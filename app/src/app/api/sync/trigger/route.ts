@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { syncAllProviders } from '@/services/usage-sync.service'
+import { syncProviderUsage } from '@/services/usage-sync.service'
 import { checkBudgetThresholds } from '@/services/budget.service'
 
 export async function POST(req: NextRequest) {
@@ -9,12 +9,22 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const { orgId } = await req.json()
+    const body = await req.json()
+    const { orgId, providerId, fromDate, toDate } = body
+
     if (!orgId) {
       return NextResponse.json({ error: 'orgId is required' }, { status: 400 })
     }
 
-    const syncResults = await syncAllProviders(orgId, token)
+    const syncResults = await syncProviderUsage({
+      orgId,
+      token,
+      providerId,
+      fromDate: fromDate ? new Date(fromDate) : undefined,
+      toDate: toDate ? new Date(toDate) : undefined,
+      syncType: 'manual',
+    })
+
     const budgetAlerts = await checkBudgetThresholds(orgId, token)
 
     return NextResponse.json({

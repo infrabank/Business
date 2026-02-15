@@ -4,14 +4,18 @@ import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { Input } from '@/components/ui/Input'
-import { ArrowLeft, Plus, Key, Trash2 } from 'lucide-react'
+import { ArrowLeft, Plus } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import { PROVIDER_LABELS, PROVIDER_COLORS } from '@/lib/constants'
 import { useProviders } from '@/features/providers/hooks/useProviders'
 import { useAppStore } from '@/lib/store'
 import { useSession } from '@/hooks/useSession'
+import { SyncButton } from '@/features/providers/components/SyncButton'
+import { SyncHistory } from '@/features/providers/components/SyncHistory'
+
+const PROVIDERS_WITH_USAGE_API = new Set(['openai', 'anthropic'])
 
 export default function ProviderDetailPage() {
   const params = useParams()
@@ -22,8 +26,13 @@ export default function ProviderDetailPage() {
   const [showAddKey, setShowAddKey] = useState(false)
   const [newKeyLabel, setNewKeyLabel] = useState('')
   const [newKeyValue, setNewKeyValue] = useState('')
+  const [syncRefreshKey, setSyncRefreshKey] = useState(0)
 
   const provider = providers.find((p) => p.id === providerId)
+
+  const handleSyncComplete = useCallback(() => {
+    setSyncRefreshKey((k) => k + 1)
+  }, [])
 
   if (!isReady || isLoading) {
     return <div className="h-64 animate-pulse rounded-xl bg-gray-100" />
@@ -42,6 +51,7 @@ export default function ProviderDetailPage() {
 
   const providerLabel = PROVIDER_LABELS[provider.type] ?? provider.type
   const color = PROVIDER_COLORS[provider.type] ?? '#6B7280'
+  const supportsUsageApi = PROVIDERS_WITH_USAGE_API.has(provider.type)
 
   return (
     <div className="space-y-6">
@@ -95,17 +105,27 @@ export default function ProviderDetailPage() {
           <h3 className="text-lg font-semibold text-gray-900">Sync Status</h3>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">Last synced</p>
-              <p className="font-medium text-gray-900">
-                {provider.lastSyncAt ? new Date(provider.lastSyncAt).toLocaleString() : 'Never'}
-              </p>
-            </div>
-            <Button variant="outline">Sync Now</Button>
-          </div>
+          {orgId ? (
+            <SyncButton
+              providerId={providerId}
+              orgId={orgId}
+              lastSyncAt={provider.lastSyncAt}
+              supportsUsageApi={supportsUsageApi}
+              onSyncComplete={handleSyncComplete}
+            />
+          ) : (
+            <p className="text-sm text-gray-500">Loading organization...</p>
+          )}
         </CardContent>
       </Card>
+
+      {orgId && supportsUsageApi && (
+        <SyncHistory
+          orgId={orgId}
+          providerId={providerId}
+          refreshKey={syncRefreshKey}
+        />
+      )}
     </div>
   )
 }

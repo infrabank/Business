@@ -2,11 +2,14 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { getTokenFromCookie } from '@/lib/auth'
-import type { DashboardSummary, ChartDataPoint } from '@/types/dashboard'
+import type { DashboardSummary, ChartDataPoint, DashboardPeriod } from '@/types/dashboard'
+import type { ProviderType } from '@/types'
 
 interface UseDashboardOptions {
   orgId?: string | null
-  period?: '7d' | '30d' | '90d'
+  period?: DashboardPeriod
+  providerTypes?: ProviderType[]
+  comparison?: boolean
 }
 
 interface UseDashboardResult {
@@ -17,11 +20,18 @@ interface UseDashboardResult {
   refetch: () => void
 }
 
-export function useDashboard({ orgId, period = '7d' }: UseDashboardOptions = {}): UseDashboardResult {
+export function useDashboard({
+  orgId,
+  period = '30d',
+  providerTypes,
+  comparison = true,
+}: UseDashboardOptions = {}): UseDashboardResult {
   const [summary, setSummary] = useState<DashboardSummary | null>(null)
   const [chartData, setChartData] = useState<ChartDataPoint[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  const providerKey = providerTypes?.join(',') ?? ''
 
   const fetchData = useCallback(async () => {
     if (!orgId) {
@@ -36,10 +46,13 @@ export function useDashboard({ orgId, period = '7d' }: UseDashboardOptions = {})
     const headers: Record<string, string> = {}
     if (token) headers['Authorization'] = `Bearer ${token}`
 
+    const providerParam = providerKey ? `&providerTypes=${providerKey}` : ''
+    const comparisonParam = comparison ? '&comparison=true' : ''
+
     try {
       const [summaryRes, chartRes] = await Promise.all([
-        fetch(`/api/dashboard/summary?orgId=${orgId}`, { headers }),
-        fetch(`/api/dashboard/chart?orgId=${orgId}&period=${period}`, { headers }),
+        fetch(`/api/dashboard/summary?orgId=${orgId}${providerParam}`, { headers }),
+        fetch(`/api/dashboard/chart?orgId=${orgId}&period=${period}${providerParam}${comparisonParam}`, { headers }),
       ])
 
       if (!summaryRes.ok || !chartRes.ok) {
@@ -53,7 +66,7 @@ export function useDashboard({ orgId, period = '7d' }: UseDashboardOptions = {})
     } finally {
       setIsLoading(false)
     }
-  }, [orgId, period])
+  }, [orgId, period, providerKey, comparison])
 
   useEffect(() => { fetchData() }, [fetchData])
 

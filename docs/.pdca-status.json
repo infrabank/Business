@@ -1,57 +1,17 @@
 {
   "version": "2.0",
-  "lastUpdated": "2026-02-15T10:30:00.000Z",
-  "activeFeatures": ["bkend-integration"],
-  "primaryFeature": "bkend-integration",
+  "lastUpdated": "2026-02-15T14:00:00.000Z",
+  "activeFeatures": [],
+  "primaryFeature": "",
   "features": {
-    "business-setup": {
+    "billing-payments": {
       "phase": "archived",
-      "matchRate": 98.5,
-      "iterationCount": 2,
-      "startedAt": "2026-02-15T05:10:00.000Z",
-      "archivedAt": "2026-02-15T10:00:00.000Z",
-      "archivedTo": "docs/archive/2026-02/business-setup/"
-    },
-    "bkend-integration": {
-      "name": "bkend.ai 실제 연동",
-      "phase": "completed",
-      "status": "completed",
-      "matchRate": 97,
-      "iterationCount": 0,
-      "createdAt": "2026-02-15T10:30:00.000Z",
-      "documents": {
-        "plan": "docs/01-plan/features/bkend-integration.plan.md",
-        "design": "docs/02-design/features/bkend-integration.design.md",
-        "analysis": "docs/03-analysis/bkend-integration.analysis.md",
-        "report": "docs/04-report/features/bkend-integration.report.md"
-      },
-      "history": [
-        {
-          "phase": "plan",
-          "action": "Plan document created - 12 FRs, 6-phase implementation, 23 files to modify",
-          "timestamp": "2026-02-15T10:30:00.000Z"
-        },
-        {
-          "phase": "design",
-          "action": "Design document created - 3 new files, 13 modified files, 1 deleted file, 6-phase implementation checklist",
-          "timestamp": "2026-02-15T11:00:00.000Z"
-        },
-        {
-          "phase": "do",
-          "action": "Implementation complete - 4 new files, 14 modified files, 1 deleted file, next build 0 errors",
-          "timestamp": "2026-02-15T11:30:00.000Z"
-        },
-        {
-          "phase": "check",
-          "action": "Gap analysis complete - 97% match rate, 12/12 FRs covered, 0 missing items, 3 additive enhancements",
-          "timestamp": "2026-02-15T12:00:00.000Z"
-        },
-        {
-          "phase": "completed",
-          "action": "Completion report generated - 97% match rate, 0 iterations, ready for archive",
-          "timestamp": "2026-02-15T12:30:00.000Z"
-        }
-      ]
+      "matchRate": 98,
+      "iterationCount": 1,
+      "startedAt": "2026-02-15T19:30:00.000Z",
+      "completedAt": "2026-02-16T00:00:00.000Z",
+      "archivedAt": "2026-02-16T00:00:00.000Z",
+      "archivedTo": "docs/archive/2026-02/billing-payments/"
     }
   },
   "pipeline": {
@@ -70,6 +30,6 @@
   "session": {
     "startedAt": "2026-02-15T04:52:28.730Z",
     "onboardingCompleted": true,
-    "lastActivity": "2026-02-15T11:00:00.000Z"
+    "lastActivity": "2026-02-15T17:30:00.000Z"
   }
 }

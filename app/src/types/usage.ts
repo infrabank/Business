@@ -11,6 +11,7 @@ export interface UsageRecord {
   totalTokens: number
   cost: number
   requestCount: number
+  projectId?: string
   date: string
   createdAt: string
 }

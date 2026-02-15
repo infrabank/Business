@@ -3,7 +3,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getTokenFromCookie } from '@/lib/auth'
 import { bkend } from '@/lib/bkend'
-import type { Provider, ProviderType } from '@/types'
+import { checkProviderLimit } from '@/lib/plan-limits'
+import { useAppStore } from '@/lib/store'
+import type { Provider, ProviderType, UserPlan } from '@/types'
 
 export function useProviders(orgId?: string | null) {
   const [providers, setProviders] = useState<Provider[]>([])
@@ -32,6 +34,14 @@ export function useProviders(orgId?: string | null) {
     const token = getTokenFromCookie()
     if (!token || !orgId) return false
     try {
+      // 0. Check plan limit
+      const currentUser = useAppStore.getState().currentUser
+      const plan = (currentUser?.plan || 'free') as UserPlan
+      const limitCheck = checkProviderLimit(plan, providers.length)
+      if (!limitCheck.allowed) {
+        throw new Error(`Provider limit reached (${limitCheck.limit}). Upgrade to ${limitCheck.planRequired} plan.`)
+      }
+
       // 1. Validate key
       const validateRes = await fetch('/api/providers/validate', {
         method: 'POST',

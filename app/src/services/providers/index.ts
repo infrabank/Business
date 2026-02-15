@@ -4,7 +4,8 @@ import { OpenAIAdapter } from './openai-adapter'
 import { AnthropicAdapter } from './anthropic-adapter'
 import { GoogleAdapter } from './google-adapter'
 
-export type { ProviderAdapter, UsageData } from './base-adapter'
+export type { ProviderAdapter, UsageData, FetchUsageOptions, FetchUsageResult, RateLimitConfig } from './base-adapter'
+export { ProviderApiError } from './base-adapter'
 
 export function createAdapter(type: ProviderType): ProviderAdapter {
   switch (type) {

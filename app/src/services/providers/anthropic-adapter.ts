@@ -1,4 +1,5 @@
-import type { ProviderAdapter, UsageData } from './base-adapter'
+import type { ProviderAdapter, UsageData, FetchUsageResult, RateLimitConfig } from './base-adapter'
+import { ProviderApiError } from './base-adapter'
 
 const ANTHROPIC_MODELS: Record<string, { input: number; output: number }> = {
   'claude-opus-4-6': { input: 15, output: 75 },
@@ -8,6 +9,11 @@ const ANTHROPIC_MODELS: Record<string, { input: number; output: number }> = {
 
 export class AnthropicAdapter implements ProviderAdapter {
   type = 'anthropic' as const
+
+  rateLimitConfig: RateLimitConfig = {
+    maxRequestsPerMinute: 60,
+    delayBetweenRequestsMs: 1000,
+  }
 
   async validateKey(apiKey: string): Promise<boolean> {
     try {
@@ -30,30 +36,78 @@ export class AnthropicAdapter implements ProviderAdapter {
     }
   }
 
-  async fetchUsage(_apiKey: string, from: Date, to: Date): Promise<UsageData[]> {
-    return this.generateMockData(from, to)
+  async fetchUsage(apiKey: string, from: Date, to: Date): Promise<FetchUsageResult> {
+    const params = new URLSearchParams({
+      start_date: from.toISOString().split('T')[0],
+      end_date: to.toISOString().split('T')[0],
+      group_by: 'model',
+    })
+
+    const res = await fetch(
+      `https://api.anthropic.com/v1/organizations/usage?${params}`,
+      {
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+      },
+    )
+
+    if (res.status === 401 || res.status === 403) {
+      throw new ProviderApiError(
+        res.status,
+        'Anthropic Admin API key required for usage data. Standard API keys cannot access usage information.',
+        'anthropic',
+      )
+    }
+
+    if (res.status === 429) {
+      throw new ProviderApiError(429, 'Rate limit exceeded. Will retry automatically.', 'anthropic')
+    }
+
+    if (!res.ok) {
+      throw new ProviderApiError(res.status, `Anthropic API error: ${res.statusText}`, 'anthropic')
+    }
+
+    const data = await res.json()
+    return { data: this.parseUsageData(data as AnthropicUsageResponse), hasMore: false }
   }
 
   getAvailableModels(): string[] {
     return Object.keys(ANTHROPIC_MODELS)
   }
 
-  private generateMockData(from: Date, to: Date): UsageData[] {
-    const data: UsageData[] = []
-    const models = ['claude-sonnet-4-5', 'claude-haiku-4-5']
-    for (let d = new Date(from); d <= to; d.setDate(d.getDate() + 1)) {
-      for (const model of models) {
-        const p = ANTHROPIC_MODELS[model]!
-        const inp = Math.floor(Math.random() * 300000) + 10000
-        const out = Math.floor(Math.random() * 150000) + 5000
-        data.push({
-          model, inputTokens: inp, outputTokens: out,
-          cost: Math.round((inp * p.input + out * p.output) / 1_000_000 * 1e6) / 1e6,
-          requestCount: Math.floor(Math.random() * 300) + 30,
-          date: d.toISOString().split('T')[0],
-        })
-      }
-    }
-    return data
+  supportsUsageApi(): boolean {
+    return true
   }
+
+  private parseUsageData(data: AnthropicUsageResponse): UsageData[] {
+    const results: UsageData[] = []
+    const entries = data.data ?? []
+    for (const entry of entries) {
+      const model = entry.model ?? 'unknown'
+      const inputTokens = entry.input_tokens ?? 0
+      const outputTokens = entry.output_tokens ?? 0
+      const pricing = ANTHROPIC_MODELS[model] ?? { input: 3, output: 15 }
+      results.push({
+        model,
+        inputTokens,
+        outputTokens,
+        cost: (inputTokens * pricing.input + outputTokens * pricing.output) / 1_000_000,
+        requestCount: entry.num_requests ?? 0,
+        date: entry.date ?? new Date().toISOString().split('T')[0],
+      })
+    }
+    return results
+  }
+}
+
+interface AnthropicUsageResponse {
+  data?: Array<{
+    model?: string
+    date?: string
+    input_tokens?: number
+    output_tokens?: number
+    num_requests?: number
+  }>
 }
