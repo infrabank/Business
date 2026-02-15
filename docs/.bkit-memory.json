@@ -1,0 +1,34 @@
+{
+  "sessionCount": 4,
+  "lastSession": {
+    "startedAt": "2026-02-15T08:00:00.000Z",
+    "platform": "claude",
+    "level": "Dynamic"
+  },
+  "projectContext": {
+    "name": "LLM Cost Manager",
+    "type": "SaaS",
+    "description": "LLM API 비용을 통합 관리하고 최적화하는 플랫폼",
+    "targetMarket": "AI를 사용하는 모든 기업 및 개인",
+    "soloFounder": true,
+    "techStack": {
+      "frontend": "Next.js 16 + Tailwind CSS + TypeScript",
+      "backend": "bkend.ai BaaS",
+      "charts": "Recharts",
+      "state": "Zustand",
+      "testing": "Vitest + Playwright",
+      "deployment": "Vercel"
+    }
+  },
+  "pdcaPhase": "completed",
+  "completedPhases": [
+    "plan",
+    "schema",
+    "design",
+    "convention",
+    "do",
+    "check",
+    "act",
+    "report"
+  ]
+}

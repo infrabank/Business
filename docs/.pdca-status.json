@@ -1,0 +1,826 @@
+{
+  "version": "2.0",
+  "lastUpdated": "2026-02-15T07:07:54.062Z",
+  "activeFeatures": [
+    "business-setup",
+    "Business",
+    "providers",
+    "ui",
+    "layout",
+    "login",
+    "signup",
+    "(dashboard)",
+    "dashboard",
+    "budget",
+    "alerts",
+    "reports",
+    "projects",
+    "settings",
+    "trigger",
+    "summary",
+    "chart",
+    "export",
+    "tips",
+    "validate",
+    "optimization",
+    "[id]",
+    "pricing",
+    "auth"
+  ],
+  "primaryFeature": "business-setup",
+  "features": {
+    "business-setup": {
+      "name": "LLM Cost Manager - LLM 비용관리 플랫폼",
+      "phase": "design",
+      "status": "completed",
+      "createdAt": "2026-02-15T05:10:00.000Z",
+      "history": [
+        {
+          "phase": "plan",
+          "action": "Market research & business vision created",
+          "timestamp": "2026-02-15T05:10:00.000Z"
+        },
+        {
+          "phase": "plan",
+          "action": "Plan document created with requirements and architecture decisions",
+          "timestamp": "2026-02-15T05:20:00.000Z"
+        },
+        {
+          "phase": "plan",
+          "action": "Phase 1 Schema completed - 10 entities, 12 terms defined",
+          "timestamp": "2026-02-15T05:25:00.000Z"
+        },
+        {
+          "phase": "design",
+          "action": "Design document created with architecture, data model, API spec, UI/UX",
+          "timestamp": "2026-02-15T05:30:00.000Z"
+        }
+      ]
+    },
+    "Business": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:27:10.932Z",
+        "lastUpdated": "2026-02-15T07:05:08.631Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\services\\optimization.service.ts"
+    },
+    "providers": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:28:05.004Z",
+        "lastUpdated": "2026-02-15T07:07:37.044Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\features\\providers\\hooks\\useProviders.ts"
+    },
+    "ui": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:28:44.717Z",
+        "lastUpdated": "2026-02-15T07:06:29.377Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\components\\ui\\DataTable.tsx"
+    },
+    "layout": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:29:04.180Z",
+        "lastUpdated": "2026-02-15T07:06:32.575Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\components\\layout\\Footer.tsx"
+    },
+    "login": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:30:22.352Z",
+        "lastUpdated": "2026-02-15T05:30:22.352Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\(auth)\\login\\page.tsx"
+    },
+    "signup": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:30:26.480Z",
+        "lastUpdated": "2026-02-15T05:30:26.480Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\(auth)\\signup\\page.tsx"
+    },
+    "(dashboard)": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:30:28.118Z",
+        "lastUpdated": "2026-02-15T05:30:28.118Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\(dashboard)\\layout.tsx"
+    },
+    "dashboard": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:30:32.518Z",
+        "lastUpdated": "2026-02-15T07:07:14.830Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\features\\dashboard\\hooks\\useDashboard.ts"
+    },
+    "budget": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:31:27.305Z",
+        "lastUpdated": "2026-02-15T07:07:41.052Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\features\\budget\\hooks\\useBudgets.ts"
+    },
+    "alerts": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:31:38.370Z",
+        "lastUpdated": "2026-02-15T07:07:47.740Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\features\\alerts\\hooks\\useAlerts.ts"
+    },
+    "reports": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:31:44.004Z",
+        "lastUpdated": "2026-02-15T05:31:44.004Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\(dashboard)\\reports\\page.tsx"
+    },
+    "projects": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:31:50.631Z",
+        "lastUpdated": "2026-02-15T05:31:50.631Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\(dashboard)\\projects\\page.tsx"
+    },
+    "settings": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T05:31:57.872Z",
+        "lastUpdated": "2026-02-15T05:31:57.872Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\(dashboard)\\settings\\page.tsx"
+    },
+    "trigger": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T07:05:16.743Z",
+        "lastUpdated": "2026-02-15T07:05:16.743Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\api\\sync\\trigger\\route.ts"
+    },
+    "summary": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T07:05:30.573Z",
+        "lastUpdated": "2026-02-15T07:05:30.573Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\api\\dashboard\\summary\\route.ts"
+    },
+    "chart": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T07:05:36.162Z",
+        "lastUpdated": "2026-02-15T07:05:36.162Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\api\\dashboard\\chart\\route.ts"
+    },
+    "export": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T07:05:41.652Z",
+        "lastUpdated": "2026-02-15T07:05:41.652Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\api\\reports\\export\\route.ts"
+    },
+    "tips": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T07:05:46.028Z",
+        "lastUpdated": "2026-02-15T07:05:46.028Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\api\\optimization\\tips\\route.ts"
+    },
+    "validate": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T07:05:49.364Z",
+        "lastUpdated": "2026-02-15T07:05:49.364Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\api\\providers\\validate\\route.ts"
+    },
+    "optimization": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T07:06:07.971Z",
+        "lastUpdated": "2026-02-15T07:07:54.062Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\features\\optimization\\hooks\\useOptimization.ts"
+    },
+    "[id]": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T07:06:54.376Z",
+        "lastUpdated": "2026-02-15T07:06:54.376Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\(dashboard)\\providers\\[id]\\page.tsx"
+    },
+    "pricing": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T07:07:07.425Z",
+        "lastUpdated": "2026-02-15T07:07:07.425Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\app\\pricing\\page.tsx"
+    },
+    "auth": {
+      "phase": "do",
+      "phaseNumber": 3,
+      "matchRate": null,
+      "iterationCount": 0,
+      "requirements": [],
+      "documents": {},
+      "timestamps": {
+        "started": "2026-02-15T07:07:18.380Z",
+        "lastUpdated": "2026-02-15T07:07:26.205Z"
+      },
+      "lastFile": "D:\\Opencode\\Business\\app\\src\\features\\auth\\hooks\\useAuth.ts"
+    }
+  },
+  "pipeline": {
+    "currentPhase": 1,
+    "level": "Dynamic",
+    "phaseHistory": [
+      {
+        "phase": 1,
+        "name": "Schema",
+        "startedAt": "2026-02-15T05:10:00.000Z",
+        "completedAt": "2026-02-15T05:25:00.000Z",
+        "status": "completed"
+      }
+    ]
+  },
+  "session": {
+    "startedAt": "2026-02-15T04:52:28.730Z",
+    "onboardingCompleted": true,
+    "lastActivity": "2026-02-15T07:07:54.062Z"
+  },
+  "history": [
+    {
+      "action": "Project initialized as Dynamic level",
+      "timestamp": "2026-02-15T05:10:00.000Z"
+    },
+    {
+      "action": "Service confirmed: LLM Cost Management Platform",
+      "timestamp": "2026-02-15T05:15:00.000Z"
+    },
+    {
+      "action": "Plan document completed",
+      "timestamp": "2026-02-15T05:20:00.000Z"
+    },
+    {
+      "action": "Phase 1 Schema completed",
+      "timestamp": "2026-02-15T05:25:00.000Z"
+    },
+    {
+      "action": "Design document completed",
+      "timestamp": "2026-02-15T05:30:00.000Z"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:10.932Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:13.063Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:15.396Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:17.479Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:19.901Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:21.163Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:22.894Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:24.351Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:32.182Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:34.072Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:37.636Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:42.701Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:45.108Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:27:58.289Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:28:05.004Z",
+      "feature": "providers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:28:17.893Z",
+      "feature": "providers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:28:23.782Z",
+      "feature": "providers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:28:28.943Z",
+      "feature": "providers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:28:30.905Z",
+      "feature": "providers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:28:44.717Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:28:47.314Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:28:50.922Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:28:53.815Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:29:04.180Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:30:10.808Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:30:13.110Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:30:22.352Z",
+      "feature": "login",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:30:26.480Z",
+      "feature": "signup",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:30:28.118Z",
+      "feature": "(dashboard)",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:30:32.518Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:30:38.365Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:30:42.997Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:30:47.571Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:31:07.722Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:31:18.675Z",
+      "feature": "providers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:31:27.305Z",
+      "feature": "budget",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:31:38.370Z",
+      "feature": "alerts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:31:44.004Z",
+      "feature": "reports",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:31:50.631Z",
+      "feature": "projects",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T05:31:57.872Z",
+      "feature": "settings",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T06:54:55.482Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T06:55:30.332Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T06:56:16.232Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:04:27.575Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:04:32.819Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:04:39.136Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:04:48.549Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:04:57.600Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:05:08.631Z",
+      "feature": "Business",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:05:16.743Z",
+      "feature": "trigger",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:05:30.573Z",
+      "feature": "summary",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:05:36.162Z",
+      "feature": "chart",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:05:41.652Z",
+      "feature": "export",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:05:46.028Z",
+      "feature": "tips",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:05:49.364Z",
+      "feature": "validate",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:06:00.334Z",
+      "feature": "budget",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:06:07.971Z",
+      "feature": "optimization",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:06:15.473Z",
+      "feature": "providers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:06:23.107Z",
+      "feature": "alerts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:06:29.377Z",
+      "feature": "ui",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:06:32.575Z",
+      "feature": "layout",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:06:54.376Z",
+      "feature": "[id]",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:07:07.425Z",
+      "feature": "pricing",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:07:14.830Z",
+      "feature": "dashboard",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:07:18.380Z",
+      "feature": "auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:07:21.826Z",
+      "feature": "auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:07:26.205Z",
+      "feature": "auth",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:07:37.044Z",
+      "feature": "providers",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:07:41.052Z",
+      "feature": "budget",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:07:47.740Z",
+      "feature": "alerts",
+      "phase": "do",
+      "action": "updated"
+    },
+    {
+      "timestamp": "2026-02-15T07:07:54.062Z",
+      "feature": "optimization",
+      "phase": "do",
+      "action": "updated"
+    }
+  ]
+}
