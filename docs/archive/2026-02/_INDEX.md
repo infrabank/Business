@@ -9,6 +9,7 @@
 | real-data-sync | 2026-02-15 | 96% | 0 | 4 |
 | dashboard-analytics | 2026-02-15 | 98% | 0 | 4 |
 | billing-payments | 2026-02-16 | 98% | 1 | 4 |
+| landing-page | 2026-02-16 | 100% | 0 | 4 |
 
 ## business-setup
 
@@ -94,3 +95,20 @@
 | Design | [billing-payments.design.md](./billing-payments/billing-payments.design.md) |
 | Analysis | [billing-payments.analysis.md](./billing-payments/billing-payments.analysis.md) |
 | Report | [billing-payments.report.md](./billing-payments/billing-payments.report.md) |
+
+## landing-page
+
+**마케팅 랜딩 페이지 - 전환율 최적화 (Hero, Features, Testimonials, FAQ, CTA)**
+
+- **Duration**: 2026-02-16 (single day, AI-native development)
+- **Match Rate**: 100% (first pass, no iterations needed)
+- **Scope**: 10 FRs, 9 new files, 1 modified file, ~540 LOC
+
+### Documents
+
+| Document | Path |
+|----------|------|
+| Plan | [landing-page.plan.md](./landing-page/landing-page.plan.md) |
+| Design | [landing-page.design.md](./landing-page/landing-page.design.md) |
+| Analysis | [landing-page.analysis.md](./landing-page/landing-page.analysis.md) |
+| Report | [landing-page.report.md](./landing-page/landing-page.report.md) |
