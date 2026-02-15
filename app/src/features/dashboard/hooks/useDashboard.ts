@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { getTokenFromCookie } from '@/lib/auth'
 import type { DashboardSummary, ChartDataPoint } from '@/types/dashboard'
-import { generateMockDashboardSummary, generateMockChartData } from '@/lib/mock-data'
 
 interface UseDashboardOptions {
-  orgId?: string
+  orgId?: string | null
   period?: '7d' | '30d' | '90d'
 }
 
@@ -23,23 +23,23 @@ export function useDashboard({ orgId, period = '7d' }: UseDashboardOptions = {})
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const days = period === '90d' ? 90 : period === '30d' ? 30 : 7
+  const fetchData = useCallback(async () => {
+    if (!orgId) {
+      setIsLoading(false)
+      return
+    }
 
-  async function fetchData() {
     setIsLoading(true)
     setError(null)
 
-    try {
-      if (!orgId) {
-        // Use mock data when no org configured
-        setSummary(generateMockDashboardSummary())
-        setChartData(generateMockChartData(days))
-        return
-      }
+    const token = getTokenFromCookie()
+    const headers: Record<string, string> = {}
+    if (token) headers['Authorization'] = `Bearer ${token}`
 
+    try {
       const [summaryRes, chartRes] = await Promise.all([
-        fetch(`/api/dashboard/summary?orgId=${orgId}`),
-        fetch(`/api/dashboard/chart?orgId=${orgId}&period=${period}`),
+        fetch(`/api/dashboard/summary?orgId=${orgId}`, { headers }),
+        fetch(`/api/dashboard/chart?orgId=${orgId}&period=${period}`, { headers }),
       ])
 
       if (!summaryRes.ok || !chartRes.ok) {
@@ -50,17 +50,12 @@ export function useDashboard({ orgId, period = '7d' }: UseDashboardOptions = {})
       setChartData(await chartRes.json())
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
-      // Fallback to mock data
-      setSummary(generateMockDashboardSummary())
-      setChartData(generateMockChartData(days))
     } finally {
       setIsLoading(false)
     }
-  }
-
-  useEffect(() => {
-    fetchData()
   }, [orgId, period])
+
+  useEffect(() => { fetchData() }, [fetchData])
 
   return { summary, chartData, isLoading, error, refetch: fetchData }
 }

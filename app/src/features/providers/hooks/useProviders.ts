@@ -1,27 +1,26 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import type { Provider, ApiKey, ProviderType } from '@/types'
+import { getTokenFromCookie } from '@/lib/auth'
+import { bkend } from '@/lib/bkend'
+import type { Provider, ProviderType } from '@/types'
 
-const mockProviders: Provider[] = [
-  { id: '1', orgId: '1', type: 'openai', name: 'Production OpenAI', isActive: true, lastSyncAt: '2026-02-15T08:30:00Z', createdAt: '2026-01-10' },
-  { id: '2', orgId: '1', type: 'anthropic', name: 'Anthropic Claude', isActive: true, lastSyncAt: '2026-02-15T08:25:00Z', createdAt: '2026-01-12' },
-  { id: '3', orgId: '1', type: 'google', name: 'Google AI', isActive: true, lastSyncAt: '2026-02-14T22:00:00Z', createdAt: '2026-01-20' },
-]
-
-export function useProviders(orgId?: string) {
+export function useProviders(orgId?: string | null) {
   const [providers, setProviders] = useState<Provider[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchProviders = useCallback(async () => {
+    if (!orgId) { setIsLoading(false); return }
     setIsLoading(true)
     try {
-      if (!orgId) {
-        setProviders(mockProviders)
-        return
-      }
-      const res = await fetch(`/api/providers?orgId=${orgId}`)
-      if (res.ok) setProviders(await res.json())
+      const token = getTokenFromCookie()
+      const data = await bkend.get<Provider[]>('/providers', {
+        token: token || undefined,
+        params: { orgId }
+      })
+      setProviders(data)
+    } catch {
+      setProviders([])
     } finally {
       setIsLoading(false)
     }
@@ -30,13 +29,43 @@ export function useProviders(orgId?: string) {
   useEffect(() => { fetchProviders() }, [fetchProviders])
 
   const addProvider = useCallback(async (data: { type: ProviderType; name: string; apiKey: string }) => {
-    const res = await fetch('/api/providers/validate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ providerType: data.type, apiKey: data.apiKey }),
-    })
-    return res.ok
-  }, [])
+    const token = getTokenFromCookie()
+    if (!token || !orgId) return false
+    try {
+      // 1. Validate key
+      const validateRes = await fetch('/api/providers/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ providerType: data.type, apiKey: data.apiKey }),
+      })
+      if (!validateRes.ok) return false
 
-  return { providers, isLoading, refetch: fetchProviders, addProvider }
+      // 2. Create provider
+      const provider = await bkend.post<Provider>('/providers', {
+        orgId, type: data.type, name: data.name, isActive: true
+      }, { token })
+
+      // 3. Create encrypted API key
+      await fetch('/api/providers/encrypt-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ providerId: provider.id, apiKey: data.apiKey, label: data.name }),
+      })
+
+      await fetchProviders()
+      return true
+    } catch { return false }
+  }, [orgId, fetchProviders])
+
+  const deleteProvider = useCallback(async (providerId: string) => {
+    const token = getTokenFromCookie()
+    if (!token) return false
+    try {
+      await bkend.delete('/providers/' + providerId, { token })
+      await fetchProviders()
+      return true
+    } catch { return false }
+  }, [fetchProviders])
+
+  return { providers, isLoading, refetch: fetchProviders, addProvider, deleteProvider }
 }

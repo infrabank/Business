@@ -6,14 +6,48 @@ import { ProviderPieChart } from '@/features/dashboard/components/ProviderPieCha
 import { ModelBarChart } from '@/features/dashboard/components/ModelBarChart'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { generateMockDashboardSummary, generateMockChartData } from '@/lib/mock-data'
+import { useDashboard } from '@/features/dashboard/hooks/useDashboard'
+import { useAppStore } from '@/lib/store'
+import { useSession } from '@/hooks/useSession'
 import { formatCurrency, formatNumber } from '@/lib/utils'
 import { Lightbulb, AlertTriangle } from 'lucide-react'
 
-const summary = generateMockDashboardSummary()
-const chartData = generateMockChartData(30)
-
 export default function DashboardPage() {
+  const { isReady } = useSession()
+  const orgId = useAppStore((s) => s.currentOrgId)
+  const { summary, chartData, isLoading } = useDashboard({ orgId, period: '30d' })
+
+  if (!isReady || isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-500">Your LLM spending at a glance</p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-28 animate-pulse rounded-xl bg-gray-100" />
+          ))}
+        </div>
+        <div className="h-64 animate-pulse rounded-xl bg-gray-100" />
+      </div>
+    )
+  }
+
+  if (!summary) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-500">Your LLM spending at a glance</p>
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
+          <p className="text-gray-500">No data yet. Add a provider to start tracking costs.</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -28,7 +62,7 @@ export default function DashboardPage() {
         <StatCard title="API Requests" value={formatNumber(summary.byProvider.reduce((s, p) => s + p.requestCount, 0))} subtitle="This month" />
         <StatCard
           title="Budget Usage"
-          value={`${summary.budgetStatus[0]?.percentage.toFixed(0)}%`}
+          value={`${summary.budgetStatus[0]?.percentage.toFixed(0) ?? '0'}%`}
           subtitle={`${formatCurrency(summary.budgetStatus[0]?.spent ?? 0)} of ${formatCurrency(summary.budgetStatus[0]?.amount ?? 0)}`}
         />
       </div>
@@ -54,17 +88,21 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {summary.recentAlerts.map((alert) => (
-                <div key={alert.id} className="rounded-lg border border-gray-100 p-3">
-                  <div className="flex items-center gap-2">
-                    <Badge variant={alert.type === 'budget_warning' ? 'warning' : 'info'}>
-                      {alert.type.replace('_', ' ')}
-                    </Badge>
-                    <span className="text-sm font-medium text-gray-900">{alert.title}</span>
+              {summary.recentAlerts.length === 0 ? (
+                <p className="text-sm text-gray-500">No recent alerts</p>
+              ) : (
+                summary.recentAlerts.map((alert) => (
+                  <div key={alert.id} className="rounded-lg border border-gray-100 p-3">
+                    <div className="flex items-center gap-2">
+                      <Badge variant={alert.type === 'budget_warning' ? 'warning' : 'info'}>
+                        {alert.type.replace('_', ' ')}
+                      </Badge>
+                      <span className="text-sm font-medium text-gray-900">{alert.title}</span>
+                    </div>
+                    <p className="mt-1 text-sm text-gray-600">{alert.message}</p>
                   </div>
-                  <p className="mt-1 text-sm text-gray-600">{alert.message}</p>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
@@ -78,18 +116,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
-                <p className="text-sm font-medium text-blue-900">Switch gpt-4o to gpt-4o-mini for simple tasks</p>
-                <p className="mt-1 text-sm text-blue-700">Potential saving: ~$230/month</p>
-              </div>
-              <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
-                <p className="text-sm font-medium text-blue-900">2 unused API keys detected</p>
-                <p className="mt-1 text-sm text-blue-700">Deactivate to reduce risk and simplify management</p>
-              </div>
-              <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
-                <p className="text-sm font-medium text-blue-900">Enable request caching for repeated queries</p>
-                <p className="mt-1 text-sm text-blue-700">Potential saving: ~$85/month</p>
-              </div>
+              <p className="text-sm text-gray-500">Tips will appear here based on your usage patterns.</p>
             </div>
           </CardContent>
         </Card>

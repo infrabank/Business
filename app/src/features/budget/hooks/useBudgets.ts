@@ -1,27 +1,26 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import type { BudgetStatus } from '@/types'
+import { getTokenFromCookie } from '@/lib/auth'
+import { bkend } from '@/lib/bkend'
+import type { Budget } from '@/types'
 
-const mockBudgetStatuses: BudgetStatus[] = [
-  { budgetId: '1', name: 'Total Monthly Budget', amount: 5000, spent: 2847.53, percentage: 56.9 },
-  { budgetId: '2', name: 'Production Project', amount: 3000, spent: 1842.30, percentage: 61.4 },
-  { budgetId: '3', name: 'Development', amount: 1000, spent: 653.18, percentage: 65.3 },
-]
-
-export function useBudgets(orgId?: string) {
-  const [budgets, setBudgets] = useState<BudgetStatus[]>([])
+export function useBudgets(orgId?: string | null) {
+  const [budgets, setBudgets] = useState<Budget[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchBudgets = useCallback(async () => {
+    if (!orgId) { setIsLoading(false); return }
     setIsLoading(true)
     try {
-      if (!orgId) {
-        setBudgets(mockBudgetStatuses)
-        return
-      }
-      const res = await fetch(`/api/budgets?orgId=${orgId}`)
-      if (res.ok) setBudgets(await res.json())
+      const token = getTokenFromCookie()
+      const data = await bkend.get<Budget[]>('/budgets', {
+        token: token || undefined,
+        params: { orgId }
+      })
+      setBudgets(data)
+    } catch {
+      setBudgets([])
     } finally {
       setIsLoading(false)
     }
@@ -29,5 +28,31 @@ export function useBudgets(orgId?: string) {
 
   useEffect(() => { fetchBudgets() }, [fetchBudgets])
 
-  return { budgets, isLoading, refetch: fetchBudgets }
+  const createBudget = useCallback(async (data: { amount: number; name: string; projectId?: string }) => {
+    const token = getTokenFromCookie()
+    if (!token || !orgId) return false
+    try {
+      await bkend.post('/budgets', {
+        orgId,
+        amount: data.amount,
+        alertThresholds: [50, 80, 100],
+        period: 'monthly',
+        isActive: true,
+      }, { token })
+      await fetchBudgets()
+      return true
+    } catch { return false }
+  }, [orgId, fetchBudgets])
+
+  const updateBudget = useCallback(async (budgetId: string, data: Partial<Budget>) => {
+    const token = getTokenFromCookie()
+    if (!token) return false
+    try {
+      await bkend.patch('/budgets/' + budgetId, data as Record<string, unknown>, { token })
+      await fetchBudgets()
+      return true
+    } catch { return false }
+  }, [fetchBudgets])
+
+  return { budgets, isLoading, refetch: fetchBudgets, createBudget, updateBudget }
 }

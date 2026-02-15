@@ -1,27 +1,26 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { getTokenFromCookie } from '@/lib/auth'
+import { bkend } from '@/lib/bkend'
 import type { Alert } from '@/types'
 
-const mockAlerts: Alert[] = [
-  { id: '1', orgId: '1', type: 'budget_warning', title: 'Production budget at 61%', message: 'Production project has used 61.4% of the $3,000 monthly budget.', isRead: false, sentAt: new Date().toISOString() },
-  { id: '2', orgId: '1', type: 'optimization', title: 'Cost optimization available', message: 'Switching gpt-4o to gpt-4o-mini for simple tasks could save ~$230/month.', isRead: false, sentAt: new Date(Date.now() - 3600000).toISOString() },
-  { id: '3', orgId: '1', type: 'anomaly', title: 'Unusual spending detected', message: 'API usage spiked 340% compared to the average.', isRead: true, sentAt: new Date(Date.now() - 86400000 * 2).toISOString() },
-]
-
-export function useAlerts(orgId?: string) {
+export function useAlerts(orgId?: string | null) {
   const [alerts, setAlerts] = useState<Alert[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchAlerts = useCallback(async () => {
+    if (!orgId) { setIsLoading(false); return }
     setIsLoading(true)
     try {
-      if (!orgId) {
-        setAlerts(mockAlerts)
-        return
-      }
-      const res = await fetch(`/api/alerts?orgId=${orgId}`)
-      if (res.ok) setAlerts(await res.json())
+      const token = getTokenFromCookie()
+      const data = await bkend.get<Alert[]>('/alerts', {
+        token: token || undefined,
+        params: { orgId }
+      })
+      setAlerts(data)
+    } catch {
+      setAlerts([])
     } finally {
       setIsLoading(false)
     }
@@ -30,8 +29,23 @@ export function useAlerts(orgId?: string) {
   useEffect(() => { fetchAlerts() }, [fetchAlerts])
 
   const markAsRead = useCallback(async (alertId: string) => {
-    setAlerts((prev) => prev.map((a) => a.id === alertId ? { ...a, isRead: true } : a))
+    const token = getTokenFromCookie()
+    if (!token) return
+    try {
+      await bkend.patch('/alerts/' + alertId, { isRead: true }, { token })
+      setAlerts((prev) => prev.map((a) => a.id === alertId ? { ...a, isRead: true } : a))
+    } catch { /* optimistic update already applied */ }
   }, [])
 
-  return { alerts, isLoading, refetch: fetchAlerts, markAsRead }
+  const markAllRead = useCallback(async () => {
+    const token = getTokenFromCookie()
+    if (!token) return
+    const unread = alerts.filter((a) => !a.isRead)
+    setAlerts((prev) => prev.map((a) => ({ ...a, isRead: true })))
+    for (const alert of unread) {
+      try { await bkend.patch('/alerts/' + alert.id, { isRead: true }, { token }) } catch {}
+    }
+  }, [alerts])
+
+  return { alerts, isLoading, refetch: fetchAlerts, markAsRead, markAllRead }
 }
