@@ -19,7 +19,7 @@ export function ProviderPieChart({ data }: ProviderPieChartProps) {
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-semibold text-gray-900">프로바이더별</h3>
+        <h3 className="text-lg font-bold text-slate-900">프로바이더별</h3>
       </CardHeader>
       <CardContent>
         <div className="h-64">
@@ -30,7 +30,17 @@ export function ProviderPieChart({ data }: ProviderPieChartProps) {
                   <Cell key={i} fill={entry.color} />
                 ))}
               </Pie>
-              <Tooltip formatter={(v) => `$${Number(v).toFixed(2)}`} />
+              <Tooltip
+                formatter={(v) => `$${Number(v).toFixed(2)}`}
+                contentStyle={{
+                  borderRadius: '0.75rem',
+                  border: '1px solid rgba(226, 232, 240, 0.6)',
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                  backdropFilter: 'blur(4px)',
+                  padding: '1rem',
+                  boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)'
+                }}
+              />
               <Legend />
             </PieChart>
           </ResponsiveContainer>

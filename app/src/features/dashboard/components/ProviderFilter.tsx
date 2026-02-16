@@ -31,10 +31,10 @@ export function ProviderFilter({ providers, selected, onChange }: ProviderFilter
       <button
         onClick={toggleAll}
         className={cn(
-          'rounded-full border px-3 py-1 text-sm font-medium transition-colors',
+          'rounded-xl border px-3 py-1 text-sm font-medium transition-colors',
           allSelected
-            ? 'border-gray-300 bg-white text-gray-900'
-            : 'border-gray-200 bg-gray-50 text-gray-400',
+            ? 'bg-indigo-50 text-indigo-700 border-indigo-200 font-semibold'
+            : 'border-slate-200 text-slate-500 hover:bg-slate-50',
         )}
       >
         전체
@@ -48,10 +48,10 @@ export function ProviderFilter({ providers, selected, onChange }: ProviderFilter
             key={type}
             onClick={() => toggleProvider(type)}
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm font-medium transition-colors',
+              'inline-flex items-center gap-1.5 rounded-xl border px-3 py-1 text-sm font-medium transition-colors',
               isActive
-                ? 'border-gray-300 bg-white text-gray-900'
-                : 'border-gray-200 bg-gray-50 text-gray-400',
+                ? 'bg-indigo-50 text-indigo-700 border-indigo-200 font-semibold'
+                : 'border-slate-200 text-slate-500 hover:bg-slate-50',
             )}
           >
             {isActive && (

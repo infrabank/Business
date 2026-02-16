@@ -28,24 +28,24 @@ export function CostSavingsDemo() {
   const savingsPercent = withoutLCM > 0 ? ((totalSaved / withoutLCM) * 100).toFixed(1) : '0'
 
   return (
-    <section className="py-20">
+    <section className="py-24 bg-slate-50">
       <div className="mx-auto max-w-6xl px-4">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900">
+          <h2 className="text-4xl font-bold tracking-tight text-slate-900">
             얼마나 절감할 수 있는지 확인하세요
           </h2>
-          <p className="mt-4 text-lg text-gray-600">
+          <p className="mt-4 text-lg text-slate-600">
             사용량에 맞게 슬라이더를 조정하세요. 절감액은 실시간으로 계산됩니다.
           </p>
         </div>
 
         <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Controls */}
-          <div className="space-y-8 rounded-xl border border-gray-200 bg-white p-8">
+          <div className="space-y-8 rounded-2xl border border-slate-200/60 bg-white p-8 shadow-sm">
             <div>
-              <label className="flex items-center justify-between text-sm font-medium text-gray-700">
+              <label className="flex items-center justify-between text-sm font-medium text-slate-700">
                 <span>월간 API 요청 수</span>
-                <span className="rounded-lg bg-gray-100 px-3 py-1 font-mono text-sm font-bold text-gray-900">
+                <span className="rounded-lg bg-slate-100 px-3 py-1 font-mono text-sm font-bold text-slate-900">
                   {monthlyRequests.toLocaleString()}
                 </span>
               </label>
@@ -56,16 +56,16 @@ export function CostSavingsDemo() {
                 step={1000}
                 value={monthlyRequests}
                 onChange={(e) => setMonthlyRequests(Number(e.target.value))}
-                className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 accent-blue-600"
+                className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-indigo-600"
               />
-              <div className="mt-1 flex justify-between text-xs text-gray-400">
+              <div className="mt-1 flex justify-between text-xs text-slate-400">
                 <span>1K</span>
                 <span>500K</span>
               </div>
             </div>
 
             <div>
-              <label className="mb-3 block text-sm font-medium text-gray-700">주요 모델</label>
+              <label className="mb-3 block text-sm font-medium text-slate-700">주요 모델</label>
               <div className="grid grid-cols-3 gap-2">
                 {MODELS.map((m, i) => (
                   <button
@@ -73,8 +73,8 @@ export function CostSavingsDemo() {
                     onClick={() => setSelectedModel(i)}
                     className={`rounded-lg border-2 px-3 py-2 text-sm font-medium transition-all ${
                       selectedModel === i
-                        ? 'border-blue-600 bg-blue-50 text-blue-700'
-                        : 'border-gray-200 text-gray-600 hover:border-gray-300'
+                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+                        : 'border-slate-200 text-slate-600 hover:border-slate-300'
                     }`}
                   >
                     {m.name}
@@ -84,9 +84,9 @@ export function CostSavingsDemo() {
             </div>
 
             <div>
-              <label className="flex items-center justify-between text-sm font-medium text-gray-700">
+              <label className="flex items-center justify-between text-sm font-medium text-slate-700">
                 <span>예상 캐시 적중률</span>
-                <span className="rounded-lg bg-gray-100 px-3 py-1 font-mono text-sm font-bold text-gray-900">
+                <span className="rounded-lg bg-slate-100 px-3 py-1 font-mono text-sm font-bold text-slate-900">
                   {cacheHitRate}%
                 </span>
               </label>
@@ -97,13 +97,13 @@ export function CostSavingsDemo() {
                 step={5}
                 value={cacheHitRate}
                 onChange={(e) => setCacheHitRate(Number(e.target.value))}
-                className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 accent-blue-600"
+                className="mt-3 h-2 w-full cursor-pointer appearance-none rounded-lg bg-slate-200 accent-indigo-600"
               />
-              <div className="mt-1 flex justify-between text-xs text-gray-400">
+              <div className="mt-1 flex justify-between text-xs text-slate-400">
                 <span>0% (캐싱 없음)</span>
                 <span>80% (높은 반복)</span>
               </div>
-              <p className="mt-2 text-xs text-gray-400">
+              <p className="mt-2 text-xs text-slate-400">
                 임베딩 호출과 템플릿 프롬프트는 일반적으로 30-60% 캐시 적중률을 보입니다
               </p>
             </div>
@@ -112,13 +112,13 @@ export function CostSavingsDemo() {
           {/* Results */}
           <div className="flex flex-col gap-4">
             {/* Before vs After */}
-            <div className="grid grid-cols-3 gap-3 rounded-xl border border-gray-200 bg-white p-6">
+            <div className="grid grid-cols-3 gap-3 rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm">
               <div className="rounded-lg bg-red-50 p-4 text-center">
                 <p className="text-xs font-medium text-red-500">LCM 없이</p>
-                <p className="mt-2 text-2xl font-bold text-gray-900">
+                <p className="mt-2 text-2xl font-bold text-slate-900">
                   ${withoutLCM.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </p>
-                <p className="mt-1 text-[10px] text-gray-400">/월</p>
+                <p className="mt-1 text-[10px] text-slate-400">/월</p>
               </div>
               <div className="flex flex-col items-center justify-center rounded-lg bg-emerald-50 p-4">
                 <p className="text-xs font-medium text-emerald-600">절감액</p>
@@ -129,50 +129,50 @@ export function CostSavingsDemo() {
                   {savingsPercent}%
                 </span>
               </div>
-              <div className="rounded-lg bg-blue-50 p-4 text-center">
-                <p className="text-xs font-medium text-blue-500">LCM 사용</p>
-                <p className="mt-2 text-2xl font-bold text-blue-700">
+              <div className="rounded-lg bg-indigo-50 p-4 text-center">
+                <p className="text-xs font-medium text-indigo-500">LCM 사용</p>
+                <p className="mt-2 text-2xl font-bold text-indigo-700">
                   ${withLCM.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </p>
-                <p className="mt-1 text-[10px] text-blue-400">/월</p>
+                <p className="mt-1 text-[10px] text-indigo-400">/월</p>
               </div>
             </div>
 
             {/* Breakdown */}
-            <div className="rounded-xl border border-gray-200 bg-white p-6">
-              <h4 className="text-sm font-semibold text-gray-700">절감 내역</h4>
+            <div className="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm">
+              <h4 className="text-sm font-semibold text-slate-700">절감 내역</h4>
               <div className="mt-4 space-y-4">
                 <div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">응답 캐싱</span>
+                    <span className="text-slate-600">응답 캐싱</span>
                     <span className="font-semibold text-emerald-600">
                       -${cacheSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     </span>
                   </div>
-                  <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                  <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-slate-100">
                     <div
-                      className="h-full rounded-full bg-blue-500 transition-all duration-500"
+                      className="h-full rounded-full bg-indigo-500 transition-all duration-500"
                       style={{ width: `${withoutLCM > 0 ? (cacheSavings / withoutLCM) * 100 : 0}%` }}
                     />
                   </div>
-                  <p className="mt-1 text-xs text-gray-400">
+                  <p className="mt-1 text-xs text-slate-400">
                     {cachedRequests.toLocaleString(undefined, { maximumFractionDigits: 0 })}개 중복 요청 제거
                   </p>
                 </div>
                 <div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">스마트 모델 라우팅</span>
+                    <span className="text-slate-600">스마트 모델 라우팅</span>
                     <span className="font-semibold text-emerald-600">
                       -${routingSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     </span>
                   </div>
-                  <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                  <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-slate-100">
                     <div
-                      className="h-full rounded-full bg-purple-500 transition-all duration-500"
+                      className="h-full rounded-full bg-violet-500 transition-all duration-500"
                       style={{ width: `${withoutLCM > 0 ? (routingSavings / withoutLCM) * 100 : 0}%` }}
                     />
                   </div>
-                  <p className="mt-1 text-xs text-gray-400">
+                  <p className="mt-1 text-xs text-slate-400">
                     {routableRequests.toLocaleString(undefined, { maximumFractionDigits: 0 })}개 단순 요청 → {model.routedTo}
                   </p>
                 </div>
@@ -180,7 +180,7 @@ export function CostSavingsDemo() {
             </div>
 
             {/* Annual projection */}
-            <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50 p-6 text-center">
+            <div className="rounded-2xl border-2 border-emerald-200 bg-emerald-50 p-6 text-center shadow-sm">
               <p className="text-sm font-medium text-emerald-700">연간 절감 예상액</p>
               <p className="mt-2 text-4xl font-bold text-emerald-600">
                 ${(totalSaved * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}

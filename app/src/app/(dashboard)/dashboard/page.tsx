@@ -65,41 +65,41 @@ export default function DashboardPage() {
 
   if (!isReady || isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
-            <p className="text-gray-500">LLM 지출 한눈에 보기</p>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">대시보드</h1>
+            <p className="text-slate-500">LLM 지출 한눈에 보기</p>
           </div>
         </div>
-        <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+        <div className="grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
           {[...Array(5)].map((_, i) => (
-            <div key={i} className="h-28 animate-pulse rounded-xl bg-gray-100" />
+            <div key={i} className="loading-skeleton h-28 rounded-2xl" />
           ))}
         </div>
-        <div className="h-64 animate-pulse rounded-xl bg-gray-100" />
+        <div className="loading-skeleton h-64 rounded-2xl" />
       </div>
     )
   }
 
   if (!summary) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-8">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
-            <p className="text-gray-500">LLM 지출 한눈에 보기</p>
+            <h1 className="text-3xl font-bold tracking-tight text-slate-900">대시보드</h1>
+            <p className="text-slate-500">LLM 지출 한눈에 보기</p>
           </div>
           <PeriodSelector value={period} onChange={setPeriod} />
         </div>
-        <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
-          <p className="text-gray-500">
+        <div className="rounded-2xl border border-slate-200/60 bg-white p-12 text-center shadow-sm">
+          <p className="text-slate-500">
             {dashError
               ? `대시보드 로딩 오류: ${dashError}`
               : '아직 데이터가 없습니다. 프로바이더를 추가하여 비용 추적을 시작하세요.'}
           </p>
           {dashError && (
-            <p className="mt-2 text-xs text-gray-400">orgId: {orgId || 'not set'}</p>
+            <p className="mt-2 text-xs text-slate-400">orgId: {orgId || 'not set'}</p>
           )}
         </div>
       </div>
@@ -118,12 +118,12 @@ export default function DashboardPage() {
     : 'default' as const
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header with Period Selector */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
-          <p className="text-gray-500">LLM 지출 한눈에 보기</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">대시보드</h1>
+          <p className="text-slate-500">LLM 지출 한눈에 보기</p>
         </div>
         <PeriodSelector value={period} onChange={setPeriod} />
       </div>
@@ -138,7 +138,7 @@ export default function DashboardPage() {
       )}
 
       {/* Stat Cards */}
-      <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard
           title="이번 달 총 비용"
           value={formatCurrency(summary.totalCost.current)}
@@ -164,7 +164,7 @@ export default function DashboardPage() {
           value={formatCurrency(summary.forecast.projectedMonthly)}
           subtitle={`${summary.forecast.daysRemaining}일 남음, ~${formatCurrency(summary.forecast.dailyAverage)}/일`}
           variant={forecastVariant}
-          icon={<TrendingUp className="h-4 w-4 text-gray-400" />}
+          icon={<TrendingUp className="h-4 w-4 text-slate-400" />}
         />
       </div>
 
@@ -176,7 +176,7 @@ export default function DashboardPage() {
       />
 
       {/* Provider + Model Charts */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2">
         <ProviderPieChart data={summary.byProvider} />
         <ModelBarChart data={summary.topModels} />
       </div>
@@ -185,29 +185,29 @@ export default function DashboardPage() {
       <ProjectBreakdownChart data={summary.byProject} />
 
       {/* Alerts + Optimization Tips */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-2">
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-yellow-500" />
-              <h3 className="text-lg font-semibold text-gray-900">최근 알림</h3>
+              <AlertTriangle className="h-5 w-5 text-amber-500" />
+              <h3 className="text-lg font-bold text-slate-900">최근 알림</h3>
               <Badge variant="warning">{summary.recentAlerts.length}</Badge>
             </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {summary.recentAlerts.length === 0 ? (
-                <p className="text-sm text-gray-500">최근 알림 없음</p>
+                <p className="text-sm text-slate-500">최근 알림 없음</p>
               ) : (
                 summary.recentAlerts.map((alert) => (
-                  <div key={alert.id} className="rounded-lg border border-gray-100 p-3">
+                  <div key={alert.id} className="rounded-xl border border-slate-100 p-4 hover:bg-slate-50/50 transition-colors">
                     <div className="flex items-center gap-2">
                       <Badge variant={alert.type === 'budget_warning' ? 'warning' : 'info'}>
                         {alert.type.replace('_', ' ')}
                       </Badge>
-                      <span className="text-sm font-medium text-gray-900">{alert.title}</span>
+                      <span className="text-sm font-medium text-slate-900">{alert.title}</span>
                     </div>
-                    <p className="mt-1 text-sm text-gray-600">{alert.message}</p>
+                    <p className="mt-1 text-sm text-slate-600">{alert.message}</p>
                   </div>
                 ))
               )}
@@ -219,8 +219,8 @@ export default function DashboardPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Lightbulb className="h-5 w-5 text-blue-500" />
-                <h3 className="text-lg font-semibold text-gray-900">최적화 팁</h3>
+                <Lightbulb className="h-5 w-5 text-indigo-500" />
+                <h3 className="text-lg font-bold text-slate-900">최적화 팁</h3>
                 {summary.optimizationSummary.tipsCount > 0 && (
                   <Badge variant="info">{summary.optimizationSummary.tipsCount}</Badge>
                 )}
@@ -235,16 +235,16 @@ export default function DashboardPage() {
           <CardContent>
             <div className="space-y-3">
               {pendingTips.length === 0 ? (
-                <p className="text-sm text-gray-500">아직 최적화 팁이 없습니다. 사용 패턴에 따라 팁이 표시됩니다.</p>
+                <p className="text-sm text-slate-500">아직 최적화 팁이 없습니다. 사용 패턴에 따라 팁이 표시됩니다.</p>
               ) : (
                 pendingTips.map((tip) => {
                   const CategoryIcon = CATEGORY_ICONS[tip.category] ?? Lightbulb
                   return (
-                    <div key={tip.id} className="rounded-lg border border-gray-100 p-3">
+                    <div key={tip.id} className="rounded-xl border border-slate-100 p-4 hover:bg-slate-50/50 transition-colors">
                       <div className="flex items-start gap-3">
-                        <CategoryIcon className="mt-0.5 h-5 w-5 shrink-0 text-blue-500" />
+                        <CategoryIcon className="mt-0.5 h-5 w-5 shrink-0 text-indigo-500" />
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-gray-900">{tip.suggestion}</p>
+                          <p className="text-sm font-medium text-slate-900">{tip.suggestion}</p>
                           <p className="mt-0.5 text-sm text-green-600">
                             ~{formatCurrency(tip.potentialSaving)}/월 절약
                           </p>

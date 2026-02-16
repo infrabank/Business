@@ -18,22 +18,22 @@ interface DataTableProps<T> {
 export function DataTable<T>({ columns, data, keyExtractor, emptyMessage = 'No data', ariaLabel }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-200 py-12 text-center text-gray-400">
+      <div className="rounded-2xl border border-slate-200/60 py-16 text-center text-slate-400">
         {emptyMessage}
       </div>
     )
   }
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gray-200">
+    <div className="overflow-x-auto rounded-2xl border border-slate-200/60 shadow-sm">
       <table className="w-full text-sm" aria-label={ariaLabel}>
         <thead>
-          <tr className="border-b bg-gray-50">
+          <tr className="border-b border-slate-100 bg-slate-50/80">
             {columns.map((col) => (
               <th
                 key={col.key}
                 scope="col"
-                className={`px-4 py-3 font-medium text-gray-600 ${
+                className={`px-5 py-3.5 text-xs font-semibold text-slate-500 ${
                   col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left'
                 }`}
               >
@@ -44,11 +44,11 @@ export function DataTable<T>({ columns, data, keyExtractor, emptyMessage = 'No d
         </thead>
         <tbody>
           {data.map((item) => (
-            <tr key={keyExtractor(item)} className="border-b last:border-0 hover:bg-gray-50">
+            <tr key={keyExtractor(item)} className="border-b border-slate-50 last:border-0 hover:bg-indigo-50/30 transition-colors">
               {columns.map((col) => (
                 <td
                   key={col.key}
-                  className={`px-4 py-3 ${
+                  className={`px-5 py-4 ${
                     col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left'
                   }`}
                 >

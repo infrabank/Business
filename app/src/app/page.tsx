@@ -19,80 +19,80 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <nav className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-sm">
+      <nav className="sticky top-0 z-50 border-b border-slate-200/60 bg-white/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-          <div className="flex items-center gap-2 font-bold text-blue-600">
-            <Zap className="h-6 w-6" />
-            <span className="text-lg">LLM Cost Manager</span>
+          <div className="flex items-center gap-2 font-bold">
+            <Zap className="h-6 w-6 text-indigo-600" />
+            <span className="text-lg text-gradient">LLM Cost Manager</span>
           </div>
           <div className="hidden items-center gap-6 sm:flex">
-            <a href="#features" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+            <a href="#features" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">
               기능
             </a>
-            <Link href="/pricing" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+            <Link href="/pricing" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">
               요금제
             </Link>
-            <a href="#faq" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+            <a href="#faq" className="text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors">
               FAQ
             </a>
           </div>
           <div className="hidden items-center gap-3 sm:flex">
             <Link
               href="/login"
-              className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900"
+              className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors"
             >
               로그인
             </Link>
             <Link
               href="/signup"
-              className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:scale-[1.02] hover:bg-blue-700 hover:shadow-lg"
+              className="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:shadow-lg hover:brightness-110"
             >
               무료로 시작
             </Link>
           </div>
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="sm:hidden rounded-lg p-2 text-gray-600 hover:text-gray-900"
+            className="sm:hidden rounded-lg p-2 text-slate-600 hover:text-slate-900"
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>
         </div>
         {mobileMenuOpen && (
-          <div className="border-t border-gray-100 bg-white sm:hidden">
+          <div className="border-t border-slate-100 bg-white/95 backdrop-blur-xl sm:hidden">
             <div className="flex flex-col px-4 py-4">
               <a
                 href="#features"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-3 text-sm font-medium text-gray-600 hover:text-gray-900"
+                className="py-3 text-sm font-medium text-slate-600 hover:text-slate-900"
               >
                 기능
               </a>
               <Link
                 href="/pricing"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-3 text-sm font-medium text-gray-600 hover:text-gray-900"
+                className="py-3 text-sm font-medium text-slate-600 hover:text-slate-900"
               >
                 요금제
               </Link>
               <a
                 href="#faq"
                 onClick={() => setMobileMenuOpen(false)}
-                className="py-3 text-sm font-medium text-gray-600 hover:text-gray-900"
+                className="py-3 text-sm font-medium text-slate-600 hover:text-slate-900"
               >
                 FAQ
               </a>
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="mt-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900"
+                className="mt-4 py-3 text-sm font-medium text-slate-600 hover:text-slate-900"
               >
                 로그인
               </Link>
               <Link
                 href="/signup"
                 onClick={() => setMobileMenuOpen(false)}
-                className="mt-2 rounded-lg bg-blue-600 px-4 py-3 text-center text-sm font-medium text-white transition-all duration-200 hover:scale-[1.02] hover:bg-blue-700 hover:shadow-lg"
+                className="mt-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-md transition-all duration-200 hover:shadow-lg hover:brightness-110"
               >
                 무료로 시작
               </Link>

@@ -17,22 +17,22 @@ export function StatCard({ title, value, change, subtitle, variant = 'default', 
     <Card
       className={cn(
         variant === 'warning' && 'border-l-4 border-l-amber-400',
-        variant === 'danger' && 'border-l-4 border-l-red-500',
+        variant === 'danger' && 'border-l-4 border-l-rose-500',
       )}
     >
-      <CardContent className="py-5">
+      <CardContent className="py-6">
         <div className="flex items-center gap-2">
           {icon}
-          <p className="text-sm font-medium text-gray-500">{title}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">{title}</p>
         </div>
-        <p className="mt-1 text-2xl font-bold text-gray-900">{value}</p>
+        <p className="mt-2 text-3xl font-bold text-slate-900">{value}</p>
         {change !== undefined && (
-          <div className={cn('mt-1 flex items-center gap-1 text-sm font-medium', change <= 0 ? 'text-green-600' : 'text-red-600')}>
-            {change <= 0 ? <TrendingDown className="h-4 w-4" /> : <TrendingUp className="h-4 w-4" />}
+          <div className={cn('mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold', change <= 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700')}>
+            {change <= 0 ? <TrendingDown className="h-3.5 w-3.5 text-emerald-600" /> : <TrendingUp className="h-3.5 w-3.5 text-rose-600" />}
             {change >= 0 ? '+' : ''}{change.toFixed(1)}% vs 지난달
           </div>
         )}
-        {subtitle && <p className="mt-1 text-sm text-gray-500">{subtitle}</p>}
+        {subtitle && <p className="mt-1 text-sm text-slate-500">{subtitle}</p>}
       </CardContent>
     </Card>
   )
