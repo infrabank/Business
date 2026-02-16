@@ -1,16 +1,27 @@
 'use client'
 
+import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Plus, FolderOpen } from 'lucide-react'
 import { useProjects } from '@/features/projects/hooks/useProjects'
+import { ProjectForm } from '@/features/projects/components/ProjectForm'
 import { useAppStore } from '@/lib/store'
 import { useSession } from '@/hooks/useSession'
 
 export default function ProjectsPage() {
   const { isReady } = useSession()
   const orgId = useAppStore((s) => s.currentOrgId)
-  const { projects, isLoading } = useProjects(orgId)
+  const { projects, isLoading, createProject } = useProjects(orgId)
+  const [showForm, setShowForm] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (data: { name: string; description?: string; color?: string }) => {
+    setIsSubmitting(true)
+    const success = await createProject(data)
+    setIsSubmitting(false)
+    if (success) setShowForm(false)
+  }
 
   if (!isReady || isLoading) {
     return (
@@ -35,8 +46,16 @@ export default function ProjectsPage() {
           <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
           <p className="text-gray-500">Organize costs by project</p>
         </div>
-        <Button><Plus className="mr-2 h-4 w-4" /> Add Project</Button>
+        <Button onClick={() => setShowForm(true)}><Plus className="mr-2 h-4 w-4" /> Add Project</Button>
       </div>
+
+      {showForm && (
+        <ProjectForm
+          onSubmit={handleSubmit}
+          onCancel={() => setShowForm(false)}
+          isLoading={isSubmitting}
+        />
+      )}
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((p) => (
@@ -55,10 +74,13 @@ export default function ProjectsPage() {
           </Card>
         ))}
 
-        {projects.length === 0 && (
-          <div className="col-span-full rounded-xl border border-gray-200 bg-white p-12 text-center">
-            <p className="text-gray-500">No projects yet. Create one to organize your API costs.</p>
-          </div>
+        {projects.length === 0 && !showForm && (
+          <Card className="col-span-full cursor-pointer border-dashed transition-colors hover:border-blue-400 hover:bg-blue-50/50" onClick={() => setShowForm(true)}>
+            <CardContent className="flex min-h-[120px] flex-col items-center justify-center py-8">
+              <Plus className="h-8 w-8 text-gray-400" />
+              <p className="mt-2 text-sm text-gray-500">No projects yet. Click to create one.</p>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>

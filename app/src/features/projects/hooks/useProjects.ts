@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { getTokenFromCookie } from '@/lib/auth'
 import { bkend } from '@/lib/bkend'
 import type { Project } from '@/types'
 
@@ -13,9 +12,7 @@ export function useProjects(orgId?: string | null) {
     if (!orgId) { setIsLoading(false); return }
     setIsLoading(true)
     try {
-      const token = getTokenFromCookie()
       const data = await bkend.get<Project[]>('/projects', {
-        token: token || undefined,
         params: { orgId }
       })
       setProjects(data)
@@ -29,20 +26,17 @@ export function useProjects(orgId?: string | null) {
   useEffect(() => { fetchProjects() }, [fetchProjects])
 
   const createProject = useCallback(async (data: { name: string; description?: string; color?: string }) => {
-    const token = getTokenFromCookie()
-    if (!token || !orgId) return false
+    if (!orgId) return false
     try {
-      await bkend.post('/projects', { orgId, ...data }, { token })
+      await bkend.post('/projects', { orgId, ...data })
       await fetchProjects()
       return true
     } catch { return false }
   }, [orgId, fetchProjects])
 
   const deleteProject = useCallback(async (projectId: string) => {
-    const token = getTokenFromCookie()
-    if (!token) return false
     try {
-      await bkend.delete('/projects/' + projectId, { token })
+      await bkend.delete('/projects/' + projectId, {})
       await fetchProjects()
       return true
     } catch { return false }

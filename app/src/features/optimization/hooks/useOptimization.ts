@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { getTokenFromCookie } from '@/lib/auth'
 import { bkend } from '@/lib/bkend'
 import type { OptimizationTip } from '@/types'
 
@@ -13,9 +12,7 @@ export function useOptimization(orgId?: string | null) {
     if (!orgId) { setIsLoading(false); return }
     setIsLoading(true)
     try {
-      const token = getTokenFromCookie()
       const data = await bkend.get<OptimizationTip[]>('/optimization-tips', {
-        token: token || undefined,
         params: { orgId }
       })
       setTips(data)
@@ -29,19 +26,15 @@ export function useOptimization(orgId?: string | null) {
   useEffect(() => { fetchTips() }, [fetchTips])
 
   const applyTip = useCallback(async (tipId: string) => {
-    const token = getTokenFromCookie()
-    if (!token) return
     try {
-      await bkend.patch('/optimization-tips/' + tipId, { status: 'applied' }, { token })
+      await bkend.patch('/optimization-tips/' + tipId, { status: 'applied' })
       setTips((prev) => prev.map((t) => t.id === tipId ? { ...t, status: 'applied' as const } : t))
     } catch {}
   }, [])
 
   const dismissTip = useCallback(async (tipId: string) => {
-    const token = getTokenFromCookie()
-    if (!token) return
     try {
-      await bkend.patch('/optimization-tips/' + tipId, { status: 'dismissed' }, { token })
+      await bkend.patch('/optimization-tips/' + tipId, { status: 'dismissed' })
       setTips((prev) => prev.map((t) => t.id === tipId ? { ...t, status: 'dismissed' as const } : t))
     } catch {}
   }, [])
