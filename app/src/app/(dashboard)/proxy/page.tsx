@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useAppStore } from '@/lib/store'
+import { useSession } from '@/hooks/useSession'
 import { ProxyKeyForm } from '@/features/proxy/components/ProxyKeyForm'
 import { ProxyKeyList } from '@/features/proxy/components/ProxyKeyList'
 import { ProxyLogTable } from '@/features/proxy/components/ProxyLogTable'
@@ -9,9 +11,15 @@ import { useProxyKeys } from '@/features/proxy/hooks/useProxyKeys'
 import { useProxyLogs } from '@/features/proxy/hooks/useProxyLogs'
 
 export default function ProxyPage() {
-  const { keys, loading: keysLoading, createKey, toggleKey, removeKey } = useProxyKeys()
-  const { logs, loading: logsLoading, offset, nextPage, prevPage } = useProxyLogs()
+  const { isReady } = useSession()
+  const orgId = useAppStore((s) => s.currentOrgId)
+  const { keys, loading: keysLoading, error, createKey, toggleKey, removeKey } = useProxyKeys(orgId)
+  const { logs, loading: logsLoading, offset, nextPage, prevPage } = useProxyLogs({ orgId })
   const [showForm, setShowForm] = useState(false)
+
+  if (!isReady) {
+    return <div className="py-12 text-center text-gray-400">Loading...</div>
+  }
 
   return (
     <div className="space-y-8">
@@ -36,6 +44,11 @@ export default function ProxyPage() {
 
       <section>
         <h2 className="mb-4 text-lg font-semibold text-gray-900">Proxy Keys</h2>
+        {error && (
+          <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
         {keysLoading ? (
           <div className="py-8 text-center text-gray-400">Loading keys...</div>
         ) : (

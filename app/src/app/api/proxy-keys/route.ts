@@ -1,24 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getMeServer } from '@/lib/auth'
-import { bkend } from '@/lib/bkend'
 import { createProxyKey, listProxyKeys } from '@/services/proxy/proxy-key.service'
-import type { Organization } from '@/types'
 
-// GET /api/proxy-keys - list proxy keys for user's org
-export async function GET() {
+// GET /api/proxy-keys?orgId=xxx - list proxy keys for org
+export async function GET(req: NextRequest) {
   try {
-    const user = await getMeServer()
-    const orgs = await bkend.get<Organization[]>('/organizations')
-    if (orgs.length === 0) {
-      return NextResponse.json([])
-    }
+    await getMeServer()
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
-    const keys = await listProxyKeys(orgs[0].id)
+  const orgId = req.nextUrl.searchParams.get('orgId')
+  if (!orgId) {
+    return NextResponse.json({ error: 'orgId is required' }, { status: 400 })
+  }
+
+  try {
+    const keys = await listProxyKeys(orgId)
     return NextResponse.json(keys)
   } catch (err) {
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Failed to list proxy keys' },
-      { status: err instanceof Error && err.message === 'Not authenticated' ? 401 : 500 },
+      { status: 500 },
     )
   }
 }
@@ -27,20 +30,20 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     await getMeServer()
-    const orgs = await bkend.get<Organization[]>('/organizations')
-    if (orgs.length === 0) {
-      return NextResponse.json({ error: 'No organization found' }, { status: 400 })
-    }
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
+  try {
     const body = await req.json()
-    const { name, providerType, apiKey, budgetLimit, rateLimit } = body
+    const { orgId, name, providerType, apiKey, budgetLimit, rateLimit } = body
 
-    if (!name || !providerType || !apiKey) {
-      return NextResponse.json({ error: 'name, providerType, and apiKey are required' }, { status: 400 })
+    if (!orgId || !name || !providerType || !apiKey) {
+      return NextResponse.json({ error: 'orgId, name, providerType, and apiKey are required' }, { status: 400 })
     }
 
     const result = await createProxyKey({
-      orgId: orgs[0].id,
+      orgId,
       name,
       providerType,
       apiKey,

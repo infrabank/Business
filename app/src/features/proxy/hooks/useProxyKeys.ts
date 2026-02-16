@@ -3,15 +3,16 @@
 import { useState, useEffect, useCallback } from 'react'
 import type { ProxyKeyDisplay, CreateProxyKeyRequest } from '@/types/proxy'
 
-export function useProxyKeys() {
+export function useProxyKeys(orgId: string | null) {
   const [keys, setKeys] = useState<ProxyKeyDisplay[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchKeys = useCallback(async () => {
+    if (!orgId) return
     try {
       setLoading(true)
-      const res = await fetch('/api/proxy-keys')
+      const res = await fetch(`/api/proxy-keys?orgId=${orgId}`)
       if (!res.ok) throw new Error('Failed to fetch proxy keys')
       const data = await res.json()
       setKeys(data)
@@ -21,18 +22,22 @@ export function useProxyKeys() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [orgId])
 
   useEffect(() => { fetchKeys() }, [fetchKeys])
 
   const createKey = async (data: CreateProxyKeyRequest): Promise<{ proxyKey: string } | null> => {
+    if (!orgId) return null
     try {
       const res = await fetch('/api/proxy-keys', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, orgId }),
       })
-      if (!res.ok) throw new Error('Failed to create proxy key')
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}))
+        throw new Error(errData.error || 'Failed to create proxy key')
+      }
       const result = await res.json()
       await fetchKeys()
       return result
