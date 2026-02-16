@@ -1,4 +1,4 @@
-const BKEND_API_URL = process.env.NEXT_PUBLIC_BKEND_API_URL || 'https://api.bkend.ai'
+const BKEND_API_URL = process.env.NEXT_PUBLIC_BKEND_API_URL || 'https://api-client.bkend.ai'
 const BKEND_PROJECT_ID = process.env.NEXT_PUBLIC_BKEND_PROJECT_ID || ''
 const BKEND_ENVIRONMENT = process.env.NEXT_PUBLIC_BKEND_ENVIRONMENT || 'dev'
 
