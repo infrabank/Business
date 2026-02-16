@@ -25,7 +25,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       user: { id: data.user.id, email: data.user.email },
     })
-  } catch {
-    return NextResponse.json({ error: 'Signup failed' }, { status: 500 })
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Signup failed' },
+      { status: 500 }
+    )
   }
 }
