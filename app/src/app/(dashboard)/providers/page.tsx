@@ -17,12 +17,19 @@ export default function ProvidersPage() {
   const { providers, isLoading, addProvider } = useProviders(orgId)
   const [showForm, setShowForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
 
   const handleSubmit = async (data: { type: import('@/types').ProviderType; name: string; apiKey: string }) => {
     setIsSubmitting(true)
-    const success = await addProvider(data)
+    setFormError(null)
+    const result = await addProvider(data)
     setIsSubmitting(false)
-    if (success) setShowForm(false)
+    if (result.success) {
+      setShowForm(false)
+      setFormError(null)
+    } else {
+      setFormError(result.error || 'Failed to add provider.')
+    }
   }
 
   if (!isReady || isLoading) {
@@ -54,8 +61,9 @@ export default function ProvidersPage() {
       {showForm && (
         <ProviderForm
           onSubmit={handleSubmit}
-          onCancel={() => setShowForm(false)}
+          onCancel={() => { setShowForm(false); setFormError(null) }}
           isLoading={isSubmitting}
+          error={formError}
         />
       )}
 

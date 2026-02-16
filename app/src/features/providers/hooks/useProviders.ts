@@ -6,6 +6,33 @@ import { checkProviderLimit } from '@/lib/plan-limits'
 import { useAppStore } from '@/lib/store'
 import type { Provider, ProviderType, UserPlan } from '@/types'
 
+export interface ValidateKeyResult {
+  valid: boolean
+  error?: string
+  models?: string[]
+}
+
+export async function validateApiKey(providerType: ProviderType, apiKey: string): Promise<ValidateKeyResult> {
+  try {
+    const res = await fetch('/api/providers/validate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ providerType, apiKey }),
+    })
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      return { valid: false, error: data.error || `Validation failed (${res.status})` }
+    }
+    const data = await res.json()
+    if (!data.valid) {
+      return { valid: false, error: 'Invalid API key. Please check and try again.' }
+    }
+    return { valid: true, models: data.models }
+  } catch {
+    return { valid: false, error: 'Network error. Could not validate key.' }
+  }
+}
+
 export function useProviders(orgId?: string | null) {
   const [providers, setProviders] = useState<Provider[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -27,26 +54,22 @@ export function useProviders(orgId?: string | null) {
 
   useEffect(() => { fetchProviders() }, [fetchProviders])
 
-  const addProvider = useCallback(async (data: { type: ProviderType; name: string; apiKey: string }) => {
-    if (!orgId) return false
+  const addProvider = useCallback(async (data: { type: ProviderType; name: string; apiKey: string }): Promise<{ success: boolean; error?: string }> => {
+    if (!orgId) return { success: false, error: 'No organization selected.' }
     try {
       // 0. Check plan limit
       const currentUser = useAppStore.getState().currentUser
       const plan = (currentUser?.plan || 'free') as UserPlan
       const limitCheck = checkProviderLimit(plan, providers.length)
       if (!limitCheck.allowed) {
-        throw new Error(`Provider limit reached (${limitCheck.limit}). Upgrade to ${limitCheck.planRequired} plan.`)
+        return { success: false, error: `Provider limit reached (${limitCheck.limit}). Upgrade to ${limitCheck.planRequired} plan.` }
       }
 
       // 1. Validate key
-      const validateRes = await fetch('/api/providers/validate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ providerType: data.type, apiKey: data.apiKey }),
-      })
-      if (!validateRes.ok) return false
-      const validateData = await validateRes.json()
-      if (!validateData.valid) return false
+      const validation = await validateApiKey(data.type, data.apiKey)
+      if (!validation.valid) {
+        return { success: false, error: validation.error }
+      }
 
       // 2. Create provider
       const provider = await bkend.post<Provider>('/providers', {
@@ -61,9 +84,11 @@ export function useProviders(orgId?: string | null) {
       })
 
       await fetchProviders()
-      return true
-    } catch { return false }
-  }, [orgId, fetchProviders])
+      return { success: true }
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : 'Failed to add provider.' }
+    }
+  }, [orgId, providers.length, fetchProviders])
 
   const deleteProvider = useCallback(async (providerId: string) => {
     try {
