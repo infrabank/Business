@@ -1,14 +1,16 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { NAV_ITEMS } from '@/lib/constants'
 import {
   LayoutDashboard, Plug, FolderOpen, Wallet, Bell, FileText,
-  Settings, Menu, X, Zap,
+  Settings, Menu, X, Zap, LogOut,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { getSupabaseBrowserClient } from '@/lib/supabase'
+import { useAppStore } from '@/lib/store'
 
 const iconMap: Record<string, React.ElementType> = {
   LayoutDashboard, Plug, FolderOpen, Wallet, Bell, FileText,
@@ -16,7 +18,31 @@ const iconMap: Record<string, React.ElementType> = {
 
 export function NavBar() {
   const pathname = usePathname()
+  const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement>(null)
+  const currentUser = useAppStore((s) => s.currentUser)
+  const clearSession = useAppStore((s) => s.clearSession)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false)
+      }
+    }
+    if (userMenuOpen) document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [userMenuOpen])
+
+  const handleLogout = async () => {
+    const supabase = getSupabaseBrowserClient()
+    await supabase.auth.signOut()
+    clearSession()
+    router.push('/login')
+  }
+
+  const userInitial = currentUser?.name?.charAt(0)?.toUpperCase() || currentUser?.email?.charAt(0)?.toUpperCase() || '?'
 
   return (
     <>
@@ -50,6 +76,38 @@ export function NavBar() {
           <Link href="/settings" className="hidden rounded-lg p-2 text-gray-500 hover:bg-gray-100 lg:block">
             <Settings className="h-5 w-5" />
           </Link>
+
+          {/* User menu (desktop) */}
+          <div className="relative hidden lg:block" ref={userMenuRef}>
+            <button
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-sm font-medium text-blue-700 hover:bg-blue-200 transition-colors"
+            >
+              {userInitial}
+            </button>
+            {userMenuOpen && (
+              <div className="absolute right-0 top-10 z-10 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+                <div className="border-b border-gray-100 px-3 py-2">
+                  <p className="text-sm font-medium text-gray-900 truncate">{currentUser?.name || 'User'}</p>
+                  <p className="text-xs text-gray-500 truncate">{currentUser?.email || ''}</p>
+                </div>
+                <Link
+                  href="/settings"
+                  onClick={() => setUserMenuOpen(false)}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                >
+                  <Settings className="h-4 w-4" /> Settings
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                >
+                  <LogOut className="h-4 w-4" /> Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+
           <button className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 lg:hidden" onClick={() => setMobileOpen(!mobileOpen)}>
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -70,6 +128,17 @@ export function NavBar() {
                 </Link>
               )
             })}
+            <hr className="my-2 border-gray-100" />
+            <Link href="/settings" onClick={() => setMobileOpen(false)}
+              className={cn('flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium', pathname === '/settings' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100')}>
+              <Settings className="h-5 w-5" />
+              Settings
+            </Link>
+            <button onClick={() => { setMobileOpen(false); handleLogout() }}
+              className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-red-600 hover:bg-red-50">
+              <LogOut className="h-5 w-5" />
+              Sign Out
+            </button>
           </div>
         </div>
       )}

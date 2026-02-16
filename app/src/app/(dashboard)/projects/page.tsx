@@ -8,6 +8,7 @@ import { useProjects } from '@/features/projects/hooks/useProjects'
 import { ProjectForm } from '@/features/projects/components/ProjectForm'
 import { useAppStore } from '@/lib/store'
 import { useSession } from '@/hooks/useSession'
+import { toast } from '@/components/ui/Toast'
 import type { Project } from '@/types'
 
 function ProjectMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) {
@@ -56,7 +57,8 @@ export default function ProjectsPage() {
     setIsSubmitting(true)
     const success = await createProject(data)
     setIsSubmitting(false)
-    if (success) setShowForm(false)
+    if (success) { setShowForm(false); toast('success', 'Project created.') }
+    else toast('error', 'Failed to create project.')
   }
 
   const handleEdit = (project: Project) => {
@@ -66,12 +68,16 @@ export default function ProjectsPage() {
 
   const handleSaveEdit = async (projectId: string) => {
     if (!editName.trim()) return
-    await updateProject(projectId, { name: editName.trim() })
+    const success = await updateProject(projectId, { name: editName.trim() })
+    if (success) toast('success', 'Project updated.')
+    else toast('error', 'Failed to update project.')
     setEditingId(null)
   }
 
   const handleDelete = async (projectId: string) => {
-    await deleteProject(projectId)
+    const success = await deleteProject(projectId)
+    if (success) toast('success', 'Project deleted.')
+    else toast('error', 'Failed to delete project.')
     setDeleteConfirmId(null)
   }
 

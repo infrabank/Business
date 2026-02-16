@@ -1,12 +1,17 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Badge } from '@/components/ui/Badge'
 import { useBilling } from '@/features/billing/hooks/useBilling'
+import { useAppStore } from '@/lib/store'
+import { useSession } from '@/hooks/useSession'
+import { bkend } from '@/lib/bkend'
 import { CreditCard, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
+import type { Organization } from '@/types'
 
 const STATUS_VARIANT: Record<string, 'success' | 'warning' | 'danger' | 'info'> = {
   active: 'success',
@@ -34,9 +39,46 @@ const PLAN_PRICE: Record<string, number> = {
 }
 
 export default function SettingsPage() {
-  const { subscription, invoices, isLoading, openPortal } = useBilling()
+  const { isReady, currentUser } = useSession()
+  const orgId = useAppStore((s) => s.currentOrgId)
+  const { subscription, invoices, isLoading: billingLoading, openPortal } = useBilling()
 
-  const plan = subscription?.plan || 'free'
+  const [profileName, setProfileName] = useState('')
+  const [profileEmail, setProfileEmail] = useState('')
+  const [orgName, setOrgName] = useState('')
+  const [orgSlug, setOrgSlug] = useState('')
+  const [billingEmail, setBillingEmail] = useState('')
+  const [orgLoading, setOrgLoading] = useState(true)
+
+  // Load user data
+  useEffect(() => {
+    if (currentUser) {
+      setProfileName(currentUser.name || '')
+      setProfileEmail(currentUser.email || '')
+    }
+  }, [currentUser])
+
+  // Load org data
+  useEffect(() => {
+    async function loadOrg() {
+      if (!orgId) { setOrgLoading(false); return }
+      try {
+        const orgs = await bkend.get<Organization[]>('/organizations', { params: { id: orgId } })
+        if (orgs.length > 0) {
+          setOrgName(orgs[0].name || '')
+          setOrgSlug(orgs[0].slug || '')
+          setBillingEmail(orgs[0].billingEmail || currentUser?.email || '')
+        }
+      } catch {
+        // ignore
+      } finally {
+        setOrgLoading(false)
+      }
+    }
+    loadOrg()
+  }, [orgId, currentUser?.email])
+
+  const plan = subscription?.plan || currentUser?.plan || 'free'
   const status = subscription?.status || 'active'
   const price = PLAN_PRICE[plan] || 0
 
@@ -50,6 +92,22 @@ export default function SettingsPage() {
       })
     : null
 
+  if (!isReady) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+          <p className="text-gray-500">Manage your account and organization</p>
+        </div>
+        <div className="space-y-6">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="h-48 animate-pulse rounded-xl bg-gray-100" />
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -61,8 +119,8 @@ export default function SettingsPage() {
         <CardHeader><h2 className="text-lg font-semibold text-gray-900">Profile</h2></CardHeader>
         <CardContent>
           <form className="max-w-md space-y-4" onSubmit={(e) => e.preventDefault()}>
-            <Input id="name" label="Name" defaultValue="Solo Founder" />
-            <Input id="email" label="Email" type="email" defaultValue="founder@llmcost.io" />
+            <Input id="name" label="Name" value={profileName} onChange={(e) => setProfileName(e.target.value)} />
+            <Input id="email" label="Email" type="email" value={profileEmail} onChange={(e) => setProfileEmail(e.target.value)} />
             <Button type="submit">Save Changes</Button>
           </form>
         </CardContent>
@@ -71,19 +129,27 @@ export default function SettingsPage() {
       <Card>
         <CardHeader><h2 className="text-lg font-semibold text-gray-900">Organization</h2></CardHeader>
         <CardContent>
-          <form className="max-w-md space-y-4" onSubmit={(e) => e.preventDefault()}>
-            <Input id="orgName" label="Organization Name" defaultValue="My Company" />
-            <Input id="slug" label="URL Slug" defaultValue="my-company" />
-            <Input id="billingEmail" label="Billing Email" type="email" defaultValue="billing@company.com" />
-            <Button type="submit">Update Organization</Button>
-          </form>
+          {orgLoading ? (
+            <div className="max-w-md space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-10 animate-pulse rounded bg-gray-100" />
+              ))}
+            </div>
+          ) : (
+            <form className="max-w-md space-y-4" onSubmit={(e) => e.preventDefault()}>
+              <Input id="orgName" label="Organization Name" value={orgName} onChange={(e) => setOrgName(e.target.value)} />
+              <Input id="slug" label="URL Slug" value={orgSlug} onChange={(e) => setOrgSlug(e.target.value)} />
+              <Input id="billingEmail" label="Billing Email" type="email" value={billingEmail} onChange={(e) => setBillingEmail(e.target.value)} />
+              <Button type="submit">Update Organization</Button>
+            </form>
+          )}
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader><h2 className="text-lg font-semibold text-gray-900">Subscription</h2></CardHeader>
         <CardContent>
-          {isLoading ? (
+          {billingLoading ? (
             <div className="animate-pulse space-y-3">
               <div className="h-6 w-48 rounded bg-gray-200" />
               <div className="h-4 w-64 rounded bg-gray-200" />

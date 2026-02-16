@@ -11,6 +11,7 @@ import { useProviders } from '@/features/providers/hooks/useProviders'
 import { ProviderForm } from '@/features/providers/components/ProviderForm'
 import { useAppStore } from '@/lib/store'
 import { useSession } from '@/hooks/useSession'
+import { toast } from '@/components/ui/Toast'
 import type { Provider, ProviderType } from '@/types'
 
 function ProviderMenu({ provider, onEdit, onToggle, onDelete }: {
@@ -84,6 +85,7 @@ export default function ProvidersPage() {
     if (result.success) {
       setShowForm(false)
       setFormError(null)
+      toast('success', 'Provider added successfully.')
     } else {
       setFormError(result.error || 'Failed to add provider.')
     }
@@ -96,16 +98,22 @@ export default function ProvidersPage() {
 
   const handleSaveEdit = async (providerId: string) => {
     if (!editName.trim()) return
-    await updateProvider(providerId, { name: editName.trim() })
+    const result = await updateProvider(providerId, { name: editName.trim() })
+    if (result.success) toast('success', 'Provider updated.')
+    else toast('error', result.error || 'Failed to update.')
     setEditingId(null)
   }
 
   const handleToggleActive = async (provider: Provider) => {
-    await updateProvider(provider.id, { isActive: !provider.isActive })
+    const result = await updateProvider(provider.id, { isActive: !provider.isActive })
+    if (result.success) toast('info', provider.isActive ? 'Provider deactivated.' : 'Provider activated.')
+    else toast('error', result.error || 'Failed to update.')
   }
 
   const handleDelete = async (providerId: string) => {
-    await deleteProvider(providerId)
+    const result = await deleteProvider(providerId)
+    if (result.success) toast('success', 'Provider deleted.')
+    else toast('error', result.error || 'Failed to delete.')
     setDeleteConfirmId(null)
   }
 

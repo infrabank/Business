@@ -11,6 +11,7 @@ import { useBudgets } from '@/features/budget/hooks/useBudgets'
 import { BudgetForm } from '@/features/budget/components/BudgetForm'
 import { useAppStore } from '@/lib/store'
 import { useSession } from '@/hooks/useSession'
+import { toast } from '@/components/ui/Toast'
 import type { Budget } from '@/types'
 
 function BudgetMenu({ budget, onEdit, onToggle, onDelete }: {
@@ -67,7 +68,8 @@ export default function BudgetPage() {
     setIsSubmitting(true)
     const success = await createBudget(data)
     setIsSubmitting(false)
-    if (success) setShowForm(false)
+    if (success) { setShowForm(false); toast('success', 'Budget created.') }
+    else toast('error', 'Failed to create budget.')
   }
 
   const handleEdit = (budget: Budget) => {
@@ -78,16 +80,22 @@ export default function BudgetPage() {
   const handleSaveEdit = async (budgetId: string) => {
     const parsed = parseFloat(editAmount)
     if (isNaN(parsed) || parsed <= 0) return
-    await updateBudget(budgetId, { amount: parsed })
+    const success = await updateBudget(budgetId, { amount: parsed })
+    if (success) toast('success', 'Budget updated.')
+    else toast('error', 'Failed to update budget.')
     setEditingId(null)
   }
 
   const handleToggleActive = async (budget: Budget) => {
-    await updateBudget(budget.id, { isActive: !budget.isActive })
+    const success = await updateBudget(budget.id, { isActive: !budget.isActive })
+    if (success) toast('info', budget.isActive ? 'Budget deactivated.' : 'Budget activated.')
+    else toast('error', 'Failed to update budget.')
   }
 
   const handleDelete = async (budgetId: string) => {
-    await deleteBudget(budgetId)
+    const success = await deleteBudget(budgetId)
+    if (success) toast('success', 'Budget deleted.')
+    else toast('error', 'Failed to delete budget.')
     setDeleteConfirmId(null)
   }
 
@@ -135,7 +143,7 @@ export default function BudgetPage() {
       ) : (
         <div className="space-y-4">
           {budgets.map((b) => {
-            const pct = b.amount > 0 ? 0 : 0
+            const pct = b.amount > 0 ? Math.round((b.spent ?? 0) / b.amount * 100) : 0
             const barColor = pct >= 100 ? 'bg-red-500' : pct >= 80 ? 'bg-yellow-500' : 'bg-blue-500'
             return (
               <Card key={b.id} className={!b.isActive ? 'opacity-60' : ''}>

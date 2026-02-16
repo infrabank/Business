@@ -5,6 +5,7 @@ export interface Budget {
   orgId: string
   projectId?: string
   amount: number
+  spent?: number
   alertThresholds: number[]
   period: BudgetPeriod
   isActive: boolean
