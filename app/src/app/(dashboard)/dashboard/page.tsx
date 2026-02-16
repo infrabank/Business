@@ -48,7 +48,7 @@ export default function DashboardPage() {
   const [period, setPeriod] = useState<DashboardPeriod>('30d')
   const [selectedProviders, setSelectedProviders] = useState<ProviderType[]>([])
 
-  const { summary, chartData, isLoading } = useDashboard({
+  const { summary, chartData, isLoading, error: dashError } = useDashboard({
     orgId,
     period,
     providerTypes: selectedProviders.length > 0 ? selectedProviders : undefined,
@@ -93,7 +93,14 @@ export default function DashboardPage() {
           <PeriodSelector value={period} onChange={setPeriod} />
         </div>
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
-          <p className="text-gray-500">No data yet. Add a provider to start tracking costs.</p>
+          <p className="text-gray-500">
+            {dashError
+              ? `Error loading dashboard: ${dashError}`
+              : 'No data yet. Add a provider to start tracking costs.'}
+          </p>
+          {dashError && (
+            <p className="mt-2 text-xs text-gray-400">orgId: {orgId || 'not set'}</p>
+          )}
         </div>
       </div>
     )

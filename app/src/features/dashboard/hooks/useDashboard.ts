@@ -51,11 +51,16 @@ export function useDashboard({
       ])
 
       if (!summaryRes.ok || !chartRes.ok) {
+        const summaryErr = !summaryRes.ok ? await summaryRes.text().catch(() => '') : ''
+        const chartErr = !chartRes.ok ? await chartRes.text().catch(() => '') : ''
+        console.error('[useDashboard] API error:', { summary: summaryErr, chart: chartErr })
         throw new Error('Failed to fetch dashboard data')
       }
 
-      setSummary(await summaryRes.json())
-      setChartData(await chartRes.json())
+      const summaryData = await summaryRes.json()
+      const chartItems = await chartRes.json()
+      setSummary(summaryData)
+      setChartData(chartItems)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
     } finally {
