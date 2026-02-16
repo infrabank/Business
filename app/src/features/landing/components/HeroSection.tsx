@@ -71,7 +71,7 @@ function SavingsMockup() {
                   <p className="text-[10px] font-medium text-emerald-800">GPT-4o → GPT-4o-mini</p>
                   <p className="text-[10px] font-bold text-emerald-600">-94%</p>
                 </div>
-                <p className="text-[10px] text-emerald-600">512 requests auto-routed</p>
+                <p className="text-[10px] text-emerald-600">512 simple-qa &amp; greeting requests</p>
               </div>
               <div className="rounded bg-blue-50 px-2 py-1.5">
                 <div className="flex items-center justify-between">
@@ -89,14 +89,17 @@ function SavingsMockup() {
           <p className="mb-2 text-xs font-semibold text-gray-700">Live Request Log</p>
           <div className="space-y-1">
             {[
-              { model: 'gpt-4o-mini', from: 'gpt-4o', cost: '$0.0003', original: '$0.0052', badge: 'ROUTED', badgeColor: 'purple' },
-              { model: 'claude-sonnet', cost: '$0.0000', original: '$0.0180', badge: 'CACHED', badgeColor: 'blue' },
-              { model: 'gpt-4o', cost: '$0.0847', original: '$0.0847', badge: null, badgeColor: '' },
-              { model: 'gemini-flash', from: 'gemini-pro', cost: '$0.0001', original: '$0.0023', badge: 'ROUTED', badgeColor: 'purple' },
+              { model: 'gpt-4o-mini', from: 'gpt-4o', intent: 'simple-qa', cost: '$0.0003', original: '$0.0052', badge: 'ROUTED', badgeColor: 'purple' },
+              { model: 'claude-sonnet', intent: 'coding', cost: '$0.0000', original: '$0.0180', badge: 'CACHED', badgeColor: 'blue' },
+              { model: 'gpt-4o', intent: 'reasoning', cost: '$0.0847', original: '$0.0847', badge: null, badgeColor: '' },
+              { model: 'gemini-flash', from: 'gemini-pro', intent: 'greeting', cost: '$0.0001', original: '$0.0023', badge: 'ROUTED', badgeColor: 'purple' },
             ].map((row, i) => (
               <div key={i} className="flex items-center gap-2 rounded bg-gray-50 px-2 py-1">
-                <code className="w-28 text-[10px] text-gray-600 truncate">{row.model}</code>
+                <code className="w-24 text-[10px] text-gray-600 truncate">{row.model}</code>
                 {row.from && <span className="text-[9px] text-gray-400">from {row.from}</span>}
+                <span className={`rounded px-1 py-0.5 text-[9px] font-medium ${
+                  row.intent === 'coding' || row.intent === 'reasoning' ? 'bg-amber-50 text-amber-600' : 'bg-gray-100 text-gray-500'
+                }`}>{row.intent}</span>
                 <span className="flex-1" />
                 {row.badge && (
                   <span className={`rounded px-1 py-0.5 text-[9px] font-medium ${
@@ -130,7 +133,7 @@ export function HeroSection() {
 
       <p className="mx-auto mt-6 max-w-2xl text-lg text-gray-600">
         Swap your API endpoint to our proxy. We automatically cache duplicate requests
-        and route simple queries to cheaper models.{' '}
+        and use AI to route simple queries to cheaper models.{' '}
         <span className="font-semibold text-gray-900">Same results, fraction of the cost.</span>
       </p>
 

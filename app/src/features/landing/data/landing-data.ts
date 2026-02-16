@@ -58,7 +58,7 @@ export const features: Feature[] = [
     icon: TrendingDown,
     title: 'Automatic Cost Reduction',
     description:
-      'Our proxy automatically caches identical requests and routes simple queries to cheaper models. Most teams see 30-60% savings from day one.',
+      'Our proxy automatically caches identical requests and uses AI to route simple queries to cheaper models. Most teams see 30-60% savings from day one.',
   },
   {
     icon: Activity,
@@ -82,7 +82,7 @@ export const features: Feature[] = [
     icon: Lightbulb,
     title: 'Intelligent Model Routing',
     description:
-      'Simple questions automatically route to GPT-4o-mini instead of GPT-4o. Same quality answers, 90% cheaper. Works across all providers.',
+      'AI-powered intent classifier understands each request. Coding and analysis stay on premium models. Simple Q&A and greetings auto-route to cheaper alternatives — up to 94% savings per request.',
   },
   {
     icon: Shield,
@@ -104,7 +104,7 @@ export const steps: Step[] = [
     number: 2,
     title: 'We Optimize Every Request',
     description:
-      'Caching, smart routing, budget enforcement — all happen automatically. You write zero extra code.',
+      'AI intent classification, response caching, budget enforcement — all happen automatically. Coding stays on GPT-4o, simple Q&A routes to GPT-4o-mini. Zero extra code.',
     icon: Zap,
   },
   {
@@ -154,12 +154,12 @@ export const faqItems: FaqItem[] = [
   {
     question: 'How much will I actually save?',
     answer:
-      'It depends on your usage pattern. Teams with repetitive prompts (embeddings, classification, templates) typically save 40-60% from caching alone. Smart model routing adds another 20-30% on top of that. Your dashboard shows exact savings in real-time.',
+      'It depends on your usage pattern. Teams with repetitive prompts (embeddings, classification, templates) typically save 40-60% from caching alone. AI-powered intent routing adds another 20-30% on top — our classifier detects simple queries and auto-routes them to cheaper models. Your dashboard shows exact savings in real-time.',
   },
   {
     question: 'Does routing to cheaper models affect quality?',
     answer:
-      'We only route simple, short requests (under 500 tokens) to cheaper alternatives. Complex prompts always use your original model. In practice, most users report zero noticeable quality difference on routed requests.',
+      'Our AI intent classifier analyzes each request to understand what you\'re asking. Coding, analysis, creative writing, and reasoning always use your chosen premium model. Only simple questions, greetings, and translations get routed to cheaper alternatives — quality-sensitive work is never compromised.',
   },
   {
     question: 'How does the proxy work with my existing code?',
