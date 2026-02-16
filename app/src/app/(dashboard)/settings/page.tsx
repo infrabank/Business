@@ -33,7 +33,7 @@ const STATUS_LABEL: Record<string, string> = {
 export default function SettingsPage() {
   const { isReady, currentUser } = useSession()
   const orgId = useAppStore((s) => s.currentOrgId)
-  const { subscription, invoices, isLoading: billingLoading, openPortal } = useBilling()
+  const { subscription, invoices, commission, isLoading: billingLoading, openPortal } = useBilling()
 
   const [profileName, setProfileName] = useState('')
   const [profileEmail, setProfileEmail] = useState('')
@@ -254,6 +254,37 @@ export default function SettingsPage() {
           )}
         </CardContent>
       </Card>
+
+      {plan === 'growth' && commission && (
+        <Card>
+          <CardHeader><h2 className="text-lg font-semibold text-gray-900">Commission This Month</h2></CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <div className="rounded-lg bg-gray-50 p-4 text-center">
+                <p className="text-xs font-medium text-gray-500">Requests</p>
+                <p className="mt-1 text-2xl font-bold text-gray-900">{commission.requestCount.toLocaleString()}</p>
+              </div>
+              <div className="rounded-lg bg-emerald-50 p-4 text-center">
+                <p className="text-xs font-medium text-emerald-600">Savings</p>
+                <p className="mt-1 text-2xl font-bold text-emerald-600">${commission.currentMonthSavings.toFixed(2)}</p>
+              </div>
+              <div className="rounded-lg bg-blue-50 p-4 text-center">
+                <p className="text-xs font-medium text-blue-600">Commission (20%)</p>
+                <p className="mt-1 text-2xl font-bold text-blue-600">${commission.commissionAmount.toFixed(2)}</p>
+              </div>
+              <div className="rounded-lg bg-emerald-100 p-4 text-center">
+                <p className="text-xs font-medium text-emerald-700">Net Savings</p>
+                <p className="mt-1 text-2xl font-bold text-emerald-700">
+                  ${(commission.currentMonthSavings - commission.commissionAmount).toFixed(2)}
+                </p>
+              </div>
+            </div>
+            <p className="mt-3 text-xs text-gray-400">
+              Period: {new Date(commission.periodStart).toLocaleDateString()} — {new Date(commission.periodEnd).toLocaleDateString()}
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }
