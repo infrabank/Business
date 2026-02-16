@@ -102,19 +102,71 @@
   - 글로벌 edge 캐시
   - 자동 TTL 관리
 
-### 2.3 Smart Model Routing (Phase 2)
+### 2.3 Smart Model Routing v2 — Intent Classifier (Phase 2)
 
-**구현 파일:** `src/services/optimization/model-router.service.ts`
+**구현 파일:** `src/services/proxy/model-router.service.ts`
 
-#### 판단 기준
+#### v1 → v2 진화
+
+| 항목 | v1 (토큰 수만) | v2 (의도 분류기) |
+|------|---------------|-----------------|
+| **판단 기준** | 텍스트 길이 / 4 < 500 | 의도 분류 + 구조 신호 + 토큰 추정 |
+| **분류 카테고리** | 없음 (길이만) | 11개 의도 카테고리 |
+| **보호 범위** | 긴 텍스트만 보호 | 코딩/추론/창작/분석 등 의도 기반 보호 |
+| **정확도** | 낮음 (짧은 코딩 요청도 라우팅) | 높음 (의도 기반 정밀 판단) |
+
+#### 의도 분류기 (Intent Classifier)
+
+**11개 의도 카테고리:**
+
+| 의도 | 라우팅 가능 | 토큰 임계값 | 설명 |
+|------|:---------:|:---------:|------|
+| `greeting` | ✅ | 1,000 | 인사, 안부 ("Hello", "Hi there") |
+| `simple-qa` | ✅ | 500 | 간단한 질문 ("What is...", "Who was...") |
+| `translation` | ✅ | 300 | 번역 요청 ("Translate", "Say in Korean") |
+| `unknown` | ✅ | 200 | 미분류 (보수적 임계값) |
+| `coding` | ❌ | - | 코드 작성/수정/디버그 |
+| `analysis` | ❌ | - | 데이터 분석, 비교, 연구 |
+| `creative` | ❌ | - | 글쓰기, 스토리, 시 |
+| `reasoning` | ❌ | - | 논리적 추론, 수학, 퍼즐 |
+| `multimodal` | ❌ | - | 이미지가 포함된 요청 |
+| `tool-use` | ❌ | - | function calling, 도구 사용 |
+| `system-heavy` | ❌ | - | 긴 시스템 프롬프트 (>500자) |
+
+#### 분류 메커니즘
+
+**1단계: 구조 신호 감지 (Structural Signals)**
 ```typescript
-const estimatedTokens = messageText.length / 4;
-if (estimatedTokens < 500) {
-  // 라우팅 실행
-}
+// 이미지 포함 → multimodal (라우팅 불가)
+// tools/functions 포함 → tool-use (라우팅 불가)
+// 시스템 프롬프트 > 500자 → system-heavy (라우팅 불가)
+// 멀티턴 대화 (>3 메시지) → unknown (보수적)
 ```
 
-**안전 장치:** 500 토큰 이상 요청은 라우팅하지 않음 (복잡한 작업 보호)
+**2단계: 키워드 패턴 매칭**
+```typescript
+// 각 카테고리별 키워드/패턴 배열 순차 검사
+CODING_PATTERNS: ["write code", "implement", "function", "debug", ...]
+REASONING_PATTERNS: ["step by step", "prove", "calculate", "logic", ...]
+CREATIVE_PATTERNS: ["write a story", "poem", "essay", "creative", ...]
+ANALYSIS_PATTERNS: ["analyze", "compare", "evaluate", "research", ...]
+GREETING_PATTERNS: ["hello", "hi there", "good morning", ...]
+TRANSLATION_PATTERNS: ["translate", "say in", "convert to", ...]
+QA_PATTERNS: ["what is", "who was", "define", "how many", ...]
+```
+
+**3단계: 결정 매트릭스**
+```
+의도 분류 결과 → routable 여부 확인
+  → routable=false → 원래 모델 유지 (라우팅 안 함)
+  → routable=true → 토큰 추정 < 임계값? → 저렴한 모델로 라우팅
+                                        → 아니면 원래 모델 유지
+```
+
+**핵심 특징:**
+- **제로 레이턴시**: 외부 API 호출 없이 순수 패턴 매칭 (~0ms)
+- **보수적 기본값**: 미분류(unknown)는 200 토큰 이하만 라우팅
+- **다국어 지원**: 영어 + 한국어 + 일본어 + 중국어 패턴 포함
 
 #### 라우팅 맵
 
@@ -127,9 +179,22 @@ if (estimatedTokens < 500) {
 | `gemini-2.0-pro` | `gemini-2.0-flash` | ~92% |
 | `gemini-1.5-pro` | `gemini-1.5-flash` | ~94% |
 
+#### 프로덕션 E2E 테스트 결과 (2026-02-16)
+
+| 테스트 | 요청 모델 | 실제 사용 모델 | 라우팅 | 결과 |
+|--------|----------|--------------|:------:|:----:|
+| 간단 질문 "What is 2+2?" | gpt-4o | gpt-4o-mini | ✅ | ✅ |
+| 코딩 "Write a Python sort" | gpt-4o | gpt-4o | ❌ (보호) | ✅ |
+| 추론 "Solve step by step" | gpt-4o | gpt-4o | ❌ (보호) | ✅ |
+| 창작 "Write a short story" | gpt-4o | gpt-4o | ❌ (보호) | ✅ |
+| 인사 "Hello, how are you?" | gpt-4o | gpt-4o-mini | ✅ | ✅ |
+| 잘못된 키 | - | - | - | 401 ✅ |
+| 프로바이더 불일치 | - | - | - | 403 ✅ |
+
 #### 품질 보증
-- **짧은 요청**: 단순 작업에 적합 (분류, 번역, 요약 등)
-- **긴 요청**: 원래 모델 유지 (추론, 코드 생성, 복잡한 분석)
+- **의도 기반 보호**: 코딩/추론/창작/분석 요청은 절대 라우팅하지 않음
+- **구조 기반 보호**: 이미지, 도구 호출, 긴 시스템 프롬프트 포함 시 보호
+- **보수적 임계값**: 라우팅 가능 의도도 토큰 수 기준 이중 확인
 - **사용자 제어**: 프록시 키 생성 시 라우팅 활성화/비활성화 선택 가능
 
 ### 2.4 Before vs After 비용 비교 (Phase 3)
@@ -380,11 +445,12 @@ export function useSession() {
    - DB에서 키 정보 조회 (proxy_keys 테이블)
    - AES-256-GCM으로 실제 API 키 복호화
   ↓
-2. Smart Model Routing (if enabled)
-   - 요청 본문 파싱
-   - 메시지 길이 → 토큰 추정
-   - 토큰 < 500 → 저렴한 모델로 교체
-   - 예: gpt-4o → gpt-4o-mini
+2. Smart Model Routing v2 (if enabled)
+   - 구조 신호 감지 (이미지, 도구, 시스템 프롬프트)
+   - 키워드 패턴 매칭 → 11개 의도 카테고리 분류
+   - 의도별 라우팅 가능 여부 판단
+   - 라우팅 가능 + 토큰 < 임계값 → 저렴한 모델로 교체
+   - 예: gpt-4o + "What is 2+2?" → gpt-4o-mini
   ↓
 3. Cache Check (if enabled && non-streaming)
    - 요청 정규화 (provider, model, temp, messages)
@@ -526,7 +592,8 @@ const realApiKey = decryptApiKey(keyData.encrypted_api_key);
 |------|----------|--------|----------|----------|
 | **캐시 저장소** | 인메모리 Map | Vercel cold start 시 유실 | **Upstash Redis** 전환 | **HIGH** |
 | **스트리밍 캐시** | 미지원 | 스트리밍 요청은 캐싱 불가 | SSE 청크 조합 후 캐시 | MEDIUM |
-| **토큰 추정** | `length / 4` 근사치 | 부정확 (특히 한글/이모지) | `tiktoken` 라이브러리 적용 | MEDIUM |
+| **토큰 추정** | `length / 4` 근사치 | 부정확 (특히 한글/이모지) | `tiktoken` 라이브러리 적용 | LOW |
+| **의도 분류** | 키워드 패턴 매칭 (v2) | 복잡한 혼합 요청 오분류 가능 | 경량 ML 모델 도입 | LOW |
 | **배포 환경** | Vercel Hobby | 10초 타임아웃 (긴 요청 실패) | Railway/Fly.io로 프록시 분리 | HIGH |
 | **캐시 격리** | 글로벌 캐시 | orgId 간 데이터 유출 가능성 | 프록시 키별/org별 캐시 네임스페이스 | **HIGH** |
 | **에러 처리** | 기본 try-catch | 프로바이더별 에러 핸들링 부족 | 상세 에러 메시지 + 재시도 로직 | LOW |
@@ -591,6 +658,15 @@ await redis.setex(cacheKey, 3600, response); // TTL 1시간
 |  |  | - Hero 절감 목업 (Before/After) |
 |  |  | - Testimonials에 구체적 금액 추가 |
 |  |  | - FAQ 8개 질문 (통합, 품질, 보안 등) |
+| 2026-02-16 | `892b588` | fix: exclude originalCost from proxy log insert to prevent silent failures |
+|  |  | - `logProxyRequest`에서 `originalCost` 분리 (DB 컬럼 미존재 대응) |
+|  |  | - fire-and-forget 로깅 실패 원인 해결 |
+| 2026-02-16 | `fae93a0` | feat: add intent classifier to smart model router v2 |
+|  |  | - 11개 의도 카테고리 기반 분류기 구현 |
+|  |  | - 구조 신호 감지 (이미지, 도구, 시스템 프롬프트) |
+|  |  | - 키워드 패턴 매칭 (영어/한국어/일본어/중국어) |
+|  |  | - 코딩/추론/창작/분석 요청 보호 (라우팅 차단) |
+|  |  | - 프로덕션 E2E 테스트 7/7 통과 |
 
 ## 8. 배포 전략 (단계별)
 
@@ -701,6 +777,8 @@ await redis.setex(cacheKey, 3600, response); // TTL 1시간
 - [x] 캐싱 + 라우팅 (Phase 2)
 - [x] Before/After 비교 (Phase 3)
 - [x] 랜딩페이지 리뉴얼
+- [x] **Intent Classifier v2** (의도 기반 스마트 라우팅)
+- [x] **프로덕션 E2E 검증** (실제 API 키 테스트 완료)
 - [ ] **Upstash Redis 전환** (이번 주)
 - [ ] 베타 테스터 10명 모집
 - [ ] Product Hunt 소프트 론칭
@@ -775,11 +853,14 @@ await redis.setex(cacheKey, 3600, response); // TTL 1시간
 ## 13. 결론
 
 ### 달성한 것
-- ✅ 프록시/게이트웠이 MVP 완성 (25개 파일, 5일 작업)
+- ✅ 프록시/게이트웨이 MVP 완성 (25개 파일, 5일 작업)
 - ✅ 자동 비용 절감 증명 (캐싱 + 라우팅)
 - ✅ Before/After 비교 UI
 - ✅ 랜딩페이지 완전 리뉴얼
 - ✅ UX 개선 (로딩 스켈레톤, 세션 최적화)
+- ✅ **Intent Classifier v2** (11개 의도 카테고리, 프로덕션 E2E 검증 완료)
+- ✅ **프로덕션 E2E 테스트** (실제 OpenAI API 키로 7/7 테스트 통과)
+- ✅ **비동기 로깅 안정화** (originalCost 분리로 silent failure 해결)
 
 ### 다음 단계
 1. **Upstash Redis 전환** (이번 주 월요일)
@@ -798,5 +879,6 @@ await redis.setex(cacheKey, 3600, response); // TTL 1시간
 ---
 
 *작성일: 2026-02-16*
+*최종 수정: 2026-02-16 (Intent Classifier v2 추가)*
 *작성자: LLM Cost Manager Team*
-*버전: 1.0*
+*버전: 1.1*
