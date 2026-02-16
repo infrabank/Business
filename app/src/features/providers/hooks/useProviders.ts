@@ -90,13 +90,25 @@ export function useProviders(orgId?: string | null) {
     }
   }, [orgId, providers.length, fetchProviders])
 
-  const deleteProvider = useCallback(async (providerId: string) => {
+  const updateProvider = useCallback(async (providerId: string, data: Partial<Pick<Provider, 'name' | 'isActive'>>): Promise<{ success: boolean; error?: string }> => {
+    try {
+      await bkend.patch('/providers/' + providerId, data as Record<string, unknown>)
+      await fetchProviders()
+      return { success: true }
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : 'Failed to update provider.' }
+    }
+  }, [fetchProviders])
+
+  const deleteProvider = useCallback(async (providerId: string): Promise<{ success: boolean; error?: string }> => {
     try {
       await bkend.delete('/providers/' + providerId, {})
       await fetchProviders()
-      return true
-    } catch { return false }
+      return { success: true }
+    } catch (err) {
+      return { success: false, error: err instanceof Error ? err.message : 'Failed to delete provider.' }
+    }
   }, [fetchProviders])
 
-  return { providers, isLoading, refetch: fetchProviders, addProvider, deleteProvider }
+  return { providers, isLoading, refetch: fetchProviders, addProvider, updateProvider, deleteProvider }
 }
