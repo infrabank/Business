@@ -12,6 +12,8 @@ interface SavingsData {
     modelRoutings: number
     cacheSavings: number
     routingSavings: number
+    totalOriginalCost: number
+    totalActualCost: number
   }
   recommendations: Array<{
     type: string
@@ -98,6 +100,40 @@ export function SavingsDashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Before vs After Comparison - Hero Section */}
+      <Card className="overflow-hidden">
+        <div className="grid grid-cols-1 md:grid-cols-3">
+          {/* Without LCM */}
+          <div className="bg-gray-50 p-6 text-center">
+            <div className="text-sm font-medium text-gray-500">Without LCM</div>
+            <div className="mt-2 text-3xl font-bold text-gray-900">
+              ${summary.totalOriginalCost.toFixed(2)}
+            </div>
+            <div className="mt-1 text-xs text-gray-400">What you would have paid</div>
+          </div>
+          {/* Arrow / Savings */}
+          <div className="flex flex-col items-center justify-center bg-emerald-50 p-6">
+            <div className="text-sm font-medium text-emerald-600">You Saved</div>
+            <div className="mt-2 text-4xl font-bold text-emerald-600">
+              ${summary.totalSaved.toFixed(2)}
+            </div>
+            {summary.totalOriginalCost > 0 && (
+              <div className="mt-2 rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
+                {((summary.totalSaved / summary.totalOriginalCost) * 100).toFixed(1)}% less
+              </div>
+            )}
+          </div>
+          {/* With LCM */}
+          <div className="bg-blue-50 p-6 text-center">
+            <div className="text-sm font-medium text-blue-600">With LCM</div>
+            <div className="mt-2 text-3xl font-bold text-blue-700">
+              ${summary.totalActualCost.toFixed(2)}
+            </div>
+            <div className="mt-1 text-xs text-blue-400">What you actually paid</div>
+          </div>
+        </div>
+      </Card>
+
       {/* Metric Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Saved */}
@@ -107,6 +143,14 @@ export function SavingsDashboard() {
             <div className="mt-2 text-3xl font-bold text-emerald-600">
               ${summary.totalSaved.toFixed(2)}
             </div>
+            {summary.totalOriginalCost > 0 && (
+              <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-200">
+                <div
+                  className="h-full rounded-full bg-emerald-500 transition-all duration-300"
+                  style={{ width: `${Math.min(100, (summary.totalSaved / summary.totalOriginalCost) * 100)}%` }}
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
 

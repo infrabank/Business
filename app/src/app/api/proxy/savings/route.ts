@@ -46,6 +46,7 @@ export async function GET(req: NextRequest) {
         originalModel: string | null
         cost: number
         model: string
+        originalCost: number
       }>
     >('/proxy-logs', {
       params: {
@@ -68,6 +69,9 @@ export async function GET(req: NextRequest) {
       .filter((log) => log.originalModel !== null && !log.cacheHit)
       .reduce((sum, log) => sum + log.savedAmount, 0)
 
+    const totalOriginalCost = logs.reduce((sum, log) => sum + (log.originalCost || (log.cost + log.savedAmount)), 0)
+    const totalActualCost = logs.reduce((sum, log) => sum + log.cost, 0)
+
     const summary: SavingsSummary = {
       totalSaved,
       cacheHits,
@@ -75,6 +79,8 @@ export async function GET(req: NextRequest) {
       modelRoutings,
       cacheSavings,
       routingSavings,
+      totalOriginalCost,
+      totalActualCost,
       periodStart: periodStart.toISOString(),
       periodEnd: now.toISOString(),
     }

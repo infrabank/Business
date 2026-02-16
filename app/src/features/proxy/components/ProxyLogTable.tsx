@@ -34,7 +34,14 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
       key: 'model',
       header: 'Model',
       render: (log: ProxyLog) => (
-        <code className="text-xs">{log.model}</code>
+        <div>
+          <code className="text-xs">{log.model}</code>
+          {log.originalModel && (
+            <div className="text-[10px] text-gray-400">
+              from {log.originalModel}
+            </div>
+          )}
+        </div>
       ),
     },
     {
@@ -51,9 +58,40 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
       key: 'cost',
       header: 'Cost',
       align: 'right' as const,
-      render: (log: ProxyLog) => (
-        <span className="font-mono text-xs">${Number(log.cost).toFixed(4)}</span>
-      ),
+      render: (log: ProxyLog) => {
+        const hasSavings = log.savedAmount > 0
+        return (
+          <div className="text-right">
+            <span className="font-mono text-xs">${Number(log.cost).toFixed(4)}</span>
+            {hasSavings && (
+              <div className="text-[10px] text-gray-400 line-through">
+                ${Number(log.originalCost).toFixed(4)}
+              </div>
+            )}
+          </div>
+        )
+      },
+    },
+    {
+      key: 'savings',
+      header: 'Saved',
+      align: 'right' as const,
+      render: (log: ProxyLog) => {
+        if (log.savedAmount <= 0) {
+          return <span className="text-xs text-gray-300">-</span>
+        }
+        const savingsPercent = log.originalCost > 0
+          ? ((log.savedAmount / log.originalCost) * 100).toFixed(0)
+          : '0'
+        return (
+          <div className="text-right">
+            <span className="font-mono text-xs font-medium text-emerald-600">
+              -${Number(log.savedAmount).toFixed(4)}
+            </span>
+            <div className="text-[10px] text-emerald-500">{savingsPercent}% off</div>
+          </div>
+        )
+      },
     },
     {
       key: 'latencyMs',
@@ -68,16 +106,17 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
       header: 'Status',
       align: 'center' as const,
       render: (log: ProxyLog) => (
-        <Badge variant={log.statusCode < 400 ? 'default' : 'danger'}>
-          {log.statusCode}
-        </Badge>
+        <div className="flex items-center gap-1">
+          <Badge variant={log.statusCode < 400 ? 'default' : 'danger'}>
+            {log.statusCode}
+          </Badge>
+          {log.cacheHit && (
+            <span className="rounded bg-blue-100 px-1 py-0.5 text-[10px] font-medium text-blue-700">
+              CACHE
+            </span>
+          )}
+        </div>
       ),
-    },
-    {
-      key: 'isStreaming',
-      header: 'Stream',
-      align: 'center' as const,
-      render: (log: ProxyLog) => (log.isStreaming ? 'Yes' : 'No'),
     },
   ]
 

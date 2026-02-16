@@ -141,6 +141,7 @@ export async function forwardRequest(params: {
         cacheHit: true,
         savedAmount: cachedEntry.cost,
         originalModel: wasRouted ? originalModel : null,
+        originalCost: cachedEntry.cost,
       })
 
       incrementRequestCount(resolvedKey.id)
@@ -228,6 +229,12 @@ export async function forwardRequest(params: {
     )
   }
 
+  // Calculate original cost (what it would cost without optimizations)
+  let originalCost = cost
+  if (wasRouted && originalModel) {
+    originalCost = computeCost(originalModel, tokens.inputTokens, tokens.outputTokens)
+  }
+
   logProxyRequest({
     orgId: resolvedKey.orgId,
     proxyKeyId: resolvedKey.id,
@@ -245,6 +252,7 @@ export async function forwardRequest(params: {
     cacheHit: false,
     savedAmount,
     originalModel: wasRouted ? originalModel : null,
+    originalCost,
   })
 
   // Increment request count
@@ -315,6 +323,12 @@ function handleStreamingResponse(params: {
           )
         }
 
+        // Calculate original cost (what it would cost without optimizations)
+        let originalCost = cost
+        if (wasRouted && originalModel) {
+          originalCost = computeCost(originalModel, tokens.inputTokens, tokens.outputTokens)
+        }
+
         logProxyRequest({
           orgId: resolvedKey.orgId,
           proxyKeyId: resolvedKey.id,
@@ -332,6 +346,7 @@ function handleStreamingResponse(params: {
           cacheHit: false,
           savedAmount,
           originalModel: wasRouted ? originalModel : null,
+          originalCost,
         })
 
         incrementRequestCount(resolvedKey.id)
@@ -370,6 +385,7 @@ function logProxyRequest(data: {
   cacheHit: boolean
   savedAmount: number
   originalModel: string | null
+  originalCost: number
 }): void {
   bkendService.post('/proxy-logs', data as unknown as Record<string, unknown>).catch(() => {
     // Logging failure should not impact the proxy response

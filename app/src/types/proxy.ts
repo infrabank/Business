@@ -32,6 +32,7 @@ export interface ProxyLog {
   outputTokens: number
   totalTokens: number
   cost: number
+  originalCost: number
   latencyMs: number
   isStreaming: boolean
   errorMessage: string | null
@@ -98,6 +99,8 @@ export interface SavingsSummary {
   modelRoutings: number
   cacheSavings: number
   routingSavings: number
+  totalOriginalCost: number
+  totalActualCost: number
   periodStart: string
   periodEnd: string
 }
