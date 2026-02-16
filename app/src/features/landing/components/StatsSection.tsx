@@ -2,7 +2,7 @@ import { stats } from '../data/landing-data'
 
 export function StatsSection() {
   return (
-    <section className="bg-blue-600 py-16">
+    <section className="bg-emerald-600 py-16">
       <div className="mx-auto max-w-6xl px-4">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           {stats.map((stat) => (

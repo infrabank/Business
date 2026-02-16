@@ -7,6 +7,7 @@ import { Footer } from '@/components/layout/Footer'
 import { HeroSection } from '@/features/landing/components/HeroSection'
 import { LogoBanner } from '@/features/landing/components/LogoBanner'
 import { FeaturesShowcase } from '@/features/landing/components/FeaturesShowcase'
+import { CostSavingsDemo } from '@/features/landing/components/CostSavingsDemo'
 import { HowItWorks } from '@/features/landing/components/HowItWorks'
 import { StatsSection } from '@/features/landing/components/StatsSection'
 import { Testimonials } from '@/features/landing/components/Testimonials'
@@ -104,6 +105,7 @@ export default function LandingPage() {
         <HeroSection />
         <LogoBanner />
         <FeaturesShowcase />
+        <CostSavingsDemo />
         <HowItWorks />
         <StatsSection />
         <Testimonials />

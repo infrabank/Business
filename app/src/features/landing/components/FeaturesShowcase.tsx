@@ -6,10 +6,10 @@ export function FeaturesShowcase() {
       <div className="mx-auto max-w-6xl px-4">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900">
-            Everything you need to manage AI costs
+            Every dollar saved is automatic
           </h2>
           <p className="mt-4 text-lg text-gray-600">
-            Stop guessing. Start optimizing.
+            Our proxy sits between your app and the LLM provider. No SDK changes, no new libraries — just savings.
           </p>
         </div>
 

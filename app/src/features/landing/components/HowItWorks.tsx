@@ -7,7 +7,7 @@ export function HowItWorks() {
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900">How it works</h2>
           <p className="mt-4 text-lg text-gray-600">
-            Get started in minutes, not hours.
+            One line change. Zero new dependencies. Instant savings.
           </p>
         </div>
 

@@ -8,6 +8,9 @@ import {
   Key,
   Eye,
   TrendingDown,
+  Shield,
+  Repeat,
+  Zap,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -52,63 +55,63 @@ export interface CompanyLogo {
 
 export const features: Feature[] = [
   {
-    icon: BarChart3,
-    title: 'Unified Dashboard',
+    icon: TrendingDown,
+    title: 'Automatic Cost Reduction',
     description:
-      'See all your LLM spending across OpenAI, Anthropic, and Google in one view. Track costs by project, team, or model.',
-  },
-  {
-    icon: Bell,
-    title: 'Budget Alerts',
-    description:
-      'Set monthly budgets and get instant notifications before you exceed them. Never face surprise bills again.',
-  },
-  {
-    icon: Lightbulb,
-    title: 'Cost Optimization',
-    description:
-      'AI-powered recommendations to reduce spending. Find cheaper models, batch opportunities, and unused API keys.',
+      'Our proxy automatically caches identical requests and routes simple queries to cheaper models. Most teams see 30-60% savings from day one.',
   },
   {
     icon: Activity,
-    title: 'Real-time Tracking',
+    title: 'Real-time Per-Request Tracking',
     description:
-      'Monitor your API usage as it happens. See per-request costs, token counts, and response latencies live.',
+      'See the exact cost of every single API call as it happens. Know which requests are expensive and which ones got optimized — in real time.',
   },
   {
-    icon: Users,
-    title: 'Team Management',
+    icon: BarChart3,
+    title: 'Before vs After Dashboard',
     description:
-      'Allocate budgets by team or project. Track who spends what and enforce per-team limits.',
+      'See exactly what you would have paid without LCM versus what you actually paid. A clear dollar amount showing your ROI every single day.',
   },
   {
-    icon: FileText,
-    title: 'Detailed Reports',
+    icon: Repeat,
+    title: 'Smart Response Caching',
     description:
-      'Export comprehensive reports by provider, model, or date range. CSV and PDF export for stakeholder reviews.',
+      'Identical prompts get instant cached responses instead of hitting the API again. Zero latency, zero cost — automatic for every request.',
+  },
+  {
+    icon: Lightbulb,
+    title: 'Intelligent Model Routing',
+    description:
+      'Simple questions automatically route to GPT-4o-mini instead of GPT-4o. Same quality answers, 90% cheaper. Works across all providers.',
+  },
+  {
+    icon: Shield,
+    title: 'Budget Guardrails',
+    description:
+      'Set hard spending limits per API key. When the budget hits the cap, requests get blocked — no more surprise bills at the end of the month.',
   },
 ]
 
 export const steps: Step[] = [
   {
     number: 1,
-    title: 'Connect',
+    title: 'Swap Your API Endpoint',
     description:
-      'Add your API keys from OpenAI, Anthropic, or Google. Setup takes less than 2 minutes.',
+      'Replace api.openai.com with our proxy URL. One line change — your existing code works exactly the same.',
     icon: Key,
   },
   {
     number: 2,
-    title: 'Monitor',
+    title: 'We Optimize Every Request',
     description:
-      'Start tracking costs in real-time. See spending breakdowns by provider, model, and project.',
-    icon: Eye,
+      'Caching, smart routing, budget enforcement — all happen automatically. You write zero extra code.',
+    icon: Zap,
   },
   {
     number: 3,
-    title: 'Optimize',
+    title: 'Watch Your Bill Drop',
     description:
-      'Get AI-powered recommendations to cut costs by up to 50%. Switch models, batch requests, and eliminate waste.',
+      'See real-time savings in your dashboard. Most teams save 30-60% in the first week. The service pays for itself.',
     icon: TrendingDown,
   },
 ]
@@ -116,62 +119,67 @@ export const steps: Step[] = [
 export const testimonials: Testimonial[] = [
   {
     quote:
-      'We were spending $15K/month on LLM APIs without knowing where the money went. LLM Cost Manager helped us cut that by 40% in the first month.',
-    name: 'Sarah Chen',
+      'We swapped one URL and our OpenAI bill dropped from $8,200 to $3,400 in the first month. The response caching alone saved us $2,800 on duplicate embeddings calls.',
+    name: 'James Kim',
     role: 'CTO',
-    company: 'DataFlow AI',
-    initials: 'SC',
+    company: 'Plio AI',
+    initials: 'JK',
   },
   {
     quote:
-      'The budget alerts alone saved us from a $5K overage. Now our team can experiment freely knowing we have guardrails in place.',
-    name: 'Marcus Rivera',
-    role: 'Engineering Lead',
-    company: 'NexGen Labs',
-    initials: 'MR',
+      'I was mass-calling GPT-4o for simple classification tasks. LCM auto-routed them to GPT-4o-mini and I literally didn\'t notice a quality difference. 85% cost reduction on those calls.',
+    name: 'Rachel Torres',
+    role: 'ML Engineer',
+    company: 'Stackline',
+    initials: 'RT',
   },
   {
     quote:
-      'Switching from GPT-4 to Claude where appropriate saved us 30% on our monthly bill. The optimization tips were spot on.',
-    name: 'Emily Park',
-    role: 'AI Product Manager',
-    company: 'BuildSmart',
-    initials: 'EP',
+      'The before vs after dashboard is what sold my CFO. She could see exactly how much we were saving — $4,100 last month. Budget approved in 5 minutes.',
+    name: 'David Park',
+    role: 'VP of Engineering',
+    company: 'Convexa',
+    initials: 'DP',
   },
 ]
 
 export const stats: Stat[] = [
-  { value: '$2M+', label: 'Saved by our users' },
-  { value: '10K+', label: 'API calls tracked daily' },
-  { value: '50%', label: 'Average cost reduction' },
-  { value: '3', label: 'Providers supported' },
+  { value: '42%', label: 'Average cost reduction' },
+  { value: '$0', label: 'Cost of cached responses' },
+  { value: '1 line', label: 'Code change to start' },
+  { value: '<2 min', label: 'Setup time' },
 ]
 
 export const faqItems: FaqItem[] = [
   {
-    question: 'What LLM providers do you support?',
+    question: 'How much will I actually save?',
     answer:
-      'We currently support OpenAI, Anthropic (Claude), and Google AI (Gemini). More providers are on our roadmap.',
+      'It depends on your usage pattern. Teams with repetitive prompts (embeddings, classification, templates) typically save 40-60% from caching alone. Smart model routing adds another 20-30% on top of that. Your dashboard shows exact savings in real-time.',
+  },
+  {
+    question: 'Does routing to cheaper models affect quality?',
+    answer:
+      'We only route simple, short requests (under 500 tokens) to cheaper alternatives. Complex prompts always use your original model. In practice, most users report zero noticeable quality difference on routed requests.',
+  },
+  {
+    question: 'How does the proxy work with my existing code?',
+    answer:
+      'You change the base URL in your API client from api.openai.com to our proxy URL and use your LCM proxy key instead of your real API key. That\'s it — one line change. Your real API key stays encrypted on our servers.',
   },
   {
     question: 'Is my API key secure?',
     answer:
-      'Yes. API keys are encrypted with AES-256 before storage and are never exposed in the dashboard. We use industry-standard security practices.',
+      'Your real API key is encrypted with AES-256-GCM before storage. We generate a proxy key (lmc_xxx) that you use instead. Even our team cannot see your original key. The proxy key can be revoked instantly.',
   },
   {
-    question: 'Can I try before buying?',
+    question: 'What providers do you support?',
     answer:
-      'Absolutely. Our Free plan lets you connect 1 provider and track 7 days of history at no cost. No credit card required.',
+      'OpenAI, Anthropic (Claude), and Google AI (Gemini). All three support caching, smart routing, and real-time cost tracking through our proxy.',
   },
   {
-    question: 'How does billing work?',
+    question: 'What if I hit my budget limit?',
     answer:
-      'We offer monthly subscriptions starting at $29/month. You can upgrade, downgrade, or cancel anytime. All plans include a 14-day free trial.',
-  },
-  {
-    question: 'What happens if I exceed my budget?',
-    answer:
-      "You'll receive alerts at 50%, 80%, and 100% of your budget. We never cut off your API access — we just keep you informed so you can take action.",
+      'When a proxy key reaches its budget limit, further requests return a 429 status code. Your application handles this like any rate limit. No surprise charges — ever.',
   },
 ]
 
