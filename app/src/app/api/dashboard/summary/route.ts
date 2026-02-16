@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getMeServer } from '@/lib/auth'
 import { bkend } from '@/lib/bkend'
-import type { UsageRecord, Budget, Alert, OptimizationTip, Project } from '@/types'
+import type { UsageRecord, Budget, Alert, OptimizationTip, Project, ProxyLog } from '@/types'
 import type { DashboardSummary } from '@/types/dashboard'
 
 const PROJECT_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16']
@@ -27,13 +27,14 @@ export async function GET(req: NextRequest) {
     const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString().split('T')[0]
     const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().split('T')[0]
 
-    const [allCurrentRecords, allPreviousRecords, budgets, alerts, tips, projects] = await Promise.all([
+    const [allCurrentRecords, allPreviousRecords, budgets, alerts, tips, projects, proxyLogs] = await Promise.all([
       bkend.get<UsageRecord[]>('/usage-records', { params: { orgId, date_gte: thisMonthStart } }),
       bkend.get<UsageRecord[]>('/usage-records', { params: { orgId, date_gte: lastMonthStart, date_lte: lastMonthEnd } }),
       bkend.get<Budget[]>('/budgets', { params: { orgId, isActive: 'true' } }),
       bkend.get<Alert[]>('/alerts', { params: { orgId, isRead: 'false' } }),
       bkend.get<OptimizationTip[]>('/optimization-tips', { params: { orgId } }).catch(() => [] as OptimizationTip[]),
       bkend.get<Project[]>('/projects', { params: { orgId } }).catch(() => [] as Project[]),
+      bkend.get<ProxyLog[]>('/proxy-logs', { params: { orgId, createdAt_gte: thisMonthStart } }).catch(() => [] as ProxyLog[]),
     ])
 
     // Apply provider filter
@@ -46,6 +47,7 @@ export async function GET(req: NextRequest) {
 
     const currentTotal = currentRecords.reduce((sum, r) => sum + r.cost, 0)
     const previousTotal = previousRecords.reduce((sum, r) => sum + r.cost, 0)
+    const proxyCost = proxyLogs.reduce((sum, l) => sum + Number(l.cost), 0)
     const changePercent = previousTotal > 0 ? ((currentTotal - previousTotal) / previousTotal) * 100 : 0
 
     // Forecast
@@ -56,7 +58,7 @@ export async function GET(req: NextRequest) {
     const daysRemaining = daysInMonth - daysSoFar
     const budgetWarning = budgets.length > 0 && budgets.some((b) => projectedMonthly > b.amount)
 
-    // By provider
+    // By provider (merge proxy logs)
     const providerMap = new Map<string, { cost: number; tokenCount: number; requestCount: number }>()
     for (const r of currentRecords) {
       const entry = providerMap.get(r.providerType) || { cost: 0, tokenCount: 0, requestCount: 0 }
@@ -65,8 +67,15 @@ export async function GET(req: NextRequest) {
       entry.requestCount += r.requestCount
       providerMap.set(r.providerType, entry)
     }
+    for (const log of proxyLogs) {
+      const entry = providerMap.get(log.providerType) || { cost: 0, tokenCount: 0, requestCount: 0 }
+      entry.cost += Number(log.cost)
+      entry.tokenCount += log.totalTokens
+      entry.requestCount += 1
+      providerMap.set(log.providerType, entry)
+    }
 
-    // Top models
+    // Top models (merge proxy logs)
     const modelMap = new Map<string, { cost: number; tokenCount: number; requests: number }>()
     for (const r of currentRecords) {
       const entry = modelMap.get(r.model) || { cost: 0, tokenCount: 0, requests: 0 }
@@ -74,6 +83,13 @@ export async function GET(req: NextRequest) {
       entry.tokenCount += r.totalTokens
       entry.requests += r.requestCount
       modelMap.set(r.model, entry)
+    }
+    for (const log of proxyLogs) {
+      const entry = modelMap.get(log.model) || { cost: 0, tokenCount: 0, requests: 0 }
+      entry.cost += Number(log.cost)
+      entry.tokenCount += log.totalTokens
+      entry.requests += 1
+      modelMap.set(log.model, entry)
     }
 
     // By project
@@ -114,7 +130,7 @@ export async function GET(req: NextRequest) {
     const sortedTips = [...pendingTips].sort((a, b) => b.potentialSaving - a.potentialSaving)
 
     const summary: DashboardSummary = {
-      totalCost: { current: currentTotal, previous: previousTotal, changePercent },
+      totalCost: { current: currentTotal, previous: previousTotal, changePercent, proxyCost },
       forecast: {
         projectedMonthly: Math.round(projectedMonthly * 100) / 100,
         daysRemaining,

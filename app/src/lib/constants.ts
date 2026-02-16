@@ -41,6 +41,7 @@ export const NAV_ITEMS = [
   { label: 'Budget', href: '/budget', icon: 'Wallet' },
   { label: 'Alerts', href: '/alerts', icon: 'Bell' },
   { label: 'Reports', href: '/reports', icon: 'FileText' },
+  { label: 'Proxy', href: '/proxy', icon: 'ArrowLeftRight' },
 ] as const
 
 export interface RateLimitConfig {

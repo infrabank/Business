@@ -9,6 +9,7 @@ export interface DashboardSummary {
     current: number
     previous: number
     changePercent: number
+    proxyCost: number
   }
   forecast: {
     projectedMonthly: number

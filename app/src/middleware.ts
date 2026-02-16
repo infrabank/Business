@@ -2,6 +2,11 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+  // Skip auth for proxy API routes (they use proxy key auth)
+  if (request.nextUrl.pathname.startsWith('/api/proxy/')) {
+    return NextResponse.next()
+  }
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -31,7 +36,7 @@ export async function middleware(request: NextRequest) {
   // Protected routes require auth
   const protectedPaths = [
     '/dashboard', '/providers', '/budget', '/alerts',
-    '/reports', '/projects', '/settings', '/billing',
+    '/reports', '/projects', '/settings', '/billing', '/proxy',
   ]
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p))
 
@@ -57,6 +62,8 @@ export const config = {
     '/projects/:path*',
     '/settings/:path*',
     '/billing/:path*',
+    '/proxy/:path*',
+    '/api/proxy/:path*',
     '/login',
     '/signup',
   ],
