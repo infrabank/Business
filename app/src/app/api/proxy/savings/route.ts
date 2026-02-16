@@ -86,7 +86,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Get live cache stats
-    const cacheStats = getCacheStats()
+    const cacheStats = await getCacheStats()
 
     // Generate optimization recommendations
     const recommendations: OptimizationRecommendation[] = []

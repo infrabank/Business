@@ -1,4 +1,5 @@
 import { createHash } from 'crypto'
+import { Redis } from '@upstash/redis'
 
 export interface CacheEntry {
   responseBody: string
@@ -18,15 +19,27 @@ export interface CacheStats {
   hitRate: number // percentage 0-100
 }
 
-// Module-level cache state
-const cache = new Map<string, CacheEntry>()
-const MAX_CACHE_ENTRIES = 1000
+// Redis client - lazy initialized to avoid errors when env vars are missing
+let redis: Redis | null = null
+
+function getRedis(): Redis | null {
+  if (redis) return redis
+  const url = process.env.UPSTASH_REDIS_REST_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN
+  if (!url || !token) return null
+  redis = new Redis({ url, token })
+  return redis
+}
+
+// Cache key prefix to avoid collisions
+const PREFIX = 'lcm:cache:'
+const STATS_KEY = 'lcm:cache:stats'
 const DEFAULT_TTL_SECONDS = 3600
 
-// Statistics tracking
-let totalHits = 0
-let totalMisses = 0
-let totalSaved = 0
+// In-memory fallback when Redis is not configured
+const memoryCache = new Map<string, CacheEntry>()
+const MAX_MEMORY_ENTRIES = 1000
+let memStats = { totalHits: 0, totalMisses: 0, totalSaved: 0 }
 
 /**
  * Build cache key from request params
@@ -38,13 +51,11 @@ export function buildCacheKey(
   model: string,
   body: Record<string, unknown>
 ): string {
-  // Extract semantic fields based on provider
   const keyData: Record<string, unknown> = {
     provider: providerType,
     model,
   }
 
-  // Include temperature and max_tokens if present (they affect output)
   if (body.temperature !== undefined) {
     keyData.temperature = body.temperature
   }
@@ -52,101 +63,161 @@ export function buildCacheKey(
     keyData.max_tokens = body.max_tokens
   }
 
-  // Extract message content based on provider format
   if (providerType === 'openai' || providerType === 'anthropic') {
-    // OpenAI/Anthropic use "messages" array
     if (Array.isArray(body.messages)) {
       keyData.messages = body.messages
     }
   } else if (providerType === 'google') {
-    // Google uses "contents" array
     if (Array.isArray(body.contents)) {
       keyData.contents = body.contents
     }
   }
 
-  // Serialize to JSON and hash
   const keyString = JSON.stringify(keyData)
   return createHash('sha256').update(keyString).digest('hex')
 }
 
 /**
  * Get cached response (returns null if miss or expired)
+ * Uses Redis with in-memory fallback
  */
-export function getCachedResponse(key: string): CacheEntry | null {
-  const entry = cache.get(key)
+export async function getCachedResponse(key: string): Promise<CacheEntry | null> {
+  const r = getRedis()
 
+  if (r) {
+    try {
+      const entry = await r.get<CacheEntry>(`${PREFIX}${key}`)
+      if (entry) {
+        // Update stats in Redis (fire-and-forget)
+        r.hincrby(STATS_KEY, 'totalHits', 1).catch(() => {})
+        r.hincrbyfloat(STATS_KEY, 'totalSaved', entry.cost).catch(() => {})
+        return entry
+      }
+      r.hincrby(STATS_KEY, 'totalMisses', 1).catch(() => {})
+      return null
+    } catch {
+      // Fall through to memory cache on Redis error
+    }
+  }
+
+  // In-memory fallback
+  const entry = memoryCache.get(key)
   if (!entry) {
-    totalMisses++
+    memStats.totalMisses++
     return null
   }
 
-  // Check if expired
-  const now = Date.now()
-  const age = (now - entry.timestamp) / 1000 // seconds
+  const age = (Date.now() - entry.timestamp) / 1000
   if (age > entry.ttlSeconds) {
-    cache.delete(key)
-    totalMisses++
+    memoryCache.delete(key)
+    memStats.totalMisses++
     return null
   }
 
-  // Cache hit - update LRU position (delete and re-insert)
-  cache.delete(key)
-  cache.set(key, entry)
-
-  totalHits++
-  totalSaved += entry.cost
+  // LRU update
+  memoryCache.delete(key)
+  memoryCache.set(key, entry)
+  memStats.totalHits++
+  memStats.totalSaved += entry.cost
   return entry
 }
 
 /**
  * Store response in cache
- * Evicts oldest entry if cache is full (LRU eviction - first entry is oldest)
+ * Uses Redis with in-memory fallback
  */
-export function setCachedResponse(
+export async function setCachedResponse(
   key: string,
   entry: Omit<CacheEntry, 'timestamp'>,
   ttlSeconds = DEFAULT_TTL_SECONDS
-): void {
-  // Evict oldest entry if cache is full and key is new
-  if (cache.size >= MAX_CACHE_ENTRIES && !cache.has(key)) {
-    // First entry is the oldest (LRU maintained by delete/re-insert on access)
-    const firstKey = cache.keys().next().value
-    if (firstKey) {
-      cache.delete(firstKey)
-    }
-  }
-
-  // Store new entry
-  cache.set(key, {
+): Promise<void> {
+  const fullEntry: CacheEntry = {
     ...entry,
     timestamp: Date.now(),
     ttlSeconds,
-  })
+  }
+
+  const r = getRedis()
+
+  if (r) {
+    try {
+      await r.set(`${PREFIX}${key}`, fullEntry, { ex: ttlSeconds })
+      return
+    } catch {
+      // Fall through to memory cache
+    }
+  }
+
+  // In-memory fallback
+  if (memoryCache.size >= MAX_MEMORY_ENTRIES && !memoryCache.has(key)) {
+    const firstKey = memoryCache.keys().next().value
+    if (firstKey) memoryCache.delete(firstKey)
+  }
+  memoryCache.set(key, fullEntry)
 }
 
 /**
  * Get cache statistics
+ * Combines Redis stats with in-memory stats
  */
-export function getCacheStats(): CacheStats {
-  const total = totalHits + totalMisses
-  const hitRate = total > 0 ? (totalHits / total) * 100 : 0
+export async function getCacheStats(): Promise<CacheStats> {
+  const r = getRedis()
 
+  if (r) {
+    try {
+      const stats = await r.hgetall(STATS_KEY) as Record<string, string> | null
+      const totalHits = Number(stats?.totalHits || 0)
+      const totalMisses = Number(stats?.totalMisses || 0)
+      const totalSaved = Number(stats?.totalSaved || 0)
+      const total = totalHits + totalMisses
+      const dbSize = await r.dbsize()
+
+      return {
+        totalHits,
+        totalMisses,
+        totalSaved,
+        entries: dbSize,
+        hitRate: total > 0 ? Math.round((totalHits / total) * 10000) / 100 : 0,
+      }
+    } catch {
+      // Fall through to memory stats
+    }
+  }
+
+  // In-memory fallback
+  const total = memStats.totalHits + memStats.totalMisses
   return {
-    totalHits,
-    totalMisses,
-    totalSaved,
-    entries: cache.size,
-    hitRate: Math.round(hitRate * 100) / 100, // round to 2 decimals
+    totalHits: memStats.totalHits,
+    totalMisses: memStats.totalMisses,
+    totalSaved: memStats.totalSaved,
+    entries: memoryCache.size,
+    hitRate: total > 0 ? Math.round((memStats.totalHits / total) * 10000) / 100 : 0,
   }
 }
 
 /**
  * Reset cache (for testing)
  */
-export function resetCache(): void {
-  cache.clear()
-  totalHits = 0
-  totalMisses = 0
-  totalSaved = 0
+export async function resetCache(): Promise<void> {
+  const r = getRedis()
+
+  if (r) {
+    try {
+      // Delete all cache keys with prefix
+      let cursor = '0'
+      do {
+        const [nextCursor, keys] = await r.scan(Number(cursor), { match: `${PREFIX}*`, count: 100 })
+        cursor = String(nextCursor)
+        if (keys.length > 0) {
+          await r.del(...keys)
+        }
+      } while (cursor !== '0')
+      await r.del(STATS_KEY)
+    } catch {
+      // Continue to clear memory cache
+    }
+  }
+
+  memoryCache.clear()
+  memStats = { totalHits: 0, totalMisses: 0, totalSaved: 0 }
 }
