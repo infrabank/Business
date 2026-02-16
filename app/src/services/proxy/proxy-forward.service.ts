@@ -103,7 +103,7 @@ export async function forwardRequest(params: {
   let routedModel: string | null = null
 
   if (resolvedKey.enableModelRouting && body && body.model && typeof body.model === 'string') {
-    const routingResult = routeModel(body.model, body, resolvedKey.enableModelRouting)
+    const routingResult = await routeModel(body.model, body, resolvedKey.enableModelRouting)
     if (routingResult.wasRouted) {
       wasRouted = true
       originalModel = routingResult.originalModel

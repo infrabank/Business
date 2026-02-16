@@ -1,8 +1,8 @@
 /**
- * Smart Model Router Service v2
+ * Smart Model Router Service v3
  *
  * Routes LLM requests to cheaper model alternatives based on:
- * 1. Intent classification (keyword-based, zero-latency)
+ * 1. Intent classification (hybrid: keywords + LLM fallback)
  * 2. Token estimation (input size heuristic)
  * 3. Structural signals (system prompts, tools, multimodal)
  *
@@ -191,31 +191,11 @@ function extractTextContent(body: Record<string, unknown>): {
 }
 
 /**
- * Classify request intent based on content analysis
- * Zero-latency, keyword/pattern-based classification
+ * Classify request intent based on keyword/pattern matching
+ * Internal function - synchronous, zero-latency
  */
-export function classifyIntent(body: Record<string, unknown>): IntentResult {
-  const { userText, systemText, hasImages, hasTools, messageCount } = extractTextContent(body)
+function classifyIntentByKeywords(userText: string, systemText: string): IntentResult {
   const fullText = userText + ' ' + systemText
-
-  // Structural signals (highest priority — always block routing)
-  if (hasImages) {
-    return { category: 'multimodal', confidence: 0.95, routable: false, maxTokenThreshold: 0 }
-  }
-
-  if (hasTools) {
-    return { category: 'tool-use', confidence: 0.95, routable: false, maxTokenThreshold: 0 }
-  }
-
-  // Long system prompts indicate app integrations that need full model quality
-  if (systemText.length > 500) {
-    return { category: 'system-heavy', confidence: 0.85, routable: false, maxTokenThreshold: 0 }
-  }
-
-  // Multi-turn conversations (>4 messages) suggest complex interactions
-  if (messageCount > 4) {
-    return { category: 'analysis', confidence: 0.6, routable: false, maxTokenThreshold: 0 }
-  }
 
   // Pattern-based classification (check most specific first)
   const scores: Array<{ category: IntentCategory; score: number; routable: boolean; maxTokenThreshold: number }> = []
@@ -282,6 +262,162 @@ export function classifyIntent(body: Record<string, unknown>): IntentResult {
 }
 
 /**
+ * Classify request intent using OpenAI gpt-4o-mini
+ * Returns null on any error (graceful degradation)
+ */
+async function classifyIntentByLLM(userText: string): Promise<IntentCategory | null> {
+  const apiKey = process.env.ROUTER_CLASSIFIER_API_KEY
+  if (!apiKey) return null
+
+  const CLASSIFIER_PROMPT = `You are an intent classifier for LLM API requests. Classify the user's message into exactly one category.
+
+Categories:
+- greeting: Greetings, small talk, thanks, farewells
+- simple-qa: Simple factual questions, definitions, lookups
+- translation: Translation between languages
+- coding: Code writing, debugging, review, implementation
+- analysis: Data analysis, evaluation, comparison, research
+- creative: Creative writing, storytelling, brainstorming
+- reasoning: Math, logic, step-by-step thinking, puzzles
+
+Respond with ONLY the category name in lowercase, nothing else.`
+
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: CLASSIFIER_PROMPT },
+          { role: 'user', content: userText.slice(0, 500) }
+        ],
+        max_tokens: 10,
+        temperature: 0,
+      }),
+    })
+
+    if (!response.ok) return null
+
+    const data = await response.json()
+    const category = data.choices?.[0]?.message?.content?.trim()?.toLowerCase()
+
+    const validCategories: IntentCategory[] = [
+      'greeting', 'simple-qa', 'translation', 'coding', 'analysis', 'creative', 'reasoning'
+    ]
+
+    if (validCategories.includes(category as IntentCategory)) {
+      return category as IntentCategory
+    }
+    return null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Map LLM category to IntentResult with routing configuration
+ */
+function mapCategoryToIntentResult(category: IntentCategory): IntentResult {
+  const INTENT_CONFIG: Record<string, { routable: boolean; maxTokenThreshold: number }> = {
+    'greeting': { routable: true, maxTokenThreshold: 1000 },
+    'simple-qa': { routable: true, maxTokenThreshold: 500 },
+    'translation': { routable: true, maxTokenThreshold: 300 },
+    'coding': { routable: false, maxTokenThreshold: 0 },
+    'analysis': { routable: false, maxTokenThreshold: 0 },
+    'creative': { routable: false, maxTokenThreshold: 0 },
+    'reasoning': { routable: false, maxTokenThreshold: 0 },
+    'multimodal': { routable: false, maxTokenThreshold: 0 },
+    'tool-use': { routable: false, maxTokenThreshold: 0 },
+    'system-heavy': { routable: false, maxTokenThreshold: 0 },
+    'unknown': { routable: true, maxTokenThreshold: 200 },
+  }
+  const config = INTENT_CONFIG[category] || INTENT_CONFIG['unknown']
+  return {
+    category,
+    confidence: 0.85, // LLM classification is higher confidence than keywords
+    routable: config.routable,
+    maxTokenThreshold: config.maxTokenThreshold,
+  }
+}
+
+/**
+ * Hybrid intent classification: structural signals → keywords → LLM fallback
+ * Async function that uses LLM for uncertain cases
+ */
+async function classifyIntentHybrid(body: Record<string, unknown>): Promise<IntentResult> {
+  const { userText, systemText, hasImages, hasTools, messageCount } = extractTextContent(body)
+
+  // Step 1: Structural signals (instant, no LLM needed)
+  if (hasImages) {
+    return { category: 'multimodal', confidence: 0.95, routable: false, maxTokenThreshold: 0 }
+  }
+
+  if (hasTools) {
+    return { category: 'tool-use', confidence: 0.95, routable: false, maxTokenThreshold: 0 }
+  }
+
+  // Long system prompts indicate app integrations that need full model quality
+  if (systemText.length > 500) {
+    return { category: 'system-heavy', confidence: 0.85, routable: false, maxTokenThreshold: 0 }
+  }
+
+  // Multi-turn conversations (>4 messages) suggest complex interactions
+  if (messageCount > 4) {
+    return { category: 'analysis', confidence: 0.6, routable: false, maxTokenThreshold: 0 }
+  }
+
+  // Step 2: Keyword patterns
+  const keywordResult = classifyIntentByKeywords(userText, systemText)
+
+  // High confidence keyword match → use it directly
+  if (keywordResult.confidence >= 0.7) {
+    return keywordResult
+  }
+
+  // Step 3: LLM classification for uncertain cases
+  const llmCategory = await classifyIntentByLLM(userText)
+  if (llmCategory) {
+    return mapCategoryToIntentResult(llmCategory)
+  }
+
+  // Fallback to keyword result
+  return keywordResult
+}
+
+/**
+ * Classify request intent based on content analysis (backward compatible)
+ * Synchronous, keyword-based only - for legacy usage
+ */
+export function classifyIntent(body: Record<string, unknown>): IntentResult {
+  const { userText, systemText, hasImages, hasTools, messageCount } = extractTextContent(body)
+
+  // Structural signals (highest priority — always block routing)
+  if (hasImages) {
+    return { category: 'multimodal', confidence: 0.95, routable: false, maxTokenThreshold: 0 }
+  }
+
+  if (hasTools) {
+    return { category: 'tool-use', confidence: 0.95, routable: false, maxTokenThreshold: 0 }
+  }
+
+  // Long system prompts indicate app integrations that need full model quality
+  if (systemText.length > 500) {
+    return { category: 'system-heavy', confidence: 0.85, routable: false, maxTokenThreshold: 0 }
+  }
+
+  // Multi-turn conversations (>4 messages) suggest complex interactions
+  if (messageCount > 4) {
+    return { category: 'analysis', confidence: 0.6, routable: false, maxTokenThreshold: 0 }
+  }
+
+  return classifyIntentByKeywords(userText, systemText)
+}
+
+/**
  * Match text against pattern arrays, return aggregate score (0-1)
  */
 function matchPatterns(text: string, patterns: RegExp[]): number {
@@ -338,6 +474,7 @@ export interface RoutingResult {
 
 /**
  * Route model based on intent classification + token estimation
+ * Now async to support LLM-based classification
  *
  * Decision Matrix:
  * | Intent       | Routable? | Token Threshold |
@@ -354,11 +491,11 @@ export interface RoutingResult {
  * | tool-use     | No        | -               |
  * | system-heavy | No        | -               |
  */
-export function routeModel(
+export async function routeModel(
   originalModel: string,
   body: Record<string, unknown>,
   enableRouting: boolean
-): RoutingResult {
+): Promise<RoutingResult> {
   if (!enableRouting) {
     return {
       originalModel,
@@ -380,8 +517,8 @@ export function routeModel(
     }
   }
 
-  // Classify intent
-  const intent = classifyIntent(body)
+  // Classify intent using hybrid approach (keywords + LLM fallback)
+  const intent = await classifyIntentHybrid(body)
   const estimatedTokens = estimateInputTokens(body)
 
   // Non-routable intents: always keep original model
