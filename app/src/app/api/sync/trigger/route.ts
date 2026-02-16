@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getMeServer } from '@/lib/auth'
 import { syncProviderUsage } from '@/services/usage-sync.service'
 import { checkBudgetThresholds } from '@/services/budget.service'
 
 export async function POST(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '')
-  if (!token) {
+  try {
+    await getMeServer()
+  } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -18,14 +20,14 @@ export async function POST(req: NextRequest) {
 
     const syncResults = await syncProviderUsage({
       orgId,
-      token,
+      token: '',
       providerId,
       fromDate: fromDate ? new Date(fromDate) : undefined,
       toDate: toDate ? new Date(toDate) : undefined,
       syncType: 'manual',
     })
 
-    const budgetAlerts = await checkBudgetThresholds(orgId, token)
+    const budgetAlerts = await checkBudgetThresholds(orgId, '')
 
     return NextResponse.json({
       sync: syncResults,

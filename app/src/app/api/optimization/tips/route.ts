@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getMeServer } from '@/lib/auth'
 import { generateOptimizationTips } from '@/services/optimization.service'
 import { bkend } from '@/lib/bkend'
 import type { OptimizationTip } from '@/types'
 
 export async function GET(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '')
-  if (!token) {
+  try {
+    await getMeServer()
+  } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -16,7 +18,6 @@ export async function GET(req: NextRequest) {
 
   try {
     const tips = await bkend.get<OptimizationTip[]>('/optimization-tips', {
-      token,
       params: { orgId, status: 'pending' },
     })
     return NextResponse.json(tips)
@@ -29,8 +30,9 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '')
-  if (!token) {
+  try {
+    await getMeServer()
+  } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -40,7 +42,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'orgId is required' }, { status: 400 })
     }
 
-    const tips = await generateOptimizationTips(orgId, token)
+    const tips = await generateOptimizationTips(orgId, '')
     return NextResponse.json(tips)
   } catch (err) {
     return NextResponse.json(

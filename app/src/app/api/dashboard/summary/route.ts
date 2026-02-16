@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getMeServer } from '@/lib/auth'
 import { bkend } from '@/lib/bkend'
 import type { UsageRecord, Budget, Alert, OptimizationTip, Project } from '@/types'
 import type { DashboardSummary } from '@/types/dashboard'
@@ -6,8 +7,9 @@ import type { DashboardSummary } from '@/types/dashboard'
 const PROJECT_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16']
 
 export async function GET(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '')
-  if (!token) {
+  try {
+    await getMeServer()
+  } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -26,12 +28,12 @@ export async function GET(req: NextRequest) {
     const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0).toISOString().split('T')[0]
 
     const [allCurrentRecords, allPreviousRecords, budgets, alerts, tips, projects] = await Promise.all([
-      bkend.get<UsageRecord[]>('/usage-records', { token, params: { orgId, date_gte: thisMonthStart } }),
-      bkend.get<UsageRecord[]>('/usage-records', { token, params: { orgId, date_gte: lastMonthStart, date_lte: lastMonthEnd } }),
-      bkend.get<Budget[]>('/budgets', { token, params: { orgId, isActive: 'true' } }),
-      bkend.get<Alert[]>('/alerts', { token, params: { orgId, isRead: 'false' } }),
-      bkend.get<OptimizationTip[]>('/optimization-tips', { token, params: { orgId } }).catch(() => [] as OptimizationTip[]),
-      bkend.get<Project[]>('/projects', { token, params: { orgId } }).catch(() => [] as Project[]),
+      bkend.get<UsageRecord[]>('/usage-records', { params: { orgId, date_gte: thisMonthStart } }),
+      bkend.get<UsageRecord[]>('/usage-records', { params: { orgId, date_gte: lastMonthStart, date_lte: lastMonthEnd } }),
+      bkend.get<Budget[]>('/budgets', { params: { orgId, isActive: 'true' } }),
+      bkend.get<Alert[]>('/alerts', { params: { orgId, isRead: 'false' } }),
+      bkend.get<OptimizationTip[]>('/optimization-tips', { params: { orgId } }).catch(() => [] as OptimizationTip[]),
+      bkend.get<Project[]>('/projects', { params: { orgId } }).catch(() => [] as Project[]),
     ])
 
     // Apply provider filter

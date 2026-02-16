@@ -3,7 +3,6 @@
 import { useState, useCallback } from 'react'
 import { Button } from '@/components/ui/Button'
 import { RefreshCw, Check, AlertTriangle } from 'lucide-react'
-import { getTokenFromCookie } from '@/lib/auth'
 
 interface SyncButtonProps {
   providerId: string
@@ -20,19 +19,13 @@ export function SyncButton({ providerId, orgId, lastSyncAt, supportsUsageApi = t
   const [errorMessage, setErrorMessage] = useState('')
 
   const handleSync = useCallback(async () => {
-    const token = getTokenFromCookie()
-    if (!token) return
-
     setState('syncing')
     setErrorMessage('')
 
     try {
       const res = await fetch('/api/sync/trigger', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orgId, providerId }),
       })
 

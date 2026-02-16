@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getMeServer } from '@/lib/auth'
 import { bkend } from '@/lib/bkend'
 import type { UsageRecord } from '@/types'
 
 export async function GET(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '')
-  if (!token) {
+  try {
+    await getMeServer()
+  } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -22,7 +24,7 @@ export async function GET(req: NextRequest) {
     if (from) params.date_gte = from
     if (to) params.date_lte = to
 
-    const records = await bkend.get<UsageRecord[]>('/usage-records', { token, params })
+    const records = await bkend.get<UsageRecord[]>('/usage-records', { params })
 
     if (format === 'csv') {
       const header = 'Date,Provider,Model,Input Tokens,Output Tokens,Total Tokens,Cost,Requests'

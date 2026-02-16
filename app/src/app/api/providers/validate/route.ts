@@ -1,10 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
+import { getMeServer } from '@/lib/auth'
 import { createAdapter } from '@/services/providers'
 import type { ProviderType } from '@/types'
 
-export async function POST(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '')
-  if (!token) {
+export async function POST(req: Request) {
+  try {
+    await getMeServer()
+  } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

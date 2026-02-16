@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { getMeServer } from '@/lib/auth'
 import { bkend } from '@/lib/bkend'
 import type { SyncHistory } from '@/types'
 
 export async function GET(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '')
-  if (!token) {
+  try {
+    await getMeServer()
+  } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -30,13 +32,13 @@ export async function GET(req: NextRequest) {
     if (providerId) params.providerId = providerId
     if (status) params.status = status
 
-    const data = await bkend.get<SyncHistory[]>('/sync-histories', { token, params })
+    const data = await bkend.get<SyncHistory[]>('/sync-histories', { params })
 
     const countParams: Record<string, string> = { orgId }
     if (providerId) countParams.providerId = providerId
     if (status) countParams.status = status
 
-    const allRecords = await bkend.get<SyncHistory[]>('/sync-histories', { token, params: countParams })
+    const allRecords = await bkend.get<SyncHistory[]>('/sync-histories', { params: countParams })
 
     return NextResponse.json({
       data,

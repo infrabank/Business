@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { getTokenFromCookie } from '@/lib/auth'
 import type { DashboardSummary, ChartDataPoint, DashboardPeriod } from '@/types/dashboard'
 import type { ProviderType } from '@/types'
 
@@ -42,17 +41,13 @@ export function useDashboard({
     setIsLoading(true)
     setError(null)
 
-    const token = getTokenFromCookie()
-    const headers: Record<string, string> = {}
-    if (token) headers['Authorization'] = `Bearer ${token}`
-
     const providerParam = providerKey ? `&providerTypes=${providerKey}` : ''
     const comparisonParam = comparison ? '&comparison=true' : ''
 
     try {
       const [summaryRes, chartRes] = await Promise.all([
-        fetch(`/api/dashboard/summary?orgId=${orgId}${providerParam}`, { headers }),
-        fetch(`/api/dashboard/chart?orgId=${orgId}&period=${period}${providerParam}${comparisonParam}`, { headers }),
+        fetch(`/api/dashboard/summary?orgId=${orgId}${providerParam}`),
+        fetch(`/api/dashboard/chart?orgId=${orgId}&period=${period}${providerParam}${comparisonParam}`),
       ])
 
       if (!summaryRes.ok || !chartRes.ok) {

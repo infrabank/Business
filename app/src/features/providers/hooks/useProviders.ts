@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import { getTokenFromCookie } from '@/lib/auth'
 import { bkend } from '@/lib/bkend'
 import { checkProviderLimit } from '@/lib/plan-limits'
 import { useAppStore } from '@/lib/store'
@@ -15,9 +14,7 @@ export function useProviders(orgId?: string | null) {
     if (!orgId) { setIsLoading(false); return }
     setIsLoading(true)
     try {
-      const token = getTokenFromCookie()
       const data = await bkend.get<Provider[]>('/providers', {
-        token: token || undefined,
         params: { orgId }
       })
       setProviders(data)
@@ -31,8 +28,7 @@ export function useProviders(orgId?: string | null) {
   useEffect(() => { fetchProviders() }, [fetchProviders])
 
   const addProvider = useCallback(async (data: { type: ProviderType; name: string; apiKey: string }) => {
-    const token = getTokenFromCookie()
-    if (!token || !orgId) return false
+    if (!orgId) return false
     try {
       // 0. Check plan limit
       const currentUser = useAppStore.getState().currentUser
@@ -45,7 +41,7 @@ export function useProviders(orgId?: string | null) {
       // 1. Validate key
       const validateRes = await fetch('/api/providers/validate', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ providerType: data.type, apiKey: data.apiKey }),
       })
       if (!validateRes.ok) return false
@@ -53,12 +49,12 @@ export function useProviders(orgId?: string | null) {
       // 2. Create provider
       const provider = await bkend.post<Provider>('/providers', {
         orgId, type: data.type, name: data.name, isActive: true
-      }, { token })
+      })
 
       // 3. Create encrypted API key
       await fetch('/api/providers/encrypt-key', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ providerId: provider.id, apiKey: data.apiKey, label: data.name }),
       })
 
@@ -68,10 +64,8 @@ export function useProviders(orgId?: string | null) {
   }, [orgId, fetchProviders])
 
   const deleteProvider = useCallback(async (providerId: string) => {
-    const token = getTokenFromCookie()
-    if (!token) return false
     try {
-      await bkend.delete('/providers/' + providerId, { token })
+      await bkend.delete('/providers/' + providerId, {})
       await fetchProviders()
       return true
     } catch { return false }

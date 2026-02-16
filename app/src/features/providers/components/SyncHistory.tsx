@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
-import { getTokenFromCookie } from '@/lib/auth'
 import type { SyncHistory as SyncHistoryType } from '@/types'
 
 interface SyncHistoryProps {
@@ -39,9 +38,6 @@ export function SyncHistory({ orgId, providerId, refreshKey }: SyncHistoryProps)
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchHistory = useCallback(async () => {
-    const token = getTokenFromCookie()
-    if (!token) return
-
     try {
       const params = new URLSearchParams({
         orgId,
@@ -50,9 +46,7 @@ export function SyncHistory({ orgId, providerId, refreshKey }: SyncHistoryProps)
         offset: '0',
       })
 
-      const res = await fetch(`/api/sync/history?${params}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const res = await fetch(`/api/sync/history?${params}`)
 
       if (res.ok) {
         const data = await res.json()
