@@ -21,10 +21,22 @@ export function useSession() {
           return
         }
 
+        // Fetch plan from custom users table
+        let plan: string | undefined
+        try {
+          const userData = await bkend.get<{ plan?: string }[]>('/users', {
+            params: { id: user.id }
+          })
+          if (userData.length > 0) plan = userData[0].plan
+        } catch {
+          // ignore - will default to 'free'
+        }
+
         setCurrentUser({
           id: user.id,
           email: user.email!,
           name: user.user_metadata?.name || user.email?.split('@')[0] || '',
+          plan,
         })
 
         const orgs = await bkend.get<Organization[]>('/organizations', {
