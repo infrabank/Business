@@ -162,6 +162,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(summary)
   } catch (err) {
+    console.error('[dashboard/summary] Error:', err instanceof Error ? err.message : err)
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Failed to load summary' },
       { status: 500 },

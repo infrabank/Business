@@ -59,7 +59,8 @@ export function useProviders(orgId?: string | null) {
     try {
       // 0. Check plan limit
       const currentUser = useAppStore.getState().currentUser
-      const plan: UserPlan = (currentUser?.plan as UserPlan) || 'free'
+      const rawPlan = currentUser?.plan || 'free'
+      const plan: UserPlan = rawPlan === 'free' ? 'free' : 'growth'
       const limitCheck = checkProviderLimit(plan, providers.length)
       if (!limitCheck.allowed) {
         return { success: false, error: `Provider limit reached (${limitCheck.limit}). Upgrade to ${limitCheck.planRequired} plan.` }

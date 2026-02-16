@@ -25,7 +25,9 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const user = await bkend.get<User>(`/users/${authUser.id}`)
-    const plan: UserPlan = (user.plan as UserPlan) || 'free'
+    const rawPlan = user.plan || 'free'
+    // Map legacy plan values to new 2-tier model
+    const plan: UserPlan = rawPlan === 'free' ? 'free' : 'growth'
     const { maxDays } = checkHistoryLimit(plan)
 
     const requestedDays = period === '90d' ? 90 : period === '30d' ? 30 : 7
@@ -99,6 +101,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(data)
   } catch (err) {
+    console.error('[dashboard/chart] Error:', err instanceof Error ? err.message : err)
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Failed to load chart data' },
       { status: 500 },
