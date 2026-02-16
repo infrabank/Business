@@ -24,7 +24,7 @@ export async function refreshToken(token: string): Promise<AuthTokens> {
 }
 
 export async function getMe(token: string): Promise<AuthUser> {
-  return bkend.get<AuthUser>('/v1/users/me', { token })
+  return bkend.get<AuthUser>('/v1/auth/me', { token })
 }
 
 export function getTokenFromCookie(): string | null {
