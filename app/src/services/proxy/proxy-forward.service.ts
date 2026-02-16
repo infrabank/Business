@@ -1,6 +1,8 @@
 import { bkendService } from '@/lib/bkend'
 import { extractTokensFromJson, extractTokensFromSSEChunks, mergeAnthropicStreamTokens } from './token-counter'
 import { incrementRequestCount } from './proxy-key.service'
+import { routeModel, calculateRoutingSavings } from './model-router.service'
+import { buildCacheKey, getCachedResponse, setCachedResponse } from './cache.service'
 import type { ProviderType } from '@/types/provider'
 import type { ResolvedProxyKey } from '@/types/proxy'
 
@@ -94,11 +96,67 @@ export async function forwardRequest(params: {
     targetUrl = new URL(`${config.baseUrl}/${path}`)
   }
 
+  // Step 1: Model Routing
+  let finalBody = body
+  let wasRouted = false
+  let originalModel: string | null = null
+  let routedModel: string | null = null
+
+  if (resolvedKey.enableModelRouting && body && body.model && typeof body.model === 'string') {
+    const routingResult = routeModel(body.model, body, resolvedKey.enableModelRouting)
+    if (routingResult.wasRouted) {
+      wasRouted = true
+      originalModel = routingResult.originalModel
+      routedModel = routingResult.routedModel
+      finalBody = { ...body, model: routedModel }
+    }
+  }
+
   // Determine if streaming
-  const isStream = body ? config.isStreaming(body, targetUrl) : false
+  const isStream = finalBody ? config.isStreaming(finalBody, targetUrl) : false
+
+  // Step 2: Cache Check (only for non-streaming)
+  if (resolvedKey.enableCache && !isStream && finalBody) {
+    const currentModel = (finalBody.model as string) || 'unknown'
+    const cacheKey = buildCacheKey(providerType, currentModel, finalBody)
+    const cachedEntry = await getCachedResponse(cacheKey)
+
+    if (cachedEntry) {
+      // Cache HIT - return immediately
+      const totalTokens = cachedEntry.inputTokens + cachedEntry.outputTokens
+      logProxyRequest({
+        orgId: resolvedKey.orgId,
+        proxyKeyId: resolvedKey.id,
+        providerType,
+        model: currentModel,
+        path,
+        statusCode: 200,
+        inputTokens: cachedEntry.inputTokens,
+        outputTokens: cachedEntry.outputTokens,
+        totalTokens,
+        cost: cachedEntry.cost,
+        latencyMs: 0,
+        isStreaming: false,
+        errorMessage: null,
+        cacheHit: true,
+        savedAmount: cachedEntry.cost,
+        originalModel: wasRouted ? originalModel : null,
+      })
+
+      incrementRequestCount(resolvedKey.id)
+
+      return new Response(cachedEntry.responseBody, {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-cache': 'HIT',
+          'x-proxy-latency-ms': '0',
+        },
+      })
+    }
+  }
 
   // Inject stream_options for OpenAI streaming
-  let finalBody = body
   if (isStream && config.injectStreamUsage && finalBody) {
     finalBody = config.injectStreamUsage(finalBody)
   }
@@ -126,7 +184,9 @@ export async function forwardRequest(params: {
       path,
       startTime,
       latencyMs,
-      requestModel: (body?.model as string) || 'unknown',
+      requestModel: (finalBody?.model as string) || 'unknown',
+      wasRouted,
+      originalModel,
     })
   }
 
@@ -136,8 +196,37 @@ export async function forwardRequest(params: {
 
   // Extract tokens and log asynchronously
   const tokens = extractTokensFromJson(responseBody, providerType)
-  const model = tokens.model !== 'unknown' ? tokens.model : (body?.model as string) || 'unknown'
+  const model = tokens.model !== 'unknown' ? tokens.model : (finalBody?.model as string) || 'unknown'
   const cost = computeCost(model, tokens.inputTokens, tokens.outputTokens)
+
+  // Step 3: Store in cache (only if enabled and response OK)
+  if (resolvedKey.enableCache && upstreamResponse.ok && finalBody) {
+    const cacheKey = buildCacheKey(providerType, model, finalBody)
+    const ttlSeconds = resolvedKey.cacheTtl ?? undefined
+    setCachedResponse(
+      cacheKey,
+      {
+        responseBody: JSON.stringify(responseBody),
+        model,
+        inputTokens: tokens.inputTokens,
+        outputTokens: tokens.outputTokens,
+        cost,
+        ttlSeconds: ttlSeconds ?? 3600,
+      },
+      ttlSeconds
+    )
+  }
+
+  // Step 4: Calculate savings
+  let savedAmount = 0
+  if (wasRouted && originalModel && routedModel) {
+    savedAmount = calculateRoutingSavings(
+      originalModel,
+      routedModel,
+      tokens.inputTokens,
+      tokens.outputTokens
+    )
+  }
 
   logProxyRequest({
     orgId: resolvedKey.orgId,
@@ -153,6 +242,9 @@ export async function forwardRequest(params: {
     latencyMs: totalLatency,
     isStreaming: false,
     errorMessage: upstreamResponse.ok ? null : JSON.stringify(responseBody),
+    cacheHit: false,
+    savedAmount,
+    originalModel: wasRouted ? originalModel : null,
   })
 
   // Increment request count
@@ -162,6 +254,7 @@ export async function forwardRequest(params: {
     status: upstreamResponse.status,
     headers: {
       'Content-Type': 'application/json',
+      'x-cache': 'MISS',
       'x-proxy-latency-ms': String(totalLatency),
     },
   })
@@ -175,8 +268,10 @@ function handleStreamingResponse(params: {
   startTime: number
   latencyMs: number
   requestModel: string
+  wasRouted: boolean
+  originalModel: string | null
 }): Response {
-  const { upstreamResponse, resolvedKey, providerType, path, startTime, requestModel } = params
+  const { upstreamResponse, resolvedKey, providerType, path, startTime, requestModel, wasRouted, originalModel } = params
 
   const chunks: string[] = []
   const reader = upstreamResponse.body!.getReader()
@@ -209,6 +304,17 @@ function handleStreamingResponse(params: {
         const model = tokens.model !== 'unknown' ? tokens.model : requestModel
         const cost = computeCost(model, tokens.inputTokens, tokens.outputTokens)
 
+        // Calculate savings for routed models
+        let savedAmount = 0
+        if (wasRouted && originalModel) {
+          savedAmount = calculateRoutingSavings(
+            originalModel,
+            model,
+            tokens.inputTokens,
+            tokens.outputTokens
+          )
+        }
+
         logProxyRequest({
           orgId: resolvedKey.orgId,
           proxyKeyId: resolvedKey.id,
@@ -223,6 +329,9 @@ function handleStreamingResponse(params: {
           latencyMs: totalLatency,
           isStreaming: true,
           errorMessage: null,
+          cacheHit: false,
+          savedAmount,
+          originalModel: wasRouted ? originalModel : null,
         })
 
         incrementRequestCount(resolvedKey.id)
@@ -258,6 +367,9 @@ function logProxyRequest(data: {
   latencyMs: number
   isStreaming: boolean
   errorMessage: string | null
+  cacheHit: boolean
+  savedAmount: number
+  originalModel: string | null
 }): void {
   bkendService.post('/proxy-logs', data as unknown as Record<string, unknown>).catch(() => {
     // Logging failure should not impact the proxy response

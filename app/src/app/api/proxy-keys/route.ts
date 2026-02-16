@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const { orgId, name, providerType, apiKey, budgetLimit, rateLimit } = body
+    const { orgId, name, providerType, apiKey, budgetLimit, rateLimit, enableCache, cacheTtl, enableModelRouting } = body
 
     if (!orgId || !name || !providerType || !apiKey) {
       return NextResponse.json({ error: 'orgId, name, providerType, and apiKey are required' }, { status: 400 })
@@ -49,6 +49,9 @@ export async function POST(req: NextRequest) {
       apiKey,
       budgetLimit: budgetLimit || undefined,
       rateLimit: rateLimit || undefined,
+      enableCache: enableCache ?? undefined,
+      cacheTtl: cacheTtl || undefined,
+      enableModelRouting: enableModelRouting ?? undefined,
     })
 
     return NextResponse.json(result, { status: 201 })

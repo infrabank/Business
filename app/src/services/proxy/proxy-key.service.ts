@@ -27,6 +27,9 @@ export async function createProxyKey(params: {
   apiKey: string
   budgetLimit?: number
   rateLimit?: number
+  enableCache?: boolean
+  cacheTtl?: number
+  enableModelRouting?: boolean
 }): Promise<{ proxyKey: string; display: ProxyKeyDisplay }> {
   const rawKey = generateProxyKey()
   const keyHash = hashKey(rawKey)
@@ -44,6 +47,9 @@ export async function createProxyKey(params: {
     budgetLimit: params.budgetLimit ?? null,
     rateLimit: params.rateLimit ?? null,
     requestCount: 0,
+    enableCache: params.enableCache ?? true,
+    cacheTtl: params.cacheTtl ?? null,
+    enableModelRouting: params.enableModelRouting ?? false,
   })
 
   return {
@@ -59,6 +65,9 @@ export async function createProxyKey(params: {
       requestCount: record.requestCount,
       lastUsedAt: record.lastUsedAt,
       createdAt: record.createdAt,
+      enableCache: record.enableCache,
+      cacheTtl: record.cacheTtl,
+      enableModelRouting: record.enableModelRouting,
     },
   }
 }
@@ -85,6 +94,9 @@ export async function resolveProxyKey(rawKey: string): Promise<ResolvedProxyKey 
       budgetLimit: record.budgetLimit,
       rateLimit: record.rateLimit,
       isActive: record.isActive,
+      enableCache: record.enableCache,
+      cacheTtl: record.cacheTtl,
+      enableModelRouting: record.enableModelRouting,
     }
   } catch {
     return null
@@ -118,6 +130,9 @@ export async function listProxyKeys(orgId: string): Promise<ProxyKeyDisplay[]> {
     requestCount: r.requestCount,
     lastUsedAt: r.lastUsedAt,
     createdAt: r.createdAt,
+    enableCache: r.enableCache,
+    cacheTtl: r.cacheTtl,
+    enableModelRouting: r.enableModelRouting,
   }))
 }
 
@@ -137,6 +152,9 @@ export async function updateProxyKey(
     requestCount: record.requestCount,
     lastUsedAt: record.lastUsedAt,
     createdAt: record.createdAt,
+    enableCache: record.enableCache,
+    cacheTtl: record.cacheTtl,
+    enableModelRouting: record.enableModelRouting,
   }
 }
 

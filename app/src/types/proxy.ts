@@ -15,6 +15,9 @@ export interface ProxyKey {
   lastUsedAt: string | null
   createdAt: string
   updatedAt: string
+  enableCache: boolean
+  cacheTtl: number | null
+  enableModelRouting: boolean
 }
 
 export interface ProxyLog {
@@ -33,6 +36,9 @@ export interface ProxyLog {
   isStreaming: boolean
   errorMessage: string | null
   createdAt: string
+  cacheHit: boolean
+  savedAmount: number
+  originalModel: string | null
 }
 
 export interface ResolvedProxyKey {
@@ -43,6 +49,9 @@ export interface ResolvedProxyKey {
   budgetLimit: number | null
   rateLimit: number | null
   isActive: boolean
+  enableCache: boolean
+  cacheTtl: number | null
+  enableModelRouting: boolean
 }
 
 export interface CreateProxyKeyRequest {
@@ -51,6 +60,9 @@ export interface CreateProxyKeyRequest {
   apiKey: string
   budgetLimit?: number
   rateLimit?: number
+  enableCache?: boolean
+  cacheTtl?: number
+  enableModelRouting?: boolean
 }
 
 export interface ProxyKeyDisplay {
@@ -64,6 +76,9 @@ export interface ProxyKeyDisplay {
   requestCount: number
   lastUsedAt: string | null
   createdAt: string
+  enableCache: boolean
+  cacheTtl: number | null
+  enableModelRouting: boolean
 }
 
 export interface ProxyLogQuery {
@@ -74,4 +89,23 @@ export interface ProxyLogQuery {
   endDate?: string
   limit?: number
   offset?: number
+}
+
+export interface SavingsSummary {
+  totalSaved: number
+  cacheHits: number
+  cacheHitRate: number
+  modelRoutings: number
+  cacheSavings: number
+  routingSavings: number
+  periodStart: string
+  periodEnd: string
+}
+
+export interface OptimizationRecommendation {
+  type: 'cache' | 'routing' | 'budget'
+  title: string
+  description: string
+  potentialSavings: number
+  confidence: 'high' | 'medium' | 'low'
 }

@@ -13,6 +13,9 @@ interface ProxyKeyFormProps {
     apiKey: string
     budgetLimit?: number
     rateLimit?: number
+    enableCache?: boolean
+    cacheTtl?: number
+    enableModelRouting?: boolean
   }) => Promise<{ proxyKey: string } | null>
 }
 
@@ -22,6 +25,8 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
   const [apiKey, setApiKey] = useState('')
   const [budgetLimit, setBudgetLimit] = useState('')
   const [rateLimit, setRateLimit] = useState('')
+  const [enableCache, setEnableCache] = useState(true)
+  const [enableModelRouting, setEnableModelRouting] = useState(false)
   const [loading, setLoading] = useState(false)
   const [createdKey, setCreatedKey] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
@@ -36,6 +41,8 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
         apiKey,
         budgetLimit: budgetLimit ? Number(budgetLimit) : undefined,
         rateLimit: rateLimit ? Number(rateLimit) : undefined,
+        enableCache,
+        enableModelRouting,
       })
       if (result) {
         setCreatedKey(result.proxyKey)
@@ -139,6 +146,33 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
               onChange={(e) => setRateLimit(e.target.value)}
               min="0"
             />
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3">
+            <p className="text-sm font-medium text-gray-700">Cost Savings Options</p>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={enableCache}
+                onChange={(e) => setEnableCache(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <div>
+                <span className="text-sm font-medium text-gray-900">Response Caching</span>
+                <p className="text-xs text-gray-500">Cache identical requests to avoid duplicate API calls</p>
+              </div>
+            </label>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={enableModelRouting}
+                onChange={(e) => setEnableModelRouting(e.target.checked)}
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              <div>
+                <span className="text-sm font-medium text-gray-900">Smart Model Routing</span>
+                <p className="text-xs text-gray-500">Auto-route simple requests to cheaper models (save up to 90%+)</p>
+              </div>
+            </label>
           </div>
           <Button type="submit" loading={loading} disabled={!name || !apiKey}>
             Create Proxy Key
