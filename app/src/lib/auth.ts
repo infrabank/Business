@@ -1,4 +1,4 @@
-import { bkend } from './bkend'
+import { getSupabaseBrowserClient, getSupabaseServerClient } from './supabase'
 
 interface AuthTokens {
   accessToken: string
@@ -12,49 +12,92 @@ interface AuthUser {
 }
 
 export async function signup(email: string, password: string, name: string): Promise<AuthTokens> {
-  return bkend.post<AuthTokens>('/v1/auth/email/signup', { method: 'password', email, password, name })
+  // Step 1: Create confirmed user via server API (bypasses email confirmation)
+  const res = await fetch('/api/auth/signup', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password, name }),
+  })
+
+  if (!res.ok) {
+    const { error } = await res.json()
+    throw new Error(error || 'Signup failed')
+  }
+
+  // Step 2: Sign in to get session cookies
+  const supabase = getSupabaseBrowserClient()
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+  if (error) throw new Error(error.message)
+
+  return {
+    accessToken: data.session.access_token,
+    refreshToken: data.session.refresh_token,
+  }
 }
 
 export async function login(email: string, password: string): Promise<AuthTokens> {
-  return bkend.post<AuthTokens>('/v1/auth/email/signin', { method: 'password', email, password })
+  const supabase = getSupabaseBrowserClient()
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+  if (error) throw new Error(error.message)
+  return {
+    accessToken: data.session.access_token,
+    refreshToken: data.session.refresh_token,
+  }
 }
 
-export async function refreshToken(token: string): Promise<AuthTokens> {
-  return bkend.post<AuthTokens>('/v1/auth/refresh', { refreshToken: token })
+export async function refreshToken(_token: string): Promise<AuthTokens> {
+  const supabase = getSupabaseBrowserClient()
+  const { data, error } = await supabase.auth.refreshSession()
+  if (error) throw new Error(error.message)
+  if (!data.session) throw new Error('Token refresh failed')
+  return {
+    accessToken: data.session.access_token,
+    refreshToken: data.session.refresh_token,
+  }
 }
 
-export async function getMe(token: string): Promise<AuthUser> {
-  return bkend.get<AuthUser>('/v1/auth/me', { token })
+// Client-side: get current user from Supabase session
+export async function getMe(_token?: string): Promise<AuthUser> {
+  const supabase = getSupabaseBrowserClient()
+  const { data: { user }, error } = await supabase.auth.getUser()
+  if (error || !user) throw new Error('Not authenticated')
+  return {
+    id: user.id,
+    email: user.email!,
+    name: user.user_metadata?.name || user.email?.split('@')[0] || '',
+  }
+}
+
+// Server-side: get current user from request cookies
+export async function getMeServer(): Promise<AuthUser> {
+  const supabase = await getSupabaseServerClient()
+  const { data: { user }, error } = await supabase.auth.getUser()
+  if (error || !user) throw new Error('Not authenticated')
+  return {
+    id: user.id,
+    email: user.email!,
+    name: user.user_metadata?.name || user.email?.split('@')[0] || '',
+  }
 }
 
 export function getTokenFromCookie(): string | null {
-  if (typeof document === 'undefined') return null
-  const match = document.cookie.match(/(?:^|; )access_token=([^;]*)/)
-  const cookieToken = match ? decodeURIComponent(match[1]) : null
-  // Fallback to localStorage if cookie not found
-  if (!cookieToken && typeof window !== 'undefined') {
-    return localStorage.getItem('access_token')
+  if (typeof window === 'undefined') return null
+  // Check for Supabase auth cookies (sb-{ref}-auth-token)
+  const cookies = document.cookie
+  if (cookies.includes('sb-') && cookies.includes('-auth-token')) {
+    return 'supabase-session'
   }
-  return cookieToken
+  return null
 }
 
-export function setAuthCookies(tokens: AuthTokens): void {
-  const maxAge = 60 * 60 // 1 hour
-  document.cookie = `access_token=${tokens.accessToken}; path=/; max-age=${maxAge}; SameSite=Lax`
-  document.cookie = `refresh_token=${tokens.refreshToken}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`
-  // Also store in localStorage for bkend.ts auto-refresh
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('access_token', tokens.accessToken)
-    localStorage.setItem('refresh_token', tokens.refreshToken)
-  }
+export function setAuthCookies(_tokens: AuthTokens): void {
+  // Supabase manages cookies automatically - no-op for backward compat
 }
 
 export function clearAuthCookies(): void {
-  document.cookie = 'access_token=; path=/; max-age=0'
-  document.cookie = 'refresh_token=; path=/; max-age=0'
-  // Also clear localStorage tokens
+  // Sign out via Supabase to clear session cookies
   if (typeof window !== 'undefined') {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
+    const supabase = getSupabaseBrowserClient()
+    supabase.auth.signOut()
   }
 }

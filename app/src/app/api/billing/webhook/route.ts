@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripe, priceIdToPlan } from '@/lib/stripe'
-import { bkend } from '@/lib/bkend'
+import { bkendService as bkend } from '@/lib/bkend'
 import type Stripe from 'stripe'
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || ''

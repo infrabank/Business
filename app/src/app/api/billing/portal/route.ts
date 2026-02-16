@@ -1,18 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripe } from '@/lib/stripe'
 import { bkend } from '@/lib/bkend'
-import { getMe } from '@/lib/auth'
+import { getMeServer } from '@/lib/auth'
 import type { User } from '@/types'
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.cookies.get('access_token')?.value
-    if (!token) {
+    let authUser
+    try {
+      authUser = await getMeServer()
+    } catch {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const authUser = await getMe(token)
-    const user = await bkend.get<User>(`/users/${authUser.id}`, { token })
+    const user = await bkend.get<User>(`/users/${authUser.id}`)
 
     if (!user.stripeCustomerId) {
       return NextResponse.json(

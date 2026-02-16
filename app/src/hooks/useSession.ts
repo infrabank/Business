@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAppStore } from '@/lib/store'
-import { getTokenFromCookie, getMe, clearAuthCookies } from '@/lib/auth'
+import { getSupabaseBrowserClient } from '@/lib/supabase'
 import { bkend } from '@/lib/bkend'
 import type { Organization } from '@/types'
 
@@ -11,19 +11,23 @@ export function useSession() {
   const [isReady, setIsReady] = useState(false)
 
   useEffect(() => {
-    async function restore() {
-      const token = getTokenFromCookie()
-      if (!token) {
-        setIsReady(true)
-        return
-      }
+    const supabase = getSupabaseBrowserClient()
 
+    async function restore() {
       try {
-        const user = await getMe(token)
-        setCurrentUser(user)
+        const { data: { user }, error } = await supabase.auth.getUser()
+        if (error || !user) {
+          setIsReady(true)
+          return
+        }
+
+        setCurrentUser({
+          id: user.id,
+          email: user.email!,
+          name: user.user_metadata?.name || user.email?.split('@')[0] || '',
+        })
 
         const orgs = await bkend.get<Organization[]>('/organizations', {
-          token,
           params: { ownerId: user.id }
         })
 
@@ -31,7 +35,6 @@ export function useSession() {
           setCurrentOrgId(orgs[0].id)
         }
       } catch {
-        clearAuthCookies()
         clearSession()
       } finally {
         setIsReady(true)
@@ -43,6 +46,15 @@ export function useSession() {
     } else {
       setIsReady(true)
     }
+
+    // Listen for auth state changes (sign-out, token refresh, etc.)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        clearSession()
+      }
+    })
+
+    return () => subscription.unsubscribe()
   }, [currentUser, setCurrentUser, setCurrentOrgId, clearSession])
 
   return { isReady, currentUser, currentOrgId }

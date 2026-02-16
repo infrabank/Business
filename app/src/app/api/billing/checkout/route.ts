@@ -1,21 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getStripe, STRIPE_PRICES } from '@/lib/stripe'
 import { bkend } from '@/lib/bkend'
-import { getMe } from '@/lib/auth'
+import { getMeServer } from '@/lib/auth'
 import type { User } from '@/types'
 
 export async function POST(request: NextRequest) {
   try {
-    const token = request.cookies.get('access_token')?.value
-    if (!token) {
+    let authUser
+    try {
+      authUser = await getMeServer()
+    } catch {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const authUser = await getMe(token)
     const { priceId } = await request.json()
 
     // Fetch full user with Stripe fields
-    const user = await bkend.get<User>(`/users/${authUser.id}`, { token })
+    const user = await bkend.get<User>(`/users/${authUser.id}`)
 
     // Validate price ID
     const validPrices = Object.values(STRIPE_PRICES).filter(Boolean)
@@ -41,10 +42,10 @@ export async function POST(request: NextRequest) {
       })
       customerId = customer.id
 
-      // Save stripeCustomerId to bkend
+      // Save stripeCustomerId
       await bkend.patch<User>(`/users/${user.id}`, {
         stripeCustomerId: customerId,
-      }, { token })
+      })
     }
 
     // Determine if trial applies (starter and pro get 14-day trial)

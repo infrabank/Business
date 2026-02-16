@@ -21,12 +21,11 @@ export function useAuth(): UseAuthResult {
   const router = useRouter()
   const { setCurrentUser, setCurrentOrgId, clearSession } = useAppStore()
 
-  const initSession = useCallback(async (token: string) => {
-    const user = await auth.getMe(token)
+  const initSession = useCallback(async () => {
+    const user = await auth.getMe()
     setCurrentUser(user)
 
     const orgs = await bkend.get<Organization[]>('/organizations', {
-      token,
       params: { ownerId: user.id }
     })
 
@@ -37,7 +36,7 @@ export function useAuth(): UseAuthResult {
         name: `${user.name}'s Workspace`,
         slug: user.email.split('@')[0],
         ownerId: user.id,
-      }, { token })
+      })
       setCurrentOrgId(newOrg.id)
     }
   }, [setCurrentUser, setCurrentOrgId])
@@ -46,9 +45,8 @@ export function useAuth(): UseAuthResult {
     setIsLoading(true)
     setError(null)
     try {
-      const tokens = await auth.login(email, password)
-      auth.setAuthCookies(tokens)
-      await initSession(tokens.accessToken)
+      await auth.login(email, password)
+      await initSession()
       router.push('/dashboard')
       return true
     } catch (err) {
@@ -63,9 +61,8 @@ export function useAuth(): UseAuthResult {
     setIsLoading(true)
     setError(null)
     try {
-      const tokens = await auth.signup(email, password, name)
-      auth.setAuthCookies(tokens)
-      await initSession(tokens.accessToken)
+      await auth.signup(email, password, name)
+      await initSession()
       router.push('/dashboard')
       return true
     } catch (err) {

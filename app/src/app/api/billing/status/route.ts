@@ -1,19 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { getStripe } from '@/lib/stripe'
 import { bkend } from '@/lib/bkend'
-import { getMe } from '@/lib/auth'
+import { getMeServer } from '@/lib/auth'
 import type { User } from '@/types'
 import type { PaymentHistory, BillingStatus } from '@/types/billing'
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const token = request.cookies.get('access_token')?.value
-    if (!token) {
+    let authUser
+    try {
+      authUser = await getMeServer()
+    } catch {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const authUser = await getMe(token)
-    const user = await bkend.get<User>(`/users/${authUser.id}`, { token })
+    const user = await bkend.get<User>(`/users/${authUser.id}`)
 
     const subscription = {
       plan: user.plan || 'free',

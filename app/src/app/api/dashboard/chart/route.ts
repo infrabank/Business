@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { bkend } from '@/lib/bkend'
-import { getMe } from '@/lib/auth'
+import { getMeServer } from '@/lib/auth'
 import { checkHistoryLimit } from '@/lib/plan-limits'
 import type { UsageRecord, User, UserPlan } from '@/types'
 import type { ChartDataPoint } from '@/types/dashboard'
 
 export async function GET(req: NextRequest) {
-  const token = req.headers.get('authorization')?.replace('Bearer ', '')
-  if (!token) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
   const orgId = req.nextUrl.searchParams.get('orgId')
   const period = req.nextUrl.searchParams.get('period') || '7d'
   const comparison = req.nextUrl.searchParams.get('comparison') === 'true'
@@ -23,8 +18,13 @@ export async function GET(req: NextRequest) {
 
   try {
     // Enforce plan history limit
-    const authUser = await getMe(token)
-    const user = await bkend.get<User>(`/users/${authUser.id}`, { token })
+    let authUser
+    try {
+      authUser = await getMeServer()
+    } catch {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    const user = await bkend.get<User>(`/users/${authUser.id}`)
     const { maxDays } = checkHistoryLimit((user.plan || 'free') as UserPlan)
 
     const requestedDays = period === '90d' ? 90 : period === '30d' ? 30 : 7
@@ -33,7 +33,6 @@ export async function GET(req: NextRequest) {
     from.setDate(from.getDate() - days)
 
     const records = await bkend.get<UsageRecord[]>('/usage-records', {
-      token,
       params: { orgId, date_gte: from.toISOString().split('T')[0] },
     })
 
@@ -68,7 +67,6 @@ export async function GET(req: NextRequest) {
       prevFrom.setDate(prevFrom.getDate() - days)
 
       const prevRecords = await bkend.get<UsageRecord[]>('/usage-records', {
-        token,
         params: {
           orgId,
           date_gte: prevFrom.toISOString().split('T')[0],
