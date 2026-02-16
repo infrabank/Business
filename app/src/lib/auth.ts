@@ -12,11 +12,11 @@ interface AuthUser {
 }
 
 export async function signup(email: string, password: string, name: string): Promise<AuthTokens> {
-  return bkend.post<AuthTokens>('/v1/auth/email/signup', { email, password, name, method: 'password' })
+  return bkend.post<AuthTokens>('/v1/auth/email/signup', { email, password, name })
 }
 
 export async function login(email: string, password: string): Promise<AuthTokens> {
-  return bkend.post<AuthTokens>('/v1/auth/email/login', { email, password, method: 'password' })
+  return bkend.post<AuthTokens>('/v1/auth/email/signin', { email, password })
 }
 
 export async function refreshToken(token: string): Promise<AuthTokens> {
