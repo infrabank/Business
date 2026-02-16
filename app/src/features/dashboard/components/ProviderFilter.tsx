@@ -37,7 +37,7 @@ export function ProviderFilter({ providers, selected, onChange }: ProviderFilter
             : 'border-gray-200 bg-gray-50 text-gray-400',
         )}
       >
-        All
+        전체
       </button>
       {providers.map((type) => {
         const isActive = selected.includes(type)

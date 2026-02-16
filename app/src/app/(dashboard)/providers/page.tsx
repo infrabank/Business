@@ -45,20 +45,20 @@ function ProviderMenu({ provider, onEdit, onToggle, onDelete }: {
             onClick={() => { onEdit(); setOpen(false) }}
             className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
           >
-            <Pencil className="h-4 w-4" /> Edit Name
+            <Pencil className="h-4 w-4" /> 이름 수정
           </button>
           <button
             onClick={() => { onToggle(); setOpen(false) }}
             className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
           >
-            <Power className="h-4 w-4" /> {provider.isActive ? 'Deactivate' : 'Activate'}
+            <Power className="h-4 w-4" /> {provider.isActive ? '비활성화' : '활성화'}
           </button>
           <hr className="my-1 border-gray-100" />
           <button
             onClick={() => { onDelete(); setOpen(false) }}
             className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
           >
-            <Trash2 className="h-4 w-4" /> Delete
+            <Trash2 className="h-4 w-4" /> 삭제
           </button>
         </div>
       )}
@@ -85,9 +85,9 @@ export default function ProvidersPage() {
     if (result.success) {
       setShowForm(false)
       setFormError(null)
-      toast('success', 'Provider added successfully.')
+      toast('success', '프로바이더가 추가되었습니다.')
     } else {
-      setFormError(result.error || 'Failed to add provider.')
+      setFormError(result.error || '프로바이더 추가에 실패했습니다.')
     }
   }
 
@@ -99,21 +99,21 @@ export default function ProvidersPage() {
   const handleSaveEdit = async (providerId: string) => {
     if (!editName.trim()) return
     const result = await updateProvider(providerId, { name: editName.trim() })
-    if (result.success) toast('success', 'Provider updated.')
-    else toast('error', result.error || 'Failed to update.')
+    if (result.success) toast('success', '프로바이더가 업데이트되었습니다.')
+    else toast('error', result.error || '업데이트에 실패했습니다.')
     setEditingId(null)
   }
 
   const handleToggleActive = async (provider: Provider) => {
     const result = await updateProvider(provider.id, { isActive: !provider.isActive })
-    if (result.success) toast('info', provider.isActive ? 'Provider deactivated.' : 'Provider activated.')
-    else toast('error', result.error || 'Failed to update.')
+    if (result.success) toast('info', provider.isActive ? '프로바이더가 비활성화되었습니다.' : '프로바이더가 활성화되었습니다.')
+    else toast('error', result.error || '업데이트에 실패했습니다.')
   }
 
   const handleDelete = async (providerId: string) => {
     const result = await deleteProvider(providerId)
-    if (result.success) toast('success', 'Provider deleted.')
-    else toast('error', result.error || 'Failed to delete.')
+    if (result.success) toast('success', '프로바이더가 삭제되었습니다.')
+    else toast('error', result.error || '삭제에 실패했습니다.')
     setDeleteConfirmId(null)
   }
 
@@ -121,8 +121,8 @@ export default function ProvidersPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Providers</h1>
-          <p className="text-gray-500">Manage your LLM API providers and keys</p>
+          <h1 className="text-2xl font-bold text-gray-900">프로바이더</h1>
+          <p className="text-gray-500">LLM API 프로바이더 관리</p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(3)].map((_, i) => (
@@ -137,10 +137,10 @@ export default function ProvidersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Providers</h1>
-          <p className="text-gray-500">Manage your LLM API providers and keys</p>
+          <h1 className="text-2xl font-bold text-gray-900">프로바이더</h1>
+          <p className="text-gray-500">LLM API 프로바이더 관리</p>
         </div>
-        <Button onClick={() => setShowForm(true)}><Plus className="mr-2 h-4 w-4" /> Add Provider</Button>
+        <Button onClick={() => setShowForm(true)}><Plus className="mr-2 h-4 w-4" /> 프로바이더 추가</Button>
       </div>
 
       {showForm && (
@@ -194,13 +194,13 @@ export default function ProvidersPage() {
 
               {deleteConfirmId === p.id && (
                 <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3">
-                  <p className="text-sm font-medium text-red-800">Delete &quot;{p.name}&quot;?</p>
-                  <p className="mt-1 text-xs text-red-600">This will remove the provider and all associated API keys. This cannot be undone.</p>
+                  <p className="text-sm font-medium text-red-800">&quot;{p.name}&quot;을(를) 삭제하시겠습니까?</p>
+                  <p className="mt-1 text-xs text-red-600">프로바이더와 연결된 모든 API 키가 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
                   <div className="mt-2 flex gap-2">
                     <Button size="sm" variant="outline" onClick={() => handleDelete(p.id)}>
-                      <Trash2 className="mr-1 h-3 w-3" /> Delete
+                      <Trash2 className="mr-1 h-3 w-3" /> 삭제
                     </Button>
-                    <Button size="sm" variant="ghost" onClick={() => setDeleteConfirmId(null)}>Cancel</Button>
+                    <Button size="sm" variant="ghost" onClick={() => setDeleteConfirmId(null)}>취소</Button>
                   </div>
                 </div>
               )}
@@ -210,15 +210,15 @@ export default function ProvidersPage() {
                   <div className="mt-4 flex items-center gap-4 text-sm text-gray-600">
                     <div className="flex items-center gap-1">
                       <Key className="h-4 w-4" />
-                      keys
+                      키
                     </div>
                     <Badge variant={p.isActive ? 'success' : 'default'}>
-                      {p.isActive ? 'Active' : 'Inactive'}
+                      {p.isActive ? '활성' : '비활성'}
                     </Badge>
                   </div>
 
                   <p className="mt-3 text-xs text-gray-400">
-                    Last synced: {p.lastSyncAt ? new Date(p.lastSyncAt).toLocaleString() : 'Never'}
+                    마지막 동기화: {p.lastSyncAt ? new Date(p.lastSyncAt).toLocaleString('ko-KR') : '없음'}
                   </p>
                 </>
               )}
@@ -230,8 +230,8 @@ export default function ProvidersPage() {
         <Card className="cursor-pointer border-dashed transition-colors hover:border-blue-400 hover:bg-blue-50/50" onClick={() => setShowForm(true)}>
           <CardContent className="flex h-full min-h-[160px] flex-col items-center justify-center py-5">
             <Plus className="h-8 w-8 text-gray-400" />
-            <p className="mt-2 text-sm font-medium text-gray-500">Add a new provider</p>
-            <p className="text-xs text-gray-400">OpenAI, Anthropic, Google, or custom</p>
+            <p className="mt-2 text-sm font-medium text-gray-500">새 프로바이더 추가</p>
+            <p className="text-xs text-gray-400">OpenAI, Anthropic, Google 또는 커스텀</p>
           </CardContent>
         </Card>
       </div>

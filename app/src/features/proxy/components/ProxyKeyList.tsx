@@ -18,7 +18,7 @@ export function ProxyKeyList({ keys, onToggle, onDelete }: ProxyKeyListProps) {
       <Card>
         <CardContent>
           <p className="py-8 text-center text-gray-400">
-            No proxy keys yet. Create one to get started.
+            프록시 키가 없습니다. 키를 생성하여 시작하세요.
           </p>
         </CardContent>
       </Card>
@@ -40,15 +40,15 @@ export function ProxyKeyList({ keys, onToggle, onDelete }: ProxyKeyListProps) {
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{key.name}</span>
                     <Badge variant={key.isActive ? 'default' : 'danger'}>
-                      {key.isActive ? 'Active' : 'Disabled'}
+                      {key.isActive ? '활성' : '비활성'}
                     </Badge>
                   </div>
                   <div className="mt-1 flex items-center gap-3 text-sm text-gray-500">
                     <code className="font-mono">{key.keyPrefix}</code>
                     <span>{PROVIDER_LABELS[key.providerType] || key.providerType}</span>
-                    <span>{key.requestCount.toLocaleString()} requests</span>
-                    {key.budgetLimit && <span>Budget: ${key.budgetLimit}/mo</span>}
-                    {key.rateLimit && <span>Rate: {key.rateLimit}/min</span>}
+                    <span>{key.requestCount.toLocaleString()} 요청</span>
+                    {key.budgetLimit && <span>예산: ${key.budgetLimit}/월</span>}
+                    {key.rateLimit && <span>제한: {key.rateLimit}/분</span>}
                   </div>
                 </div>
               </div>
@@ -58,18 +58,18 @@ export function ProxyKeyList({ keys, onToggle, onDelete }: ProxyKeyListProps) {
                   size="sm"
                   onClick={() => onToggle(key.id, !key.isActive)}
                 >
-                  {key.isActive ? 'Disable' : 'Enable'}
+                  {key.isActive ? '비활성화' : '활성화'}
                 </Button>
                 <Button
                   variant="danger"
                   size="sm"
                   onClick={() => {
-                    if (confirm('Delete this proxy key? This cannot be undone.')) {
+                    if (confirm('이 프록시 키를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
                       onDelete(key.id)
                     }
                   }}
                 >
-                  Delete
+                  삭제
                 </Button>
               </div>
             </div>

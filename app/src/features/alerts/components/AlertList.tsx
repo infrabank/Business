@@ -22,7 +22,7 @@ export function AlertList({ alerts, onMarkRead }: AlertListProps) {
     return (
       <div className="py-8 text-center text-gray-400">
         <Bell className="mx-auto mb-2 h-8 w-8" />
-        <p>No alerts</p>
+        <p>알림 없음</p>
       </div>
     )
   }

@@ -59,10 +59,10 @@ export function SetupInstructions() {
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-semibold">Setup Instructions</h3>
+        <h3 className="text-lg font-semibold">설치 안내</h3>
         <p className="text-sm text-gray-500">
-          Replace your API key and base URL with the proxy endpoint.
-          All requests are automatically logged and tracked.
+          API 키와 base URL을 프록시 엔드포인트로 교체하세요.
+          모든 요청이 자동으로 로깅되고 추적됩니다.
         </p>
       </CardHeader>
       <CardContent>
@@ -86,9 +86,8 @@ export function SetupInstructions() {
         </pre>
         <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50 p-3">
           <p className="text-sm text-blue-800">
-            <strong>How it works:</strong> Your API calls go through our proxy, which automatically
-            logs every request with token counts, costs, and latency. The proxy forwards
-            requests to the real provider using your encrypted API key.
+            <strong>작동 방식:</strong> API 호출이 프록시를 통과하며, 토큰 수, 비용, 지연시간을 자동으로
+            로깅합니다. 프록시는 암호화된 API 키를 사용하여 실제 프로바이더로 요청을 전달합니다.
           </p>
         </div>
       </CardContent>

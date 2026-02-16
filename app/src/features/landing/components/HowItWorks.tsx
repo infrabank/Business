@@ -5,9 +5,9 @@ export function HowItWorks() {
     <section className="py-20">
       <div className="mx-auto max-w-6xl px-4">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900">How it works</h2>
+          <h2 className="text-3xl font-bold text-gray-900">이용 방법</h2>
           <p className="mt-4 text-lg text-gray-600">
-            One line change. Zero new dependencies. Instant savings.
+            한 줄만 변경. 새 종속성 없음. 즉시 절감.
           </p>
         </div>
 

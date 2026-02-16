@@ -68,18 +68,18 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
     return (
       <Card>
         <CardHeader>
-          <h3 className="text-lg font-semibold text-green-700">Proxy Key Created</h3>
+          <h3 className="text-lg font-semibold text-green-700">프록시 키 생성됨</h3>
         </CardHeader>
         <CardContent>
           <p className="mb-3 text-sm text-gray-600">
-            Copy this key now. It will not be shown again.
+            지금 이 키를 복사하세요. 다시 표시되지 않습니다.
           </p>
           <div className="flex items-center gap-2">
             <code className="flex-1 rounded-lg border bg-gray-50 px-3 py-2 text-sm font-mono break-all">
               {createdKey}
             </code>
             <Button size="sm" onClick={handleCopy}>
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? '복사됨!' : '복사'}
             </Button>
           </div>
           <Button
@@ -87,7 +87,7 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
             className="mt-4"
             onClick={() => setCreatedKey(null)}
           >
-            Create Another Key
+            다른 키 생성
           </Button>
         </CardContent>
       </Card>
@@ -97,19 +97,19 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-semibold">Create Proxy Key</h3>
+        <h3 className="text-lg font-semibold">프록시 키 생성</h3>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            label="Key Name"
-            placeholder="e.g., Production API, Development"
+            label="키 이름"
+            placeholder="예: Production API, Development"
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
           />
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">Provider</label>
+            <label className="block text-sm font-medium text-gray-700">프로바이더</label>
             <select
               className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               value={providerType}
@@ -121,34 +121,34 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
             </select>
           </div>
           <Input
-            label="API Key"
+            label="API 키"
             type="password"
-            placeholder="Enter your real API key (will be encrypted)"
+            placeholder="실제 API 키를 입력하세요 (암호화됩니다)"
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             required
           />
           <div className="grid grid-cols-2 gap-4">
             <Input
-              label="Monthly Budget Limit ($)"
+              label="월간 예산 제한 ($)"
               type="number"
-              placeholder="Optional"
+              placeholder="선택사항"
               value={budgetLimit}
               onChange={(e) => setBudgetLimit(e.target.value)}
               min="0"
               step="0.01"
             />
             <Input
-              label="Rate Limit (req/min)"
+              label="요청 제한 (요청/분)"
               type="number"
-              placeholder="Optional"
+              placeholder="선택사항"
               value={rateLimit}
               onChange={(e) => setRateLimit(e.target.value)}
               min="0"
             />
           </div>
           <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3">
-            <p className="text-sm font-medium text-gray-700">Cost Savings Options</p>
+            <p className="text-sm font-medium text-gray-700">비용 절감 옵션</p>
             <label className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
@@ -157,8 +157,8 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <div>
-                <span className="text-sm font-medium text-gray-900">Response Caching</span>
-                <p className="text-xs text-gray-500">Cache identical requests to avoid duplicate API calls</p>
+                <span className="text-sm font-medium text-gray-900">응답 캐싱</span>
+                <p className="text-xs text-gray-500">동일한 요청을 캐싱하여 중복 API 호출 방지</p>
               </div>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
@@ -169,13 +169,13 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <div>
-                <span className="text-sm font-medium text-gray-900">Smart Model Routing</span>
-                <p className="text-xs text-gray-500">Auto-route simple requests to cheaper models (save up to 90%+)</p>
+                <span className="text-sm font-medium text-gray-900">스마트 모델 라우팅</span>
+                <p className="text-xs text-gray-500">간단한 요청을 저렴한 모델로 자동 라우팅 (최대 90%+ 절감)</p>
               </div>
             </label>
           </div>
           <Button type="submit" loading={loading} disabled={!name || !apiKey}>
-            Create Proxy Key
+            프록시 키 생성
           </Button>
         </form>
       </CardContent>

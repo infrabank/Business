@@ -18,7 +18,7 @@ export default function LoginPage() {
   function validateEmail(value: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(value)) {
-      setEmailError('Please enter a valid email address')
+      setEmailError('올바른 이메일 주소를 입력해주세요')
       return false
     }
     setEmailError('')
@@ -27,7 +27,7 @@ export default function LoginPage() {
 
   function validatePassword(value: string): boolean {
     if (value.length < 8) {
-      setPasswordError('Password must be at least 8 characters')
+      setPasswordError('비밀번호는 최소 8자 이상이어야 합니다')
       return false
     }
     setPasswordError('')
@@ -55,13 +55,13 @@ export default function LoginPage() {
             <Zap className="h-8 w-8" />
             <span className="text-2xl">LLM Cost Manager</span>
           </Link>
-          <p className="mt-2 text-gray-600">Sign in to your account</p>
+          <p className="mt-2 text-gray-600">계정에 로그인</p>
         </div>
         <form className="space-y-4" onSubmit={handleSubmit}>
           {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>}
           <Input
             id="email"
-            label="Email"
+            label="이메일"
             type="email"
             value={email}
             onChange={(e) => {
@@ -76,14 +76,14 @@ export default function LoginPage() {
           <div className="relative">
             <Input
               id="password"
-              label="Password"
+              label="비밀번호"
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value)
                 setPasswordError('')
               }}
-              placeholder="Enter password"
+              placeholder="비밀번호 입력"
               autoComplete="current-password"
               error={passwordError}
               required
@@ -92,18 +92,18 @@ export default function LoginPage() {
               type="button"
               onClick={() => setShowPassword(!showPassword)}
               className="absolute right-3 top-[34px] text-gray-500 hover:text-gray-700"
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 표시'}
             >
               {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
             </button>
           </div>
           <Button type="submit" className="w-full" size="lg" disabled={isLoading}>
-            {isLoading ? 'Signing in...' : 'Sign In'}
+            {isLoading ? '로그인 중...' : '로그인'}
           </Button>
         </form>
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don&apos;t have an account?{' '}
-          <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-700">Sign up free</Link>
+          계정이 없으신가요?{' '}
+          <Link href="/signup" className="font-medium text-blue-600 hover:text-blue-700">무료 회원가입</Link>
         </p>
       </div>
     </div>

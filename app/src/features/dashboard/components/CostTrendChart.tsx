@@ -38,13 +38,13 @@ function CustomTooltip({
 
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-3 shadow-lg">
-      <p className="mb-1 text-sm font-medium text-gray-600">Date: {label}</p>
+      <p className="mb-1 text-sm font-medium text-gray-600">날짜: {label}</p>
       <p className="text-sm font-semibold text-blue-600">
-        Current: ${Number(current?.value ?? 0).toFixed(2)}
+        현재: ${Number(current?.value ?? 0).toFixed(2)}
       </p>
       {showComparison && previous?.value != null && (
         <p className="text-sm text-gray-500">
-          Previous: ${Number(previous.value).toFixed(2)}
+          이전: ${Number(previous.value).toFixed(2)}
           {current?.value != null && previous.value > 0 && (
             <span className={current.value > previous.value ? ' text-red-500' : ' text-green-500'}>
               {' '}({current.value > previous.value ? '+' : ''}
@@ -57,7 +57,7 @@ function CustomTooltip({
   )
 }
 
-export function CostTrendChart({ data, title = 'Cost Trend', showComparison = false }: CostTrendChartProps) {
+export function CostTrendChart({ data, title = '비용 추이', showComparison = false }: CostTrendChartProps) {
   const hasComparison = showComparison && data.some((d) => d.previousCost != null)
 
   return (
@@ -83,7 +83,7 @@ export function CostTrendChart({ data, title = 'Cost Trend', showComparison = fa
               <Area
                 type="monotone"
                 dataKey="cost"
-                name="Current Period"
+                name="현재 기간"
                 stroke="#3B82F6"
                 strokeWidth={2}
                 fill="url(#colorCost)"
@@ -92,7 +92,7 @@ export function CostTrendChart({ data, title = 'Cost Trend', showComparison = fa
                 <Line
                   type="monotone"
                   dataKey="previousCost"
-                  name="Previous Period"
+                  name="이전 기간"
                   stroke="#9CA3AF"
                   strokeWidth={1.5}
                   strokeDasharray="5 5"

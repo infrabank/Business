@@ -17,10 +17,10 @@ interface TipCardProps {
 }
 
 const categoryLabels: Record<OptimizationCategory, string> = {
-  model_downgrade: 'Model Switch',
-  batch_processing: 'Batch Processing',
-  caching: 'Caching',
-  unused_key: 'Unused Key',
+  model_downgrade: '모델 전환',
+  batch_processing: '일괄 처리',
+  caching: '캐싱',
+  unused_key: '미사용 키',
 }
 
 export function TipCard({ suggestion, category, potentialSaving, status, onApply, onDismiss }: TipCardProps) {
@@ -32,7 +32,7 @@ export function TipCard({ suggestion, category, potentialSaving, status, onApply
           <div className="flex items-center gap-2">
             <Badge variant="info">{categoryLabels[category]}</Badge>
             {potentialSaving > 0 && (
-              <span className="text-sm font-medium text-green-600">Save {formatCurrency(potentialSaving)}/mo</span>
+              <span className="text-sm font-medium text-green-600">{formatCurrency(potentialSaving)}/월 절약</span>
             )}
           </div>
           <p className="mt-1 text-sm text-gray-700">{suggestion}</p>

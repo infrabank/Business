@@ -20,16 +20,16 @@ export default function ProxyPage() {
   const [activeTab, setActiveTab] = useState<'keys' | 'savings' | 'logs'>('keys')
 
   if (!isReady) {
-    return <div className="py-12 text-center text-gray-400">Loading...</div>
+    return <div className="py-12 text-center text-gray-400">로딩 중...</div>
   }
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">API Proxy & Cost Savings</h1>
+          <h1 className="text-2xl font-bold text-gray-900">API 프록시 & 비용 절감</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Route LLM calls through our proxy — save money with smart caching and model routing
+            LLM 요청을 프록시를 통해 라우팅 — 스마트 캐싱과 모델 라우팅으로 비용 절감
           </p>
         </div>
         {activeTab === 'keys' && (
@@ -37,7 +37,7 @@ export default function ProxyPage() {
             className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 transition-colors"
             onClick={() => setShowForm(!showForm)}
           >
-            {showForm ? 'Hide Form' : '+ New Proxy Key'}
+            {showForm ? '폼 숨기기' : '+ 새 프록시 키'}
           </button>
         )}
       </div>
@@ -50,7 +50,7 @@ export default function ProxyPage() {
           }`}
           onClick={() => setActiveTab('keys')}
         >
-          Proxy Keys
+          프록시 키
         </button>
         <button
           className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
@@ -58,7 +58,7 @@ export default function ProxyPage() {
           }`}
           onClick={() => setActiveTab('savings')}
         >
-          Cost Savings
+          비용 절감
         </button>
         <button
           className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
@@ -66,7 +66,7 @@ export default function ProxyPage() {
           }`}
           onClick={() => setActiveTab('logs')}
         >
-          Request Logs
+          요청 로그
         </button>
       </div>
 
@@ -77,14 +77,14 @@ export default function ProxyPage() {
           )}
 
           <section>
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">Proxy Keys</h2>
+            <h2 className="mb-4 text-lg font-semibold text-gray-900">프록시 키</h2>
             {error && (
               <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {error}
               </div>
             )}
             {keysLoading ? (
-              <div className="py-8 text-center text-gray-400">Loading keys...</div>
+              <div className="py-8 text-center text-gray-400">키 로딩 중...</div>
             ) : (
               <ProxyKeyList keys={keys} onToggle={toggleKey} onDelete={removeKey} />
             )}
@@ -100,7 +100,7 @@ export default function ProxyPage() {
 
       {activeTab === 'logs' && (
         <section>
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">Request Logs</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-900">요청 로그</h2>
           <ProxyLogTable
             logs={logs}
             loading={logsLoading}

@@ -27,10 +27,10 @@ export default function LandingPage() {
           </div>
           <div className="hidden items-center gap-6 sm:flex">
             <a href="#features" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-              Features
+              기능
             </a>
             <Link href="/pricing" className="text-sm font-medium text-gray-600 hover:text-gray-900">
-              Pricing
+              요금제
             </Link>
             <a href="#faq" className="text-sm font-medium text-gray-600 hover:text-gray-900">
               FAQ
@@ -41,13 +41,13 @@ export default function LandingPage() {
               href="/login"
               className="rounded-lg px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900"
             >
-              Log in
+              로그인
             </Link>
             <Link
               href="/signup"
               className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-all duration-200 hover:scale-[1.02] hover:bg-blue-700 hover:shadow-lg"
             >
-              Start Free
+              무료로 시작
             </Link>
           </div>
           <button
@@ -66,14 +66,14 @@ export default function LandingPage() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-3 text-sm font-medium text-gray-600 hover:text-gray-900"
               >
-                Features
+                기능
               </a>
               <Link
                 href="/pricing"
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-3 text-sm font-medium text-gray-600 hover:text-gray-900"
               >
-                Pricing
+                요금제
               </Link>
               <a
                 href="#faq"
@@ -87,14 +87,14 @@ export default function LandingPage() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="mt-4 py-3 text-sm font-medium text-gray-600 hover:text-gray-900"
               >
-                Log in
+                로그인
               </Link>
               <Link
                 href="/signup"
                 onClick={() => setMobileMenuOpen(false)}
                 className="mt-2 rounded-lg bg-blue-600 px-4 py-3 text-center text-sm font-medium text-white transition-all duration-200 hover:scale-[1.02] hover:bg-blue-700 hover:shadow-lg"
               >
-                Start Free
+                무료로 시작
               </Link>
             </div>
           </div>

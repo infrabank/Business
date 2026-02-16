@@ -12,12 +12,12 @@ interface ProjectFormProps {
 }
 
 const COLOR_OPTIONS = [
-  { value: '#3B82F6', label: 'Blue' },
-  { value: '#10B981', label: 'Green' },
-  { value: '#F59E0B', label: 'Yellow' },
-  { value: '#EF4444', label: 'Red' },
-  { value: '#8B5CF6', label: 'Purple' },
-  { value: '#EC4899', label: 'Pink' },
+  { value: '#3B82F6', label: '파랑' },
+  { value: '#10B981', label: '초록' },
+  { value: '#F59E0B', label: '노랑' },
+  { value: '#EF4444', label: '빨강' },
+  { value: '#8B5CF6', label: '보라' },
+  { value: '#EC4899', label: '분홍' },
 ]
 
 export function ProjectForm({ onSubmit, onCancel, isLoading }: ProjectFormProps) {
@@ -33,14 +33,14 @@ export function ProjectForm({ onSubmit, onCancel, isLoading }: ProjectFormProps)
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-semibold text-gray-900">Add Project</h3>
+        <h3 className="text-lg font-semibold text-gray-900">프로젝트 추가</h3>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input label="Project Name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g., Production API" />
-          <Input label="Description" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Optional description" />
+          <Input label="프로젝트 이름" value={name} onChange={(e) => setName(e.target.value)} placeholder="예: Production API" />
+          <Input label="설명" value={description} onChange={(e) => setDescription(e.target.value)} placeholder="선택사항" />
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Color</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">색상</label>
             <div className="flex gap-2">
               {COLOR_OPTIONS.map((c) => (
                 <button
@@ -56,9 +56,9 @@ export function ProjectForm({ onSubmit, onCancel, isLoading }: ProjectFormProps)
           </div>
           <div className="flex gap-2">
             <Button type="submit" disabled={!name || isLoading}>
-              {isLoading ? 'Creating...' : 'Add Project'}
+              {isLoading ? '생성 중...' : '프로젝트 추가'}
             </Button>
-            {onCancel && <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>}
+            {onCancel && <Button type="button" variant="outline" onClick={onCancel}>취소</Button>}
           </div>
         </form>
       </CardContent>

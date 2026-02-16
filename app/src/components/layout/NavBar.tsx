@@ -109,14 +109,14 @@ export function NavBar() {
                   className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
                   role="menuitem"
                 >
-                  <Settings className="h-4 w-4" /> Settings
+                  <Settings className="h-4 w-4" /> 설정
                 </Link>
                 <button
                   onClick={handleLogout}
                   className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
                   role="menuitem"
                 >
-                  <LogOut className="h-4 w-4" /> Sign Out
+                  <LogOut className="h-4 w-4" /> 로그아웃
                 </button>
               </div>
             )}
@@ -151,12 +151,12 @@ export function NavBar() {
             <Link href="/settings" onClick={() => setMobileOpen(false)}
               className={cn('flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium', pathname === '/settings' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100')}>
               <Settings className="h-5 w-5" />
-              Settings
+              설정
             </Link>
             <button onClick={() => { setMobileOpen(false); handleLogout() }}
               className="flex items-center gap-3 rounded-lg px-4 py-3 text-base font-medium text-red-600 hover:bg-red-50">
               <LogOut className="h-5 w-5" />
-              Sign Out
+              로그아웃
             </button>
           </div>
         </div>

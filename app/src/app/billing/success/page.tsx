@@ -30,17 +30,17 @@ function SuccessContent() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
             <CheckCircle className="h-8 w-8 text-green-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Subscription Activated!</h1>
+          <h1 className="text-2xl font-bold text-gray-900">구독이 활성화되었습니다!</h1>
           <p className="mt-2 text-gray-500">
-            Your subscription is now active. You have full access to all features.
+            구독이 활성화되었습니다. 모든 기능을 사용하실 수 있습니다.
           </p>
         </CardHeader>
         <CardContent>
           <p className="mb-6 text-sm text-gray-400">
-            Redirecting to dashboard in 5 seconds...
+            5초 후 대시보드로 이동합니다...
           </p>
           <Button onClick={() => router.push('/dashboard')} className="w-full">
-            Go to Dashboard
+            대시보드로 이동
           </Button>
         </CardContent>
       </Card>
@@ -52,7 +52,7 @@ export default function BillingSuccessPage() {
   return (
     <Suspense fallback={
       <div className="flex min-h-screen items-center justify-center bg-gray-50">
-        <div className="animate-pulse text-gray-400">Loading...</div>
+        <div className="animate-pulse text-gray-400">로딩 중...</div>
       </div>
     }>
       <SuccessContent />

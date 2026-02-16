@@ -39,14 +39,14 @@ function BudgetMenu({ budget, onEdit, onToggle, onDelete }: {
       {open && (
         <div className="absolute right-0 top-8 z-10 w-44 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
           <button onClick={() => { onEdit(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
-            <Pencil className="h-4 w-4" /> Edit Amount
+            <Pencil className="h-4 w-4" /> 금액 수정
           </button>
           <button onClick={() => { onToggle(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
-            <Power className="h-4 w-4" /> {budget.isActive ? 'Deactivate' : 'Activate'}
+            <Power className="h-4 w-4" /> {budget.isActive ? '비활성화' : '활성화'}
           </button>
           <hr className="my-1 border-gray-100" />
           <button onClick={() => { onDelete(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50">
-            <Trash2 className="h-4 w-4" /> Delete
+            <Trash2 className="h-4 w-4" /> 삭제
           </button>
         </div>
       )}
@@ -68,8 +68,8 @@ export default function BudgetPage() {
     setIsSubmitting(true)
     const success = await createBudget(data)
     setIsSubmitting(false)
-    if (success) { setShowForm(false); toast('success', 'Budget created.') }
-    else toast('error', 'Failed to create budget.')
+    if (success) { setShowForm(false); toast('success', '예산이 생성되었습니다.') }
+    else toast('error', '예산 생성에 실패했습니다.')
   }
 
   const handleEdit = (budget: Budget) => {
@@ -81,21 +81,21 @@ export default function BudgetPage() {
     const parsed = parseFloat(editAmount)
     if (isNaN(parsed) || parsed <= 0) return
     const success = await updateBudget(budgetId, { amount: parsed })
-    if (success) toast('success', 'Budget updated.')
-    else toast('error', 'Failed to update budget.')
+    if (success) toast('success', '예산이 업데이트되었습니다.')
+    else toast('error', '예산 업데이트에 실패했습니다.')
     setEditingId(null)
   }
 
   const handleToggleActive = async (budget: Budget) => {
     const success = await updateBudget(budget.id, { isActive: !budget.isActive })
-    if (success) toast('info', budget.isActive ? 'Budget deactivated.' : 'Budget activated.')
-    else toast('error', 'Failed to update budget.')
+    if (success) toast('info', budget.isActive ? '예산이 비활성화되었습니다.' : '예산이 활성화되었습니다.')
+    else toast('error', '예산 업데이트에 실패했습니다.')
   }
 
   const handleDelete = async (budgetId: string) => {
     const success = await deleteBudget(budgetId)
-    if (success) toast('success', 'Budget deleted.')
-    else toast('error', 'Failed to delete budget.')
+    if (success) toast('success', '예산이 삭제되었습니다.')
+    else toast('error', '예산 삭제에 실패했습니다.')
     setDeleteConfirmId(null)
   }
 
@@ -103,8 +103,8 @@ export default function BudgetPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Budget</h1>
-          <p className="text-gray-500">Set spending limits and get alerts</p>
+          <h1 className="text-2xl font-bold text-gray-900">예산</h1>
+          <p className="text-gray-500">지출 한도를 설정하고 알림을 받으세요</p>
         </div>
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
@@ -119,10 +119,10 @@ export default function BudgetPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Budget</h1>
-          <p className="text-gray-500">Set spending limits and get alerts</p>
+          <h1 className="text-2xl font-bold text-gray-900">예산</h1>
+          <p className="text-gray-500">지출 한도를 설정하고 알림을 받으세요</p>
         </div>
-        <Button onClick={() => setShowForm(true)}><Plus className="mr-2 h-4 w-4" /> Add Budget</Button>
+        <Button onClick={() => setShowForm(true)}><Plus className="mr-2 h-4 w-4" /> 예산 추가</Button>
       </div>
 
       {showForm && (
@@ -137,7 +137,7 @@ export default function BudgetPage() {
         <Card className="cursor-pointer border-dashed transition-colors hover:border-blue-400 hover:bg-blue-50/50" onClick={() => setShowForm(true)}>
           <CardContent className="flex min-h-[120px] flex-col items-center justify-center py-8">
             <Plus className="h-8 w-8 text-gray-400" />
-            <p className="mt-2 text-sm text-gray-500">No budgets yet. Click to create one.</p>
+            <p className="mt-2 text-sm text-gray-500">설정된 예산이 없습니다. 클릭하여 생성하세요.</p>
           </CardContent>
         </Card>
       ) : (
@@ -150,7 +150,7 @@ export default function BudgetPage() {
                 <CardContent className="py-5">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-semibold text-gray-900">{b.period} budget</h3>
+                      <h3 className="font-semibold text-gray-900">{b.period === 'monthly' ? '월간' : b.period === 'weekly' ? '주간' : '일간'} 예산</h3>
                       {editingId === b.id ? (
                         <div className="mt-1 flex items-center gap-1">
                           <span className="text-sm text-gray-500">$</span>
@@ -172,12 +172,12 @@ export default function BudgetPage() {
                           </button>
                         </div>
                       ) : (
-                        <p className="mt-1 text-sm text-gray-500">{formatCurrency(b.amount)} limit</p>
+                        <p className="mt-1 text-sm text-gray-500">한도 {formatCurrency(b.amount)}</p>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge variant={b.isActive ? 'success' : 'default'}>
-                        {b.isActive ? 'Active' : 'Inactive'}
+                        {b.isActive ? '활성' : '비활성'}
                       </Badge>
                       <div className="flex items-center gap-1 text-sm text-gray-400">
                         <Bell className="h-4 w-4" />
@@ -194,13 +194,13 @@ export default function BudgetPage() {
 
                   {deleteConfirmId === b.id && (
                     <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3">
-                      <p className="text-sm font-medium text-red-800">Delete this budget?</p>
-                      <p className="mt-1 text-xs text-red-600">This will remove the budget and its alert thresholds. This cannot be undone.</p>
+                      <p className="text-sm font-medium text-red-800">이 예산을 삭제하시겠습니까?</p>
+                      <p className="mt-1 text-xs text-red-600">예산과 알림 임계값이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
                       <div className="mt-2 flex gap-2">
                         <Button size="sm" variant="outline" onClick={() => handleDelete(b.id)}>
-                          <Trash2 className="mr-1 h-3 w-3" /> Delete
+                          <Trash2 className="mr-1 h-3 w-3" /> 삭제
                         </Button>
-                        <Button size="sm" variant="ghost" onClick={() => setDeleteConfirmId(null)}>Cancel</Button>
+                        <Button size="sm" variant="ghost" onClick={() => setDeleteConfirmId(null)}>취소</Button>
                       </div>
                     </div>
                   )}

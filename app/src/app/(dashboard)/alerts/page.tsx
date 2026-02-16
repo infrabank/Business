@@ -24,8 +24,8 @@ export default function AlertsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Alerts</h1>
-          <p className="text-gray-500">Notifications and warnings</p>
+          <h1 className="text-2xl font-bold text-gray-900">알림</h1>
+          <p className="text-gray-500">알림 및 경고</p>
         </div>
         <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
@@ -40,17 +40,17 @@ export default function AlertsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Alerts</h1>
-          <p className="text-gray-500">Notifications and warnings</p>
+          <h1 className="text-2xl font-bold text-gray-900">알림</h1>
+          <p className="text-gray-500">알림 및 경고</p>
         </div>
         <Button variant="outline" size="sm" onClick={markAllRead}>
-          <CheckCircle className="mr-2 h-4 w-4" /> Mark all read
+          <CheckCircle className="mr-2 h-4 w-4" /> 모두 읽음 처리
         </Button>
       </div>
 
       {alerts.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
-          <p className="text-gray-500">No alerts yet. Alerts will appear when budget thresholds are reached.</p>
+          <p className="text-gray-500">알림이 없습니다. 예산 임계값에 도달하면 알림이 표시됩니다.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -69,7 +69,7 @@ export default function AlertsPage() {
                     {!a.isRead && <span className="h-2 w-2 rounded-full bg-blue-500" />}
                   </div>
                   <p className="mt-1 text-sm text-gray-600">{a.message}</p>
-                  <p className="mt-1 text-xs text-gray-400">{new Date(a.sentAt).toLocaleString()}</p>
+                  <p className="mt-1 text-xs text-gray-400">{new Date(a.sentAt).toLocaleString('ko-KR')}</p>
                 </div>
               </CardContent>
             </Card>

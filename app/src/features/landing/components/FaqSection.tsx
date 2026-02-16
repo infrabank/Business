@@ -15,7 +15,7 @@ export function FaqSection() {
     <section id="faq" className="py-20">
       <div className="mx-auto max-w-3xl px-4">
         <h2 className="text-center text-3xl font-bold text-gray-900">
-          Frequently asked questions
+          자주 묻는 질문
         </h2>
 
         <div className="mt-12 divide-y divide-gray-200 rounded-xl border border-gray-200">

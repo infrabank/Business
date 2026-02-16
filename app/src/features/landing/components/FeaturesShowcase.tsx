@@ -6,10 +6,10 @@ export function FeaturesShowcase() {
       <div className="mx-auto max-w-6xl px-4">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-gray-900">
-            Every dollar saved is automatic
+            모든 비용 절감은 자동으로
           </h2>
           <p className="mt-4 text-lg text-gray-600">
-            Our proxy sits between your app and the LLM provider. No SDK changes, no new libraries — just savings.
+            프록시가 앱과 LLM 프로바이더 사이에 위치합니다. SDK 변경 없이, 새 라이브러리 없이 — 그저 절감만.
           </p>
         </div>
 

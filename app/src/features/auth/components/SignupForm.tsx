@@ -23,11 +23,11 @@ export function SignupForm({ onSubmit, isLoading, error }: SignupFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">{error}</div>}
-      <Input label="Name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
-      <Input label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
-      <Input label="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Min 8 characters" />
+      <Input label="이름" value={name} onChange={(e) => setName(e.target.value)} placeholder="이름 입력" />
+      <Input label="이메일" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+      <Input label="비밀번호" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="최소 8자" />
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading ? 'Creating account...' : 'Create account'}
+        {isLoading ? '계정 생성 중...' : '계정 만들기'}
       </Button>
     </form>
   )

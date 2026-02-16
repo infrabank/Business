@@ -29,9 +29,9 @@ import type { DashboardPeriod } from '@/types/dashboard'
 import type { ProviderType, OptimizationCategory } from '@/types'
 
 const PERIOD_LABELS: Record<DashboardPeriod, string> = {
-  '7d': '7 Days',
-  '30d': '30 Days',
-  '90d': '90 Days',
+  '7d': '7일',
+  '30d': '30일',
+  '90d': '90일',
 }
 
 const CATEGORY_ICONS: Record<OptimizationCategory, typeof ArrowDownCircle> = {
@@ -68,8 +68,8 @@ export default function DashboardPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-500">Your LLM spending at a glance</p>
+            <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
+            <p className="text-gray-500">LLM 지출 한눈에 보기</p>
           </div>
         </div>
         <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
@@ -87,16 +87,16 @@ export default function DashboardPage() {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-            <p className="text-gray-500">Your LLM spending at a glance</p>
+            <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
+            <p className="text-gray-500">LLM 지출 한눈에 보기</p>
           </div>
           <PeriodSelector value={period} onChange={setPeriod} />
         </div>
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
           <p className="text-gray-500">
             {dashError
-              ? `Error loading dashboard: ${dashError}`
-              : 'No data yet. Add a provider to start tracking costs.'}
+              ? `대시보드 로딩 오류: ${dashError}`
+              : '아직 데이터가 없습니다. 프로바이더를 추가하여 비용 추적을 시작하세요.'}
           </p>
           {dashError && (
             <p className="mt-2 text-xs text-gray-400">orgId: {orgId || 'not set'}</p>
@@ -122,8 +122,8 @@ export default function DashboardPage() {
       {/* Header with Period Selector */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500">Your LLM spending at a glance</p>
+          <h1 className="text-2xl font-bold text-gray-900">대시보드</h1>
+          <p className="text-gray-500">LLM 지출 한눈에 보기</p>
         </div>
         <PeriodSelector value={period} onChange={setPeriod} />
       </div>
@@ -140,29 +140,29 @@ export default function DashboardPage() {
       {/* Stat Cards */}
       <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
         <StatCard
-          title="Total Cost (This Month)"
+          title="이번 달 총 비용"
           value={formatCurrency(summary.totalCost.current)}
           change={summary.totalCost.changePercent}
         />
         <StatCard
-          title="Total Tokens"
+          title="총 토큰"
           value={formatNumber(summary.byProvider.reduce((s, p) => s + p.tokenCount, 0))}
-          subtitle="Across all providers"
+          subtitle="모든 프로바이더 합산"
         />
         <StatCard
-          title="API Requests"
+          title="API 요청 수"
           value={formatNumber(summary.byProvider.reduce((s, p) => s + p.requestCount, 0))}
-          subtitle="This month"
+          subtitle="이번 달"
         />
         <StatCard
-          title="Budget Usage"
+          title="예산 사용률"
           value={`${summary.budgetStatus[0]?.percentage.toFixed(0) ?? '0'}%`}
           subtitle={`${formatCurrency(summary.budgetStatus[0]?.spent ?? 0)} of ${formatCurrency(summary.budgetStatus[0]?.amount ?? 0)}`}
         />
         <StatCard
-          title="Projected Cost"
+          title="예상 비용"
           value={formatCurrency(summary.forecast.projectedMonthly)}
-          subtitle={`${summary.forecast.daysRemaining}d remaining, ~${formatCurrency(summary.forecast.dailyAverage)}/day`}
+          subtitle={`${summary.forecast.daysRemaining}일 남음, ~${formatCurrency(summary.forecast.dailyAverage)}/일`}
           variant={forecastVariant}
           icon={<TrendingUp className="h-4 w-4 text-gray-400" />}
         />
@@ -171,7 +171,7 @@ export default function DashboardPage() {
       {/* Cost Trend Chart */}
       <CostTrendChart
         data={chartData}
-        title={`Daily Cost (Last ${PERIOD_LABELS[period]})`}
+        title={`일별 비용 (최근 ${PERIOD_LABELS[period]})`}
         showComparison
       />
 
@@ -190,14 +190,14 @@ export default function DashboardPage() {
           <CardHeader>
             <div className="flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-yellow-500" />
-              <h3 className="text-lg font-semibold text-gray-900">Recent Alerts</h3>
+              <h3 className="text-lg font-semibold text-gray-900">최근 알림</h3>
               <Badge variant="warning">{summary.recentAlerts.length}</Badge>
             </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
               {summary.recentAlerts.length === 0 ? (
-                <p className="text-sm text-gray-500">No recent alerts</p>
+                <p className="text-sm text-gray-500">최근 알림 없음</p>
               ) : (
                 summary.recentAlerts.map((alert) => (
                   <div key={alert.id} className="rounded-lg border border-gray-100 p-3">
@@ -220,14 +220,14 @@ export default function DashboardPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Lightbulb className="h-5 w-5 text-blue-500" />
-                <h3 className="text-lg font-semibold text-gray-900">Optimization Tips</h3>
+                <h3 className="text-lg font-semibold text-gray-900">최적화 팁</h3>
                 {summary.optimizationSummary.tipsCount > 0 && (
                   <Badge variant="info">{summary.optimizationSummary.tipsCount}</Badge>
                 )}
               </div>
               {summary.optimizationSummary.totalSavings > 0 && (
                 <span className="text-sm font-medium text-green-600">
-                  Save ~{formatCurrency(summary.optimizationSummary.totalSavings)}/mo
+                  ~{formatCurrency(summary.optimizationSummary.totalSavings)}/월 절약
                 </span>
               )}
             </div>
@@ -235,7 +235,7 @@ export default function DashboardPage() {
           <CardContent>
             <div className="space-y-3">
               {pendingTips.length === 0 ? (
-                <p className="text-sm text-gray-500">No optimization tips yet. Tips will appear based on your usage patterns.</p>
+                <p className="text-sm text-gray-500">아직 최적화 팁이 없습니다. 사용 패턴에 따라 팁이 표시됩니다.</p>
               ) : (
                 pendingTips.map((tip) => {
                   const CategoryIcon = CATEGORY_ICONS[tip.category] ?? Lightbulb
@@ -246,12 +246,12 @@ export default function DashboardPage() {
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium text-gray-900">{tip.suggestion}</p>
                           <p className="mt-0.5 text-sm text-green-600">
-                            Save ~{formatCurrency(tip.potentialSaving)}/month
+                            ~{formatCurrency(tip.potentialSaving)}/월 절약
                           </p>
                         </div>
                         <div className="flex shrink-0 gap-1">
                           <Button size="sm" variant="outline" onClick={() => applyTip(tip.id)}>
-                            Apply
+                            적용
                           </Button>
                           <Button size="sm" variant="ghost" onClick={() => dismissTip(tip.id)}>
                             ✕

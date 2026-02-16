@@ -18,27 +18,27 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
   const columns = [
     {
       key: 'createdAt',
-      header: 'Time',
+      header: '시간',
       render: (log: ProxyLog) => (
         <span className="text-xs text-gray-500">
-          {new Date(log.createdAt).toLocaleString()}
+          {new Date(log.createdAt).toLocaleString('ko-KR')}
         </span>
       ),
     },
     {
       key: 'providerType',
-      header: 'Provider',
+      header: '프로바이더',
       render: (log: ProxyLog) => PROVIDER_LABELS[log.providerType] || log.providerType,
     },
     {
       key: 'model',
-      header: 'Model',
+      header: '모델',
       render: (log: ProxyLog) => (
         <div>
           <code className="text-xs">{log.model}</code>
           {log.originalModel && (
             <div className="text-[10px] text-gray-400">
-              from {log.originalModel}
+              원본: {log.originalModel}
             </div>
           )}
         </div>
@@ -46,7 +46,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
     },
     {
       key: 'tokens',
-      header: 'Tokens',
+      header: '토큰',
       align: 'right' as const,
       render: (log: ProxyLog) => (
         <span className="text-xs">
@@ -56,7 +56,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
     },
     {
       key: 'cost',
-      header: 'Cost',
+      header: '비용',
       align: 'right' as const,
       render: (log: ProxyLog) => {
         const hasSavings = log.savedAmount > 0
@@ -74,7 +74,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
     },
     {
       key: 'savings',
-      header: 'Saved',
+      header: '절감',
       align: 'right' as const,
       render: (log: ProxyLog) => {
         if (log.savedAmount <= 0) {
@@ -88,14 +88,14 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
             <span className="font-mono text-xs font-medium text-emerald-600">
               -${Number(log.savedAmount).toFixed(4)}
             </span>
-            <div className="text-[10px] text-emerald-500">{savingsPercent}% off</div>
+            <div className="text-[10px] text-emerald-500">{savingsPercent}% 할인</div>
           </div>
         )
       },
     },
     {
       key: 'latencyMs',
-      header: 'Latency',
+      header: '지연시간',
       align: 'right' as const,
       render: (log: ProxyLog) => (
         <span className="text-xs">{log.latencyMs}ms</span>
@@ -103,7 +103,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
     },
     {
       key: 'statusCode',
-      header: 'Status',
+      header: '상태',
       align: 'center' as const,
       render: (log: ProxyLog) => (
         <div className="flex items-center gap-1">
@@ -121,7 +121,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
   ]
 
   if (loading) {
-    return <div className="py-8 text-center text-gray-400">Loading logs...</div>
+    return <div className="py-8 text-center text-gray-400">로그 로딩 중...</div>
   }
 
   return (
@@ -130,8 +130,8 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
         columns={columns}
         data={logs}
         keyExtractor={(log) => log.id}
-        emptyMessage="No proxy logs yet"
-        ariaLabel="Proxy request logs"
+        emptyMessage="프록시 로그가 없습니다"
+        ariaLabel="프록시 요청 로그"
       />
       <div className="flex items-center justify-between">
         <Button
@@ -140,10 +140,10 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
           onClick={onPrevPage}
           disabled={offset === 0}
         >
-          Previous
+          이전
         </Button>
         <span className="text-sm text-gray-500">
-          Showing {offset + 1} - {offset + logs.length}
+          {offset + 1} - {offset + logs.length} 표시 중
         </span>
         <Button
           variant="outline"
@@ -151,7 +151,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
           onClick={onNextPage}
           disabled={logs.length < 50}
         >
-          Next
+          다음
         </Button>
       </div>
     </div>

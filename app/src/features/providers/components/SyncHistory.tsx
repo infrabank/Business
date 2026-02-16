@@ -11,10 +11,10 @@ interface SyncHistoryProps {
 }
 
 const STATUS_STYLES: Record<string, { dot: string; label: string }> = {
-  success: { dot: 'bg-green-500', label: 'success' },
-  failed: { dot: 'bg-red-500', label: 'failed' },
-  partial: { dot: 'bg-yellow-500', label: 'partial' },
-  running: { dot: 'bg-blue-500 animate-pulse', label: 'running' },
+  success: { dot: 'bg-green-500', label: '성공' },
+  failed: { dot: 'bg-red-500', label: '실패' },
+  partial: { dot: 'bg-yellow-500', label: '부분 성공' },
+  running: { dot: 'bg-blue-500 animate-pulse', label: '실행 중' },
 }
 
 function formatDuration(ms: number): string {
@@ -24,7 +24,7 @@ function formatDuration(ms: number): string {
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr)
-  return d.toLocaleDateString('en-US', {
+  return d.toLocaleDateString('ko-KR', {
     month: 'short',
     day: 'numeric',
     hour: 'numeric',
@@ -67,7 +67,7 @@ export function SyncHistory({ orgId, providerId, refreshKey }: SyncHistoryProps)
     return (
       <Card>
         <CardHeader>
-          <h3 className="text-lg font-semibold text-gray-900">Sync History</h3>
+          <h3 className="text-lg font-semibold text-gray-900">동기화 기록</h3>
         </CardHeader>
         <CardContent>
           <div className="h-24 animate-pulse rounded bg-gray-100" />
@@ -79,11 +79,11 @@ export function SyncHistory({ orgId, providerId, refreshKey }: SyncHistoryProps)
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-semibold text-gray-900">Sync History</h3>
+        <h3 className="text-lg font-semibold text-gray-900">동기화 기록</h3>
       </CardHeader>
       <CardContent>
         {history.length === 0 ? (
-          <p className="text-sm text-gray-500">No sync history yet.</p>
+          <p className="text-sm text-gray-500">동기화 기록이 없습니다.</p>
         ) : (
           <div className="space-y-3">
             {history.map((entry) => {
@@ -104,9 +104,9 @@ export function SyncHistory({ orgId, providerId, refreshKey }: SyncHistoryProps)
                   </span>
                   <span className="text-gray-500">
                     {entry.status === 'failed' ? (
-                      <span className="text-red-600">{entry.errorMessage || 'Error'}</span>
+                      <span className="text-red-600">{entry.errorMessage || '오류'}</span>
                     ) : (
-                      <>+{entry.recordsCreated} / ~{entry.recordsUpdated}</>
+                      <>+{entry.recordsCreated}건 / ~{entry.recordsUpdated}건</>
                     )}
                   </span>
                   <span className="ml-auto text-gray-400">

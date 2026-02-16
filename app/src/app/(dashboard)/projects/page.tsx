@@ -31,11 +31,11 @@ function ProjectMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: () =>
       {open && (
         <div className="absolute right-0 top-8 z-10 w-40 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
           <button onClick={() => { onEdit(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
-            <Pencil className="h-4 w-4" /> Edit
+            <Pencil className="h-4 w-4" /> 수정
           </button>
           <hr className="my-1 border-gray-100" />
           <button onClick={() => { onDelete(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50">
-            <Trash2 className="h-4 w-4" /> Delete
+            <Trash2 className="h-4 w-4" /> 삭제
           </button>
         </div>
       )}
@@ -57,8 +57,8 @@ export default function ProjectsPage() {
     setIsSubmitting(true)
     const success = await createProject(data)
     setIsSubmitting(false)
-    if (success) { setShowForm(false); toast('success', 'Project created.') }
-    else toast('error', 'Failed to create project.')
+    if (success) { setShowForm(false); toast('success', '프로젝트가 생성되었습니다.') }
+    else toast('error', '프로젝트 생성에 실패했습니다.')
   }
 
   const handleEdit = (project: Project) => {
@@ -69,15 +69,15 @@ export default function ProjectsPage() {
   const handleSaveEdit = async (projectId: string) => {
     if (!editName.trim()) return
     const success = await updateProject(projectId, { name: editName.trim() })
-    if (success) toast('success', 'Project updated.')
-    else toast('error', 'Failed to update project.')
+    if (success) toast('success', '프로젝트가 업데이트되었습니다.')
+    else toast('error', '프로젝트 업데이트에 실패했습니다.')
     setEditingId(null)
   }
 
   const handleDelete = async (projectId: string) => {
     const success = await deleteProject(projectId)
-    if (success) toast('success', 'Project deleted.')
-    else toast('error', 'Failed to delete project.')
+    if (success) toast('success', '프로젝트가 삭제되었습니다.')
+    else toast('error', '프로젝트 삭제에 실패했습니다.')
     setDeleteConfirmId(null)
   }
 
@@ -85,8 +85,8 @@ export default function ProjectsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-          <p className="text-gray-500">Organize costs by project</p>
+          <h1 className="text-2xl font-bold text-gray-900">프로젝트</h1>
+          <p className="text-gray-500">프로젝트별 비용 관리</p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(3)].map((_, i) => (
@@ -101,10 +101,10 @@ export default function ProjectsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-          <p className="text-gray-500">Organize costs by project</p>
+          <h1 className="text-2xl font-bold text-gray-900">프로젝트</h1>
+          <p className="text-gray-500">프로젝트별 비용 관리</p>
         </div>
-        <Button onClick={() => setShowForm(true)}><Plus className="mr-2 h-4 w-4" /> Add Project</Button>
+        <Button onClick={() => setShowForm(true)}><Plus className="mr-2 h-4 w-4" /> 프로젝트 추가</Button>
       </div>
 
       {showForm && (
@@ -155,13 +155,13 @@ export default function ProjectsPage() {
 
               {deleteConfirmId === p.id && (
                 <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3">
-                  <p className="text-sm font-medium text-red-800">Delete &quot;{p.name}&quot;?</p>
-                  <p className="mt-1 text-xs text-red-600">This will remove the project. This cannot be undone.</p>
+                  <p className="text-sm font-medium text-red-800">&quot;{p.name}&quot;을(를) 삭제하시겠습니까?</p>
+                  <p className="mt-1 text-xs text-red-600">프로젝트가 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
                   <div className="mt-2 flex gap-2">
                     <Button size="sm" variant="outline" onClick={() => handleDelete(p.id)}>
-                      <Trash2 className="mr-1 h-3 w-3" /> Delete
+                      <Trash2 className="mr-1 h-3 w-3" /> 삭제
                     </Button>
-                    <Button size="sm" variant="ghost" onClick={() => setDeleteConfirmId(null)}>Cancel</Button>
+                    <Button size="sm" variant="ghost" onClick={() => setDeleteConfirmId(null)}>취소</Button>
                   </div>
                 </div>
               )}
@@ -173,7 +173,7 @@ export default function ProjectsPage() {
           <Card className="col-span-full cursor-pointer border-dashed transition-colors hover:border-blue-400 hover:bg-blue-50/50" onClick={() => setShowForm(true)}>
             <CardContent className="flex min-h-[120px] flex-col items-center justify-center py-8">
               <Plus className="h-8 w-8 text-gray-400" />
-              <p className="mt-2 text-sm text-gray-500">No projects yet. Click to create one.</p>
+              <p className="mt-2 text-sm text-gray-500">등록된 프로젝트가 없습니다. 클릭하여 생성하세요.</p>
             </CardContent>
           </Card>
         )}

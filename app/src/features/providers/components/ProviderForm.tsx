@@ -79,12 +79,12 @@ export function ProviderForm({ onSubmit, onCancel, isLoading, error }: ProviderF
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-semibold text-gray-900">Add Provider</h3>
+        <h3 className="text-lg font-semibold text-gray-900">프로바이더 추가</h3>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Provider</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">프로바이더</label>
             <select
               value={type}
               onChange={(e) => handleTypeChange(e.target.value as ProviderType)}
@@ -96,10 +96,10 @@ export function ProviderForm({ onSubmit, onCancel, isLoading, error }: ProviderF
             </select>
           </div>
 
-          <Input label="Display Name" value={name} onChange={(e) => setName(e.target.value)} placeholder={`e.g., Production ${currentProvider.label}`} />
+          <Input label="표시 이름" value={name} onChange={(e) => setName(e.target.value)} placeholder={`예: Production ${currentProvider.label}`} />
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">API Key</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700">API 키</label>
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <input
@@ -129,11 +129,11 @@ export function ProviderForm({ onSubmit, onCancel, isLoading, error }: ProviderF
                 disabled={!apiKey || keyStatus === 'testing'}
               >
                 {keyStatus === 'testing' ? (
-                  <><Loader2 className="mr-1 h-4 w-4 animate-spin" /> Testing...</>
+                  <><Loader2 className="mr-1 h-4 w-4 animate-spin" /> 검증 중...</>
                 ) : keyStatus === 'valid' ? (
-                  <><Check className="mr-1 h-4 w-4 text-green-600" /> Valid</>
+                  <><Check className="mr-1 h-4 w-4 text-green-600" /> 유효함</>
                 ) : (
-                  'Test Key'
+                  '키 검증'
                 )}
               </Button>
             </div>
@@ -141,11 +141,11 @@ export function ProviderForm({ onSubmit, onCancel, isLoading, error }: ProviderF
             {keyStatus === 'valid' && (
               <div className="mt-2 rounded-lg border border-green-200 bg-green-50 p-2">
                 <p className="flex items-center gap-1 text-sm font-medium text-green-700">
-                  <Check className="h-4 w-4" /> API key is valid
+                  <Check className="h-4 w-4" /> API 키가 유효합니다
                 </p>
                 {keyModels.length > 0 && (
                   <p className="mt-1 text-xs text-green-600">
-                    Available models: {keyModels.slice(0, 5).join(', ')}{keyModels.length > 5 ? ` +${keyModels.length - 5} more` : ''}
+                    사용 가능한 모델: {keyModels.slice(0, 5).join(', ')}{keyModels.length > 5 ? ` 외 ${keyModels.length - 5}개` : ''}
                   </p>
                 )}
               </div>
@@ -168,9 +168,9 @@ export function ProviderForm({ onSubmit, onCancel, isLoading, error }: ProviderF
 
           <div className="flex gap-2">
             <Button type="submit" disabled={!apiKey || isLoading}>
-              {isLoading ? 'Adding...' : 'Add Provider'}
+              {isLoading ? '추가 중...' : '프로바이더 추가'}
             </Button>
-            {onCancel && <Button type="button" variant="outline" onClick={onCancel}>Cancel</Button>}
+            {onCancel && <Button type="button" variant="outline" onClick={onCancel}>취소</Button>}
           </div>
         </form>
       </CardContent>

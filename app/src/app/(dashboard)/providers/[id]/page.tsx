@@ -42,9 +42,9 @@ export default function ProviderDetailPage() {
     return (
       <div className="space-y-6">
         <Link href="/providers" className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700">
-          <ArrowLeft className="h-4 w-4" /> Back to Providers
+          <ArrowLeft className="h-4 w-4" /> 프로바이더 목록으로
         </Link>
-        <p className="text-gray-500">Provider not found.</p>
+        <p className="text-gray-500">프로바이더를 찾을 수 없습니다.</p>
       </div>
     )
   }
@@ -69,40 +69,40 @@ export default function ProviderDetailPage() {
           </div>
         </div>
         <Badge variant={provider.isActive ? 'success' : 'default'} className="ml-auto">
-          {provider.isActive ? 'Active' : 'Inactive'}
+          {provider.isActive ? '활성' : '비활성'}
         </Badge>
       </div>
 
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900">API Keys</h3>
+            <h3 className="text-lg font-semibold text-gray-900">API 키</h3>
             <Button size="sm" onClick={() => setShowAddKey(!showAddKey)}>
-              <Plus className="mr-1 h-4 w-4" /> Add Key
+              <Plus className="mr-1 h-4 w-4" /> 키 추가
             </Button>
           </div>
         </CardHeader>
         <CardContent>
           {showAddKey && (
             <div className="mb-4 space-y-3 rounded-lg border border-blue-100 bg-blue-50 p-4">
-              <Input label="Label" value={newKeyLabel} onChange={(e) => setNewKeyLabel(e.target.value)} placeholder="e.g., Production" />
-              <Input label="API Key" type="password" value={newKeyValue} onChange={(e) => setNewKeyValue(e.target.value)} placeholder="sk-..." />
+              <Input label="레이블" value={newKeyLabel} onChange={(e) => setNewKeyLabel(e.target.value)} placeholder="예: Production" />
+              <Input label="API 키" type="password" value={newKeyValue} onChange={(e) => setNewKeyValue(e.target.value)} placeholder="sk-..." />
               <div className="flex gap-2">
-                <Button size="sm" onClick={() => setShowAddKey(false)}>Save Key</Button>
-                <Button size="sm" variant="outline" onClick={() => setShowAddKey(false)}>Cancel</Button>
+                <Button size="sm" onClick={() => setShowAddKey(false)}>키 저장</Button>
+                <Button size="sm" variant="outline" onClick={() => setShowAddKey(false)}>취소</Button>
               </div>
             </div>
           )}
 
           <div className="space-y-3">
-            <p className="text-sm text-gray-500">API keys will appear here once added.</p>
+            <p className="text-sm text-gray-500">API 키를 추가하면 여기에 표시됩니다.</p>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <h3 className="text-lg font-semibold text-gray-900">Sync Status</h3>
+          <h3 className="text-lg font-semibold text-gray-900">동기화 상태</h3>
         </CardHeader>
         <CardContent>
           {orgId ? (
@@ -114,7 +114,7 @@ export default function ProviderDetailPage() {
               onSyncComplete={handleSyncComplete}
             />
           ) : (
-            <p className="text-sm text-gray-500">Loading organization...</p>
+            <p className="text-sm text-gray-500">조직 정보 로딩 중...</p>
           )}
         </CardContent>
       </Card>

@@ -56,10 +56,10 @@ export function SyncButton({ providerId, orgId, lastSyncAt, supportsUsageApi = t
     return (
       <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
         <p className="text-sm text-amber-800">
-          This provider does not support automatic usage sync.
+          이 프로바이더는 자동 사용량 동기화를 지원하지 않습니다.
         </p>
         <p className="mt-1 text-xs text-amber-600">
-          Usage data can be imported via CSV or entered manually.
+          사용량 데이터는 CSV 가져오기 또는 수동 입력이 필요합니다.
         </p>
       </div>
     )
@@ -69,15 +69,15 @@ export function SyncButton({ providerId, orgId, lastSyncAt, supportsUsageApi = t
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-600">Last synced</p>
+          <p className="text-sm text-gray-600">마지막 동기화</p>
           <p className="font-medium text-gray-900">
-            {lastSyncAt ? new Date(lastSyncAt).toLocaleString() : 'Never'}
+            {lastSyncAt ? new Date(lastSyncAt).toLocaleString() : '없음'}
           </p>
         </div>
         <div className="flex items-center gap-2">
           {state === 'success' && (
             <span className="flex items-center gap-1 text-sm text-green-600">
-              <Check className="h-4 w-4" /> Synced!
+              <Check className="h-4 w-4" /> 동기화 완료!
             </span>
           )}
           <Button
@@ -88,15 +88,15 @@ export function SyncButton({ providerId, orgId, lastSyncAt, supportsUsageApi = t
           >
             {state === 'syncing' ? (
               <>
-                <RefreshCw className="mr-1 h-4 w-4 animate-spin" /> Syncing...
+                <RefreshCw className="mr-1 h-4 w-4 animate-spin" /> 동기화 중...
               </>
             ) : state === 'error' ? (
               <>
-                <RefreshCw className="mr-1 h-4 w-4" /> Retry
+                <RefreshCw className="mr-1 h-4 w-4" /> 재시도
               </>
             ) : (
               <>
-                <RefreshCw className="mr-1 h-4 w-4" /> Sync Now
+                <RefreshCw className="mr-1 h-4 w-4" /> 지금 동기화
               </>
             )}
           </Button>

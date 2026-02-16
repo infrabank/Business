@@ -25,12 +25,12 @@ function SavingsCalculator() {
     <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-lg lg:p-8">
       <div className="mb-6 flex items-center gap-2">
         <Calculator className="h-5 w-5 text-emerald-600" />
-        <h3 className="text-lg font-semibold text-gray-900">Savings Calculator</h3>
+        <h3 className="text-lg font-semibold text-gray-900">절약 계산기</h3>
       </div>
 
       <div className="mb-6">
         <label className="mb-2 block text-sm font-medium text-gray-700">
-          Monthly LLM Spend: <span className="text-emerald-600 font-bold">${monthlySpend.toLocaleString()}</span>
+          월간 LLM 지출: <span className="text-emerald-600 font-bold">${monthlySpend.toLocaleString()}</span>
         </label>
         <input
           type="range"
@@ -49,26 +49,25 @@ function SavingsCalculator() {
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <div className="rounded-lg bg-gray-50 p-4 text-center">
-          <p className="text-xs font-medium text-gray-500">Without LCM</p>
+          <p className="text-xs font-medium text-gray-500">LCM 사용 전</p>
           <p className="mt-1 text-2xl font-bold text-gray-900">${monthlySpend.toLocaleString()}</p>
         </div>
         <div className="rounded-lg bg-emerald-50 p-4 text-center">
-          <p className="text-xs font-medium text-emerald-600">Estimated Savings</p>
+          <p className="text-xs font-medium text-emerald-600">예상 절감액</p>
           <p className="mt-1 text-2xl font-bold text-emerald-600">${Math.round(estimatedSavings).toLocaleString()}</p>
         </div>
         <div className="rounded-lg bg-blue-50 p-4 text-center">
-          <p className="text-xs font-medium text-blue-600">Our Commission (20%)</p>
+          <p className="text-xs font-medium text-blue-600">수수료 (20%)</p>
           <p className="mt-1 text-2xl font-bold text-blue-600">${Math.round(commission).toLocaleString()}</p>
         </div>
         <div className="rounded-lg bg-emerald-100 p-4 text-center">
-          <p className="text-xs font-medium text-emerald-700">Your Net Savings</p>
+          <p className="text-xs font-medium text-emerald-700">순 절감액</p>
           <p className="mt-1 text-2xl font-bold text-emerald-700">${Math.round(netSavings).toLocaleString()}</p>
         </div>
       </div>
 
       <p className="mt-4 text-center text-sm text-gray-500">
-        You pay <span className="font-semibold text-gray-900">${Math.round(actualCost + commission).toLocaleString()}/mo</span> instead
-        of ${monthlySpend.toLocaleString()}/mo — saving <span className="font-semibold text-emerald-600">{Math.round((netSavings / monthlySpend) * 100)}%</span> net
+        ${monthlySpend.toLocaleString()}/월 대신 <span className="font-semibold text-gray-900">${Math.round(actualCost + commission).toLocaleString()}/월</span>만 지불 — 순 <span className="font-semibold text-emerald-600">{Math.round((netSavings / monthlySpend) * 100)}%</span> 절약
       </p>
     </div>
   )
@@ -76,24 +75,24 @@ function SavingsCalculator() {
 
 const faqItems = [
   {
-    question: 'How does the commission model work?',
-    answer: 'We only charge when we save you money. Our proxy optimizes your LLM costs through caching and smart model routing. At the end of each month, we calculate your total savings and charge 20% of that amount. If we save you nothing, you pay nothing.',
+    question: '수수료 모델은 어떻게 작동하나요?',
+    answer: '절약해드릴 때만 비용을 청구합니다. 우리 프록시는 캐싱과 스마트 모델 라우팅을 통해 LLM 비용을 최적화합니다. 매월 말에 총 절감액을 계산하여 그 금액의 20%를 청구합니다. 절감액이 없으면 비용도 없습니다.',
   },
   {
-    question: 'When am I billed?',
-    answer: 'Commission is calculated and billed monthly via Stripe. On the 1st of each month, we tally the previous month\'s savings from your proxy logs and report usage to Stripe. You\'ll receive an invoice for 20% of the total savings.',
+    question: '언제 청구되나요?',
+    answer: '수수료는 Stripe를 통해 매월 계산 및 청구됩니다. 매월 1일에 프록시 로그에서 전월 절감액을 집계하고 Stripe에 사용량을 보고합니다. 총 절감액의 20%에 대한 청구서를 받게 됩니다.',
   },
   {
-    question: 'What counts as "savings"?',
-    answer: 'Savings = what you would have paid without LCM minus what you actually paid. This includes savings from response caching (duplicate requests cost $0) and smart model routing (simple queries auto-routed to cheaper models).',
+    question: '"절감액"은 무엇으로 계산되나요?',
+    answer: '절감액 = LCM 없이 지불했을 금액 - 실제 지불한 금액. 여기에는 응답 캐싱(중복 요청 비용 $0)과 스마트 모델 라우팅(간단한 쿼리를 저렴한 모델로 자동 라우팅)을 통한 절감액이 포함됩니다.',
   },
   {
-    question: 'What are the Free tier limits?',
-    answer: 'Free tier includes 1,000 requests/month, 1 provider, and 7-day history. Upgrade to Growth for unlimited requests, all providers, and 365-day history.',
+    question: '무료 플랜의 제한사항은 무엇인가요?',
+    answer: '무료 플랜은 월 1,000건 요청, 1개 프로바이더, 7일 히스토리를 포함합니다. 성장 플랜으로 업그레이드하면 무제한 요청, 모든 프로바이더, 365일 히스토리를 이용할 수 있습니다.',
   },
   {
-    question: 'Can I downgrade back to Free?',
-    answer: 'Yes, you can cancel your Growth plan anytime through the billing portal. You\'ll revert to Free tier limits at the end of your current billing period.',
+    question: '무료 플랜으로 다운그레이드할 수 있나요?',
+    answer: '네, 청구 포털을 통해 언제든지 성장 플랜을 취소할 수 있습니다. 현재 청구 기간이 끝나면 무료 플랜 제한으로 되돌아갑니다.',
   },
 ]
 
@@ -116,13 +115,13 @@ export default function PricingPage() {
           <div className="flex items-center gap-4">
             {isLoggedIn ? (
               <Link href="/dashboard">
-                <Button size="sm" variant="outline">Dashboard</Button>
+                <Button size="sm" variant="outline">대시보드</Button>
               </Link>
             ) : (
               <>
-                <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900">Log in</Link>
+                <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900">로그인</Link>
                 <Link href="/signup">
-                  <Button size="sm">Sign up</Button>
+                  <Button size="sm">회원가입</Button>
                 </Link>
               </>
             )}
@@ -133,9 +132,9 @@ export default function PricingPage() {
       <main className="mx-auto max-w-5xl px-4 py-16">
         {/* Hero */}
         <div className="mb-12 text-center">
-          <h1 className="text-4xl font-bold text-gray-900">Only pay when we save you money</h1>
+          <h1 className="text-4xl font-bold text-gray-900">절약해드릴 때만 비용을 지불하세요</h1>
           <p className="mt-4 text-lg text-gray-600">
-            No monthly fees. We take 20% of what we save you — if we save you nothing, it costs you nothing.
+            월 구독료 없음. 절감액의 20%만 받습니다 — 절감액이 없으면 비용도 없습니다.
           </p>
         </div>
 
@@ -144,16 +143,16 @@ export default function PricingPage() {
           {/* Free */}
           <Card>
             <CardHeader>
-              <h3 className="text-lg font-semibold text-gray-900">Free</h3>
-              <p className="mt-1 text-sm text-gray-500">Try it out, no commitment</p>
+              <h3 className="text-lg font-semibold text-gray-900">무료</h3>
+              <p className="mt-1 text-sm text-gray-500">부담 없이 시작하기</p>
               <div className="mt-4">
                 <span className="text-4xl font-bold text-gray-900">$0</span>
-                <span className="text-gray-500">/forever</span>
+                <span className="text-gray-500">/영구 무료</span>
               </div>
             </CardHeader>
             <CardContent>
               <ul className="space-y-3">
-                {['1,000 requests/month', '1 provider', '7-day history', 'Basic dashboard', 'Response caching', 'Smart routing'].map((f) => (
+                {['월 1,000건 요청', '1개 프로바이더', '7일 히스토리', '기본 대시보드', '응답 캐싱', '스마트 라우팅'].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
                     <Check className="h-4 w-4 text-green-500" /> {f}
                   </li>
@@ -165,11 +164,11 @@ export default function PricingPage() {
                   className="mt-6 w-full"
                   disabled={currentPlan === 'free'}
                 >
-                  {currentPlan === 'free' ? 'Current Plan' : 'Downgrade'}
+                  {currentPlan === 'free' ? '현재 플랜' : '다운그레이드'}
                 </Button>
               ) : (
                 <Link href="/signup" className="mt-6 block">
-                  <Button variant="outline" className="w-full">Get Started</Button>
+                  <Button variant="outline" className="w-full">시작하기</Button>
                 </Link>
               )}
             </CardContent>
@@ -179,27 +178,27 @@ export default function PricingPage() {
           <Card className="ring-2 ring-emerald-500">
             <CardHeader>
               <div className="flex items-center gap-2">
-                <h3 className="text-lg font-semibold text-gray-900">Growth</h3>
-                <Badge variant="success">Recommended</Badge>
+                <h3 className="text-lg font-semibold text-gray-900">성장</h3>
+                <Badge variant="success">추천</Badge>
               </div>
-              <p className="mt-1 text-sm text-gray-500">Pay only for results</p>
+              <p className="mt-1 text-sm text-gray-500">결과에 대해서만 지불</p>
               <div className="mt-4">
                 <span className="text-4xl font-bold text-emerald-600">20%</span>
-                <span className="text-gray-500"> of savings</span>
+                <span className="text-gray-500"> 절감액 기준</span>
               </div>
-              <p className="mt-1 text-xs text-gray-400">$0 base — commission only</p>
+              <p className="mt-1 text-xs text-gray-400">$0 기본료 — 수수료만</p>
             </CardHeader>
             <CardContent>
               <ul className="space-y-3">
                 {[
-                  'Unlimited requests',
-                  'All providers (OpenAI, Anthropic, Google)',
-                  '365-day history',
-                  'Advanced analytics',
-                  'Budget alerts & guardrails',
-                  'Team members',
-                  'Optimization recommendations',
-                  'Priority support',
+                  '무제한 요청',
+                  '모든 프로바이더 (OpenAI, Anthropic, Google)',
+                  '365일 히스토리',
+                  '고급 분석',
+                  '예산 알림 및 가드레일',
+                  '팀 멤버',
+                  '최적화 추천',
+                  '우선 지원',
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
                     <Check className="h-4 w-4 text-emerald-500" /> {f}
@@ -209,17 +208,17 @@ export default function PricingPage() {
               {isLoggedIn ? (
                 currentPlan === 'growth' ? (
                   <Button variant="outline" className="mt-6 w-full" onClick={openPortal}>
-                    Manage Subscription
+                    구독 관리
                   </Button>
                 ) : (
                   <Button variant="primary" className="mt-6 w-full" onClick={handleUpgrade}>
-                    Start Saving <ArrowRight className="ml-2 h-4 w-4" />
+                    절약 시작하기 <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 )
               ) : (
                 <Link href="/signup" className="mt-6 block">
                   <Button variant="primary" className="w-full">
-                    Start Saving <ArrowRight className="ml-2 h-4 w-4" />
+                    절약 시작하기 <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </Link>
               )}
@@ -234,12 +233,12 @@ export default function PricingPage() {
 
         {/* How it works */}
         <div className="mb-16">
-          <h2 className="mb-8 text-center text-2xl font-bold text-gray-900">How commission billing works</h2>
+          <h2 className="mb-8 text-center text-2xl font-bold text-gray-900">수수료 청구 방식</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {[
-              { icon: Zap, title: 'We optimize your requests', desc: 'Caching, smart routing, and budget guardrails reduce your LLM costs automatically.' },
-              { icon: BarChart3, title: 'Savings tracked per-request', desc: 'Every proxy request logs original cost vs actual cost. Your dashboard shows real-time savings.' },
-              { icon: Shield, title: 'Monthly commission invoice', desc: 'On the 1st of each month, Stripe charges 20% of previous month\'s total savings. No savings = no charge.' },
+              { icon: Zap, title: '요청 최적화', desc: '캐싱, 스마트 라우팅, 예산 가드레일이 LLM 비용을 자동으로 절감합니다.' },
+              { icon: BarChart3, title: '요청별 절감액 추적', desc: '모든 프록시 요청은 원래 비용 대비 실제 비용을 기록합니다. 대시보드에서 실시간 절감액을 확인하세요.' },
+              { icon: Shield, title: '월간 수수료 청구', desc: '매월 1일, Stripe가 전월 총 절감액의 20%를 청구합니다. 절감액이 없으면 청구도 없습니다.' },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="rounded-xl border border-gray-200 bg-white p-6 text-center">
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-50">
@@ -254,7 +253,7 @@ export default function PricingPage() {
 
         {/* FAQ */}
         <div className="mb-16">
-          <h2 className="mb-8 text-center text-2xl font-bold text-gray-900">Frequently Asked Questions</h2>
+          <h2 className="mb-8 text-center text-2xl font-bold text-gray-900">자주 묻는 질문</h2>
           <div className="mx-auto max-w-3xl space-y-4">
             {faqItems.map(({ question, answer }) => (
               <details key={question} className="group rounded-lg border border-gray-200 bg-white">

@@ -24,13 +24,13 @@ export const STRIPE_METERED_PRICE = process.env.STRIPE_METERED_PRICE_ID || ''
 export const STRIPE_METER_EVENT_NAME = process.env.STRIPE_METER_EVENT_NAME || 'llm_savings'
 
 export const NAV_ITEMS = [
-  { label: 'Dashboard', href: '/dashboard', icon: 'LayoutDashboard' },
-  { label: 'Providers', href: '/providers', icon: 'Plug' },
-  { label: 'Projects', href: '/projects', icon: 'FolderOpen' },
-  { label: 'Budget', href: '/budget', icon: 'Wallet' },
-  { label: 'Alerts', href: '/alerts', icon: 'Bell' },
-  { label: 'Reports', href: '/reports', icon: 'FileText' },
-  { label: 'Proxy', href: '/proxy', icon: 'ArrowLeftRight' },
+  { label: '대시보드', href: '/dashboard', icon: 'LayoutDashboard' },
+  { label: '프로바이더', href: '/providers', icon: 'Plug' },
+  { label: '프로젝트', href: '/projects', icon: 'FolderOpen' },
+  { label: '예산', href: '/budget', icon: 'Wallet' },
+  { label: '알림', href: '/alerts', icon: 'Bell' },
+  { label: '리포트', href: '/reports', icon: 'FileText' },
+  { label: '프록시', href: '/proxy', icon: 'ArrowLeftRight' },
 ] as const
 
 export interface RateLimitConfig {

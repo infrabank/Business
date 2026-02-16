@@ -23,11 +23,11 @@ const STATUS_VARIANT: Record<string, 'success' | 'warning' | 'danger' | 'info'> 
 }
 
 const STATUS_LABEL: Record<string, string> = {
-  active: 'Active',
-  past_due: 'Past Due',
-  canceled: 'Canceled',
-  unpaid: 'Unpaid',
-  incomplete: 'Incomplete',
+  active: '활성',
+  past_due: '결제 지연',
+  canceled: '해지됨',
+  unpaid: '미결제',
+  incomplete: '미완료',
 }
 
 export default function SettingsPage() {
@@ -78,9 +78,9 @@ export default function SettingsPage() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 800))
       // TODO: Call bkend.patch('/users/me', { name: profileName, email: profileEmail })
-      toast('success', 'Profile updated.')
+      toast('success', '프로필이 업데이트되었습니다.')
     } catch {
-      toast('error', 'Failed to update profile.')
+      toast('error', '프로필 업데이트에 실패했습니다.')
     } finally {
       setProfileSaving(false)
     }
@@ -93,9 +93,9 @@ export default function SettingsPage() {
     try {
       await new Promise((resolve) => setTimeout(resolve, 800))
       // TODO: Call bkend.patch(`/organizations/${orgId}`, { name: orgName, slug: orgSlug, billingEmail })
-      toast('success', 'Organization updated.')
+      toast('success', '조직 정보가 업데이트되었습니다.')
     } catch {
-      toast('error', 'Failed to update organization.')
+      toast('error', '조직 업데이트에 실패했습니다.')
     } finally {
       setOrgSaving(false)
     }
@@ -114,8 +114,8 @@ export default function SettingsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-          <p className="text-gray-500">Manage your account and organization</p>
+          <h1 className="text-2xl font-bold text-gray-900">설정</h1>
+          <p className="text-gray-500">계정 및 조직 관리</p>
         </div>
         <div className="space-y-6">
           {[...Array(3)].map((_, i) => (
@@ -129,25 +129,25 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-500">Manage your account and organization</p>
+        <h1 className="text-2xl font-bold text-gray-900">설정</h1>
+        <p className="text-gray-500">계정 및 조직 관리</p>
       </div>
 
       <Card>
-        <CardHeader><h2 className="text-lg font-semibold text-gray-900">Profile</h2></CardHeader>
+        <CardHeader><h2 className="text-lg font-semibold text-gray-900">프로필</h2></CardHeader>
         <CardContent>
           <form className="max-w-md space-y-4" onSubmit={handleSaveProfile}>
-            <Input id="name" label="Name" value={profileName} onChange={(e) => setProfileName(e.target.value)} />
-            <Input id="email" label="Email" type="email" value={profileEmail} onChange={(e) => setProfileEmail(e.target.value)} />
+            <Input id="name" label="이름" value={profileName} onChange={(e) => setProfileName(e.target.value)} />
+            <Input id="email" label="이메일" type="email" value={profileEmail} onChange={(e) => setProfileEmail(e.target.value)} />
             <Button type="submit" disabled={profileSaving}>
-              {profileSaving ? 'Saving...' : 'Save Changes'}
+              {profileSaving ? '저장 중...' : '변경사항 저장'}
             </Button>
           </form>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><h2 className="text-lg font-semibold text-gray-900">Organization</h2></CardHeader>
+        <CardHeader><h2 className="text-lg font-semibold text-gray-900">조직</h2></CardHeader>
         <CardContent>
           {orgLoading ? (
             <div className="max-w-md space-y-4">
@@ -157,11 +157,11 @@ export default function SettingsPage() {
             </div>
           ) : (
             <form className="max-w-md space-y-4" onSubmit={handleUpdateOrg}>
-              <Input id="orgName" label="Organization Name" value={orgName} onChange={(e) => setOrgName(e.target.value)} />
-              <Input id="slug" label="URL Slug" value={orgSlug} onChange={(e) => setOrgSlug(e.target.value)} />
-              <Input id="billingEmail" label="Billing Email" type="email" value={billingEmail} onChange={(e) => setBillingEmail(e.target.value)} />
+              <Input id="orgName" label="조직 이름" value={orgName} onChange={(e) => setOrgName(e.target.value)} />
+              <Input id="slug" label="URL 슬러그" value={orgSlug} onChange={(e) => setOrgSlug(e.target.value)} />
+              <Input id="billingEmail" label="청구 이메일" type="email" value={billingEmail} onChange={(e) => setBillingEmail(e.target.value)} />
               <Button type="submit" disabled={orgSaving}>
-                {orgSaving ? 'Saving...' : 'Update Organization'}
+                {orgSaving ? '저장 중...' : '조직 정보 업데이트'}
               </Button>
             </form>
           )}
@@ -169,7 +169,7 @@ export default function SettingsPage() {
       </Card>
 
       <Card>
-        <CardHeader><h2 className="text-lg font-semibold text-gray-900">Subscription</h2></CardHeader>
+        <CardHeader><h2 className="text-lg font-semibold text-gray-900">구독</h2></CardHeader>
         <CardContent>
           {billingLoading ? (
             <div className="animate-pulse space-y-3">
@@ -179,46 +179,46 @@ export default function SettingsPage() {
           ) : (
             <div className="space-y-4">
               <div className="flex items-center gap-3">
-                <Badge variant="info">{plan.charAt(0).toUpperCase() + plan.slice(1)} Plan</Badge>
+                <Badge variant="info">{plan.charAt(0).toUpperCase() + plan.slice(1)} 플랜</Badge>
                 <Badge variant={STATUS_VARIANT[status] || 'info'}>
                   {STATUS_LABEL[status] || status}
                 </Badge>
-                {plan === 'growth' && <span className="text-sm text-gray-600">20% of savings</span>}
+                {plan === 'growth' && <span className="text-sm text-gray-600">절감액의 20%</span>}
               </div>
 
               {status === 'past_due' && (
                 <p className="text-sm text-amber-600">
-                  Payment failed. Please update your payment method to avoid service interruption.
+                  결제에 실패했습니다. 서비스 중단을 방지하려면 결제 수단을 업데이트해주세요.
                 </p>
               )}
 
               {subscription?.cancelAtPeriodEnd && (
                 <p className="text-sm text-red-600">
-                  Subscription will cancel at end of current period ({nextBillingDate})
+                  현재 기간 종료 시 구독이 해지됩니다 ({nextBillingDate})
                 </p>
               )}
 
               {nextBillingDate && !subscription?.cancelAtPeriodEnd && plan !== 'free' && (
-                <p className="text-sm text-gray-500">Next billing date: {nextBillingDate}</p>
+                <p className="text-sm text-gray-500">다음 결제일: {nextBillingDate}</p>
               )}
 
               <div className="flex gap-3">
                 {plan !== 'free' && subscription?.stripeCustomerId && (
                   <Button variant="outline" onClick={openPortal}>
                     <CreditCard className="mr-2 h-4 w-4" />
-                    Manage Billing
+                    결제 관리
                   </Button>
                 )}
                 <Link href="/pricing">
                   <Button variant={plan === 'free' ? 'primary' : 'outline'}>
-                    {plan === 'free' ? 'Upgrade Plan' : 'Change Plan'}
+                    {plan === 'free' ? '플랜 업그레이드' : '플랜 변경'}
                   </Button>
                 </Link>
               </div>
 
               {invoices.length > 0 && (
                 <div className="mt-6">
-                  <h3 className="mb-3 text-sm font-medium text-gray-700">Recent Invoices</h3>
+                  <h3 className="mb-3 text-sm font-medium text-gray-700">최근 청구서</h3>
                   <div className="divide-y rounded-lg border">
                     {invoices.map((inv) => (
                       <div key={inv.id} className="flex items-center justify-between px-4 py-3">
@@ -257,30 +257,30 @@ export default function SettingsPage() {
 
       {plan === 'growth' && commission && (
         <Card>
-          <CardHeader><h2 className="text-lg font-semibold text-gray-900">Commission This Month</h2></CardHeader>
+          <CardHeader><h2 className="text-lg font-semibold text-gray-900">이번 달 수수료</h2></CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <div className="rounded-lg bg-gray-50 p-4 text-center">
-                <p className="text-xs font-medium text-gray-500">Requests</p>
+                <p className="text-xs font-medium text-gray-500">요청 수</p>
                 <p className="mt-1 text-2xl font-bold text-gray-900">{commission.requestCount.toLocaleString()}</p>
               </div>
               <div className="rounded-lg bg-emerald-50 p-4 text-center">
-                <p className="text-xs font-medium text-emerald-600">Savings</p>
+                <p className="text-xs font-medium text-emerald-600">절감액</p>
                 <p className="mt-1 text-2xl font-bold text-emerald-600">${commission.currentMonthSavings.toFixed(2)}</p>
               </div>
               <div className="rounded-lg bg-blue-50 p-4 text-center">
-                <p className="text-xs font-medium text-blue-600">Commission (20%)</p>
+                <p className="text-xs font-medium text-blue-600">수수료 (20%)</p>
                 <p className="mt-1 text-2xl font-bold text-blue-600">${commission.commissionAmount.toFixed(2)}</p>
               </div>
               <div className="rounded-lg bg-emerald-100 p-4 text-center">
-                <p className="text-xs font-medium text-emerald-700">Net Savings</p>
+                <p className="text-xs font-medium text-emerald-700">순 절감액</p>
                 <p className="mt-1 text-2xl font-bold text-emerald-700">
                   ${(commission.currentMonthSavings - commission.commissionAmount).toFixed(2)}
                 </p>
               </div>
             </div>
             <p className="mt-3 text-xs text-gray-400">
-              Period: {new Date(commission.periodStart).toLocaleDateString()} — {new Date(commission.periodEnd).toLocaleDateString()}
+              기간: {new Date(commission.periodStart).toLocaleDateString('ko-KR')} — {new Date(commission.periodEnd).toLocaleDateString('ko-KR')}
             </p>
           </CardContent>
         </Card>

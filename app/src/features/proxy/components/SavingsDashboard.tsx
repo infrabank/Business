@@ -90,7 +90,7 @@ export function SavingsDashboard() {
     return (
       <Card>
         <CardContent className="py-8 text-center text-gray-400">
-          No savings data available
+          절감 데이터가 없습니다
         </CardContent>
       </Card>
     )
@@ -105,31 +105,31 @@ export function SavingsDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3">
           {/* Without LCM */}
           <div className="bg-gray-50 p-6 text-center">
-            <div className="text-sm font-medium text-gray-500">Without LCM</div>
+            <div className="text-sm font-medium text-gray-500">LCM 미사용 시</div>
             <div className="mt-2 text-3xl font-bold text-gray-900">
               ${summary.totalOriginalCost.toFixed(2)}
             </div>
-            <div className="mt-1 text-xs text-gray-400">What you would have paid</div>
+            <div className="mt-1 text-xs text-gray-400">지불했을 금액</div>
           </div>
           {/* Arrow / Savings */}
           <div className="flex flex-col items-center justify-center bg-emerald-50 p-6">
-            <div className="text-sm font-medium text-emerald-600">You Saved</div>
+            <div className="text-sm font-medium text-emerald-600">절감 금액</div>
             <div className="mt-2 text-4xl font-bold text-emerald-600">
               ${summary.totalSaved.toFixed(2)}
             </div>
             {summary.totalOriginalCost > 0 && (
               <div className="mt-2 rounded-full bg-emerald-100 px-3 py-1 text-sm font-semibold text-emerald-700">
-                {((summary.totalSaved / summary.totalOriginalCost) * 100).toFixed(1)}% less
+                {((summary.totalSaved / summary.totalOriginalCost) * 100).toFixed(1)}% 감소
               </div>
             )}
           </div>
           {/* With LCM */}
           <div className="bg-blue-50 p-6 text-center">
-            <div className="text-sm font-medium text-blue-600">With LCM</div>
+            <div className="text-sm font-medium text-blue-600">LCM 사용 시</div>
             <div className="mt-2 text-3xl font-bold text-blue-700">
               ${summary.totalActualCost.toFixed(2)}
             </div>
-            <div className="mt-1 text-xs text-blue-400">What you actually paid</div>
+            <div className="mt-1 text-xs text-blue-400">실제 지불 금액</div>
           </div>
         </div>
       </Card>
@@ -139,7 +139,7 @@ export function SavingsDashboard() {
         {/* Total Saved */}
         <Card className="border-emerald-200 bg-emerald-50">
           <CardContent className="py-6">
-            <div className="text-sm font-medium text-gray-600">Total Saved</div>
+            <div className="text-sm font-medium text-gray-600">총 절감액</div>
             <div className="mt-2 text-3xl font-bold text-emerald-600">
               ${summary.totalSaved.toFixed(2)}
             </div>
@@ -157,7 +157,7 @@ export function SavingsDashboard() {
         {/* Cache Hit Rate */}
         <Card>
           <CardContent className="py-6">
-            <div className="text-sm font-medium text-gray-600">Cache Hit Rate</div>
+            <div className="text-sm font-medium text-gray-600">캐시 적중률</div>
             <div className="mt-2 flex items-end gap-2">
               <span className="text-3xl font-bold text-gray-900">
                 {summary.cacheHitRate.toFixed(1)}%
@@ -175,12 +175,12 @@ export function SavingsDashboard() {
         {/* Cache Savings */}
         <Card>
           <CardContent className="py-6">
-            <div className="text-sm font-medium text-gray-600">Cache Savings</div>
+            <div className="text-sm font-medium text-gray-600">캐시 절감액</div>
             <div className="mt-2 text-3xl font-bold text-gray-900">
               ${summary.cacheSavings.toFixed(2)}
             </div>
             <div className="mt-1 text-xs text-gray-500">
-              {cacheStats.totalHits.toLocaleString()} hits
+              {cacheStats.totalHits.toLocaleString()} 적중
             </div>
           </CardContent>
         </Card>
@@ -188,12 +188,12 @@ export function SavingsDashboard() {
         {/* Routing Savings */}
         <Card>
           <CardContent className="py-6">
-            <div className="text-sm font-medium text-gray-600">Routing Savings</div>
+            <div className="text-sm font-medium text-gray-600">라우팅 절감액</div>
             <div className="mt-2 text-3xl font-bold text-gray-900">
               ${summary.routingSavings.toFixed(2)}
             </div>
             <div className="mt-1 text-xs text-gray-500">
-              {summary.modelRoutings.toLocaleString()} routings
+              {summary.modelRoutings.toLocaleString()} 라우팅
             </div>
           </CardContent>
         </Card>
@@ -211,7 +211,7 @@ export function SavingsDashboard() {
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            {p === '7d' ? 'Last 7 days' : p === '30d' ? 'Last 30 days' : 'Last 90 days'}
+            {p === '7d' ? '최근 7일' : p === '30d' ? '최근 30일' : '최근 90일'}
           </button>
         ))}
       </div>
@@ -220,13 +220,13 @@ export function SavingsDashboard() {
       <Card>
         <CardHeader>
           <h3 className="text-lg font-semibold text-gray-900">
-            Optimization Recommendations
+            최적화 권장사항
           </h3>
         </CardHeader>
         <CardContent>
           {recommendations.length === 0 ? (
             <div className="py-8 text-center text-gray-400">
-              No recommendations at this time
+              현재 권장사항 없음
             </div>
           ) : (
             <div className="space-y-4">
@@ -256,7 +256,7 @@ export function SavingsDashboard() {
                     </div>
                     <div className="ml-4 text-right">
                       <div className="text-sm font-medium text-gray-600">
-                        Potential Savings
+                        예상 절감액
                       </div>
                       <div className="mt-1 text-xl font-bold text-emerald-600">
                         ${rec.potentialSavings.toFixed(2)}

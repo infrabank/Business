@@ -19,7 +19,7 @@ export function ProviderPieChart({ data }: ProviderPieChartProps) {
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-semibold text-gray-900">By Provider</h3>
+        <h3 className="text-lg font-semibold text-gray-900">프로바이더별</h3>
       </CardHeader>
       <CardContent>
         <div className="h-64">

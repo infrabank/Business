@@ -37,20 +37,20 @@ export default function ReportsPage() {
   }
 
   const reports = [
-    { title: 'January 2026', cost: '$3,215.82', date: '2026-01-31', period: '2026-01', status: 'Ready' },
-    { title: 'February 2026 (Current)', cost: '$2,847.53', date: '2026-02-15', period: '2026-02', status: 'In Progress' },
+    { title: '2026년 1월', cost: '$3,215.82', date: '2026-01-31', period: '2026-01', status: '준비됨' },
+    { title: '2026년 2월 (진행 중)', cost: '$2,847.53', date: '2026-02-15', period: '2026-02', status: '진행 중' },
   ]
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
-          <p className="text-gray-500">Export cost data and generate reports</p>
+          <h1 className="text-2xl font-bold text-gray-900">리포트</h1>
+          <p className="text-gray-500">비용 데이터 내보내기 및 리포트 생성</p>
         </div>
         <Button onClick={() => handleExport()} disabled={exporting === 'all'}>
           <Download className="mr-2 h-4 w-4" />
-          {exporting === 'all' ? 'Exporting...' : 'Export CSV'}
+          {exporting === 'all' ? '내보내는 중...' : 'CSV 내보내기'}
         </Button>
       </div>
 
@@ -65,12 +65,12 @@ export default function ReportsPage() {
               <h3 className="mt-2 font-semibold text-gray-900">{r.title}</h3>
               <p className="mt-1 text-2xl font-bold text-gray-900">{r.cost}</p>
               <div className="mt-3 flex items-center gap-2">
-                <Badge variant={r.status === 'Ready' ? 'success' : 'info'}>{r.status}</Badge>
+                <Badge variant={r.status === '준비됨' ? 'success' : 'info'}>{r.status}</Badge>
               </div>
               <div className="mt-4 flex items-center gap-2">
                 <Button variant="outline" size="sm" onClick={() => handleExport(r.period)} disabled={exporting === r.period}>
                   <Download className="mr-1 h-4 w-4" />
-                  {exporting === r.period ? 'Exporting...' : 'CSV'}
+                  {exporting === r.period ? '내보내는 중...' : 'CSV'}
                 </Button>
               </div>
             </CardContent>

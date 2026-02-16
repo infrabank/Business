@@ -23,7 +23,7 @@ export function BudgetProgress({ name, amount, spent, thresholds = [50, 80, 100]
           <div>
             <h3 className="font-semibold text-gray-900">{name}</h3>
             <p className="mt-1 text-sm text-gray-500">
-              {formatCurrency(spent)} of {formatCurrency(amount)}
+              {formatCurrency(spent)} / {formatCurrency(amount)}
             </p>
           </div>
           <div className="flex items-center gap-2">
