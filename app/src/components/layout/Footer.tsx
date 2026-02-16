@@ -7,9 +7,9 @@ export function Footer() {
             &copy; {new Date().getFullYear()} LLM Cost Manager. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <a href="#" className="text-sm text-gray-400 hover:text-gray-600">Privacy</a>
-            <a href="#" className="text-sm text-gray-400 hover:text-gray-600">Terms</a>
-            <a href="#" className="text-sm text-gray-400 hover:text-gray-600">Support</a>
+            <a href="/privacy" className="text-sm text-gray-400 hover:text-gray-600">Privacy</a>
+            <a href="/terms" className="text-sm text-gray-400 hover:text-gray-600">Terms</a>
+            <a href="mailto:support@llmcost.io" className="text-sm text-gray-400 hover:text-gray-600">Support</a>
           </div>
         </div>
       </div>

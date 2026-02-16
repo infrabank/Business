@@ -12,9 +12,10 @@ interface DataTableProps<T> {
   data: T[]
   keyExtractor: (item: T) => string
   emptyMessage?: string
+  ariaLabel?: string
 }
 
-export function DataTable<T>({ columns, data, keyExtractor, emptyMessage = 'No data' }: DataTableProps<T>) {
+export function DataTable<T>({ columns, data, keyExtractor, emptyMessage = 'No data', ariaLabel }: DataTableProps<T>) {
   if (data.length === 0) {
     return (
       <div className="rounded-lg border border-gray-200 py-12 text-center text-gray-400">
@@ -25,12 +26,13 @@ export function DataTable<T>({ columns, data, keyExtractor, emptyMessage = 'No d
 
   return (
     <div className="overflow-x-auto rounded-lg border border-gray-200">
-      <table className="w-full text-sm">
+      <table className="w-full text-sm" aria-label={ariaLabel}>
         <thead>
           <tr className="border-b bg-gray-50">
             {columns.map((col) => (
               <th
                 key={col.key}
+                scope="col"
                 className={`px-4 py-3 font-medium text-gray-600 ${
                   col.align === 'right' ? 'text-right' : col.align === 'center' ? 'text-center' : 'text-left'
                 }`}

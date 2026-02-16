@@ -40,11 +40,13 @@ export function FaqSection() {
                 </button>
                 <div
                   id={`faq-answer-${index}`}
-                  className={`overflow-hidden transition-all duration-200 ${
-                    isOpen ? 'max-h-40 pb-5' : 'max-h-0'
+                  className={`grid overflow-hidden transition-[grid-template-rows] duration-300 ${
+                    isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
                   }`}
                 >
-                  <p className="px-6 text-gray-600">{item.answer}</p>
+                  <div className="min-h-0">
+                    <p className="px-6 pb-5 text-gray-600">{item.answer}</p>
+                  </div>
                 </div>
               </div>
             )

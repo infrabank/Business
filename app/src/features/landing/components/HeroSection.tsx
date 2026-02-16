@@ -151,13 +151,13 @@ export function HeroSection() {
       <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
         <Link
           href="/signup"
-          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white hover:bg-blue-700"
+          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-base font-medium text-white transition-all duration-200 hover:scale-[1.02] hover:bg-blue-700 hover:shadow-lg"
         >
           Start Free <ArrowRight className="h-4 w-4" />
         </Link>
         <Link
           href="/pricing"
-          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-6 py-3 text-base font-medium text-gray-700 hover:bg-gray-50"
+          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-6 py-3 text-base font-medium text-gray-700 transition-all duration-200 hover:bg-gray-50 hover:shadow-md"
         >
           View Pricing
         </Link>

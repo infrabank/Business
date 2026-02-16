@@ -5,6 +5,7 @@ import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Badge } from '@/components/ui/Badge'
+import { toast } from '@/components/ui/Toast'
 import { useBilling } from '@/features/billing/hooks/useBilling'
 import { useAppStore } from '@/lib/store'
 import { useSession } from '@/hooks/useSession'
@@ -49,6 +50,8 @@ export default function SettingsPage() {
   const [orgSlug, setOrgSlug] = useState('')
   const [billingEmail, setBillingEmail] = useState('')
   const [orgLoading, setOrgLoading] = useState(true)
+  const [profileSaving, setProfileSaving] = useState(false)
+  const [orgSaving, setOrgSaving] = useState(false)
 
   // Load user data
   useEffect(() => {
@@ -77,6 +80,35 @@ export default function SettingsPage() {
     }
     loadOrg()
   }, [orgId, currentUser?.email])
+
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setProfileSaving(true)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 800))
+      // TODO: Call bkend.patch('/users/me', { name: profileName, email: profileEmail })
+      toast('success', 'Profile updated.')
+    } catch {
+      toast('error', 'Failed to update profile.')
+    } finally {
+      setProfileSaving(false)
+    }
+  }
+
+  const handleUpdateOrg = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!orgId) return
+    setOrgSaving(true)
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 800))
+      // TODO: Call bkend.patch(`/organizations/${orgId}`, { name: orgName, slug: orgSlug, billingEmail })
+      toast('success', 'Organization updated.')
+    } catch {
+      toast('error', 'Failed to update organization.')
+    } finally {
+      setOrgSaving(false)
+    }
+  }
 
   const plan = subscription?.plan || currentUser?.plan || 'free'
   const status = subscription?.status || 'active'
@@ -118,10 +150,12 @@ export default function SettingsPage() {
       <Card>
         <CardHeader><h2 className="text-lg font-semibold text-gray-900">Profile</h2></CardHeader>
         <CardContent>
-          <form className="max-w-md space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="max-w-md space-y-4" onSubmit={handleSaveProfile}>
             <Input id="name" label="Name" value={profileName} onChange={(e) => setProfileName(e.target.value)} />
             <Input id="email" label="Email" type="email" value={profileEmail} onChange={(e) => setProfileEmail(e.target.value)} />
-            <Button type="submit">Save Changes</Button>
+            <Button type="submit" disabled={profileSaving}>
+              {profileSaving ? 'Saving...' : 'Save Changes'}
+            </Button>
           </form>
         </CardContent>
       </Card>
@@ -136,11 +170,13 @@ export default function SettingsPage() {
               ))}
             </div>
           ) : (
-            <form className="max-w-md space-y-4" onSubmit={(e) => e.preventDefault()}>
+            <form className="max-w-md space-y-4" onSubmit={handleUpdateOrg}>
               <Input id="orgName" label="Organization Name" value={orgName} onChange={(e) => setOrgName(e.target.value)} />
               <Input id="slug" label="URL Slug" value={orgSlug} onChange={(e) => setOrgSlug(e.target.value)} />
               <Input id="billingEmail" label="Billing Email" type="email" value={billingEmail} onChange={(e) => setBillingEmail(e.target.value)} />
-              <Button type="submit">Update Organization</Button>
+              <Button type="submit" disabled={orgSaving}>
+                {orgSaving ? 'Saving...' : 'Update Organization'}
+              </Button>
             </form>
           )}
         </CardContent>
