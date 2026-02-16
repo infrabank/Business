@@ -45,6 +45,8 @@ export function useProviders(orgId?: string | null) {
         body: JSON.stringify({ providerType: data.type, apiKey: data.apiKey }),
       })
       if (!validateRes.ok) return false
+      const validateData = await validateRes.json()
+      if (!validateData.valid) return false
 
       // 2. Create provider
       const provider = await bkend.post<Provider>('/providers', {
