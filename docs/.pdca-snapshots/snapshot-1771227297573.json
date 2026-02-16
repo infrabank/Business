@@ -1,0 +1,48 @@
+{
+  "timestamp": "2026-02-16T07:34:57.570Z",
+  "reason": "compaction",
+  "status": {
+    "version": "2.0",
+    "lastUpdated": "2026-02-15T14:00:00.000Z",
+    "activeFeatures": [],
+    "primaryFeature": "",
+    "features": {
+      "landing-page": {
+        "phase": "archived",
+        "matchRate": 100,
+        "iterationCount": 0,
+        "startedAt": "2026-02-16T12:00:00.000Z",
+        "completedAt": "2026-02-16T13:00:00.000Z",
+        "archivedAt": "2026-02-16T13:30:00.000Z",
+        "archivedTo": "docs/archive/2026-02/landing-page/"
+      },
+      "billing-payments": {
+        "phase": "archived",
+        "matchRate": 98,
+        "iterationCount": 1,
+        "startedAt": "2026-02-15T19:30:00.000Z",
+        "completedAt": "2026-02-16T00:00:00.000Z",
+        "archivedAt": "2026-02-16T00:00:00.000Z",
+        "archivedTo": "docs/archive/2026-02/billing-payments/"
+      }
+    },
+    "pipeline": {
+      "currentPhase": 1,
+      "level": "Dynamic",
+      "phaseHistory": [
+        {
+          "phase": 1,
+          "name": "Schema",
+          "startedAt": "2026-02-15T05:10:00.000Z",
+          "completedAt": "2026-02-15T05:25:00.000Z",
+          "status": "completed"
+        }
+      ]
+    },
+    "session": {
+      "startedAt": "2026-02-15T04:52:28.730Z",
+      "onboardingCompleted": true,
+      "lastActivity": "2026-02-15T17:30:00.000Z"
+    }
+  }
+}
