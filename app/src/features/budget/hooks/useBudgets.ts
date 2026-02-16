@@ -48,5 +48,13 @@ export function useBudgets(orgId?: string | null) {
     } catch { return false }
   }, [fetchBudgets])
 
-  return { budgets, isLoading, refetch: fetchBudgets, createBudget, updateBudget }
+  const deleteBudget = useCallback(async (budgetId: string) => {
+    try {
+      await bkend.delete('/budgets/' + budgetId, {})
+      await fetchBudgets()
+      return true
+    } catch { return false }
+  }, [fetchBudgets])
+
+  return { budgets, isLoading, refetch: fetchBudgets, createBudget, updateBudget, deleteBudget }
 }

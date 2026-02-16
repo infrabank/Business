@@ -34,6 +34,14 @@ export function useProjects(orgId?: string | null) {
     } catch { return false }
   }, [orgId, fetchProjects])
 
+  const updateProject = useCallback(async (projectId: string, data: Partial<Pick<Project, 'name' | 'description' | 'color'>>) => {
+    try {
+      await bkend.patch('/projects/' + projectId, data as Record<string, unknown>)
+      await fetchProjects()
+      return true
+    } catch { return false }
+  }, [fetchProjects])
+
   const deleteProject = useCallback(async (projectId: string) => {
     try {
       await bkend.delete('/projects/' + projectId, {})
@@ -42,5 +50,5 @@ export function useProjects(orgId?: string | null) {
     } catch { return false }
   }, [fetchProjects])
 
-  return { projects, isLoading, refetch: fetchProjects, createProject, deleteProject }
+  return { projects, isLoading, refetch: fetchProjects, createProject, updateProject, deleteProject }
 }

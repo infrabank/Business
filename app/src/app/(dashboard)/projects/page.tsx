@@ -1,26 +1,78 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Plus, FolderOpen } from 'lucide-react'
+import { Plus, FolderOpen, MoreVertical, Pencil, Trash2, Check, X } from 'lucide-react'
 import { useProjects } from '@/features/projects/hooks/useProjects'
 import { ProjectForm } from '@/features/projects/components/ProjectForm'
 import { useAppStore } from '@/lib/store'
 import { useSession } from '@/hooks/useSession'
+import type { Project } from '@/types'
+
+function ProjectMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    if (open) document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [open])
+
+  return (
+    <div className="relative" ref={ref}>
+      <button onClick={() => setOpen(!open)} className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+        <MoreVertical className="h-4 w-4" />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-8 z-10 w-40 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+          <button onClick={() => { onEdit(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+            <Pencil className="h-4 w-4" /> Edit
+          </button>
+          <hr className="my-1 border-gray-100" />
+          <button onClick={() => { onDelete(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50">
+            <Trash2 className="h-4 w-4" /> Delete
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
 
 export default function ProjectsPage() {
   const { isReady } = useSession()
   const orgId = useAppStore((s) => s.currentOrgId)
-  const { projects, isLoading, createProject } = useProjects(orgId)
+  const { projects, isLoading, createProject, updateProject, deleteProject } = useProjects(orgId)
   const [showForm, setShowForm] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editName, setEditName] = useState('')
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null)
 
   const handleSubmit = async (data: { name: string; description?: string; color?: string }) => {
     setIsSubmitting(true)
     const success = await createProject(data)
     setIsSubmitting(false)
     if (success) setShowForm(false)
+  }
+
+  const handleEdit = (project: Project) => {
+    setEditingId(project.id)
+    setEditName(project.name)
+  }
+
+  const handleSaveEdit = async (projectId: string) => {
+    if (!editName.trim()) return
+    await updateProject(projectId, { name: editName.trim() })
+    setEditingId(null)
+  }
+
+  const handleDelete = async (projectId: string) => {
+    await deleteProject(projectId)
+    setDeleteConfirmId(null)
   }
 
   if (!isReady || isLoading) {
@@ -61,15 +113,52 @@ export default function ProjectsPage() {
         {projects.map((p) => (
           <Card key={p.id}>
             <CardContent className="py-5">
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-lg" style={{ backgroundColor: `${p.color ?? '#6B7280'}15` }}>
-                  <FolderOpen className="h-5 w-5" style={{ color: p.color ?? '#6B7280' }} />
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg" style={{ backgroundColor: `${p.color ?? '#6B7280'}15` }}>
+                    <FolderOpen className="h-5 w-5" style={{ color: p.color ?? '#6B7280' }} />
+                  </div>
+                  <div>
+                    {editingId === p.id ? (
+                      <div className="flex items-center gap-1">
+                        <input
+                          value={editName}
+                          onChange={(e) => setEditName(e.target.value)}
+                          onKeyDown={(e) => { if (e.key === 'Enter') handleSaveEdit(p.id); if (e.key === 'Escape') setEditingId(null) }}
+                          autoFocus
+                          className="w-40 rounded border border-blue-400 px-2 py-0.5 text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                        <button onClick={() => handleSaveEdit(p.id)} className="rounded p-1 text-green-600 hover:bg-green-50">
+                          <Check className="h-4 w-4" />
+                        </button>
+                        <button onClick={() => setEditingId(null)} className="rounded p-1 text-gray-400 hover:bg-gray-100">
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ) : (
+                      <h3 className="font-semibold text-gray-900">{p.name}</h3>
+                    )}
+                    {p.description && <p className="text-sm text-gray-500">{p.description}</p>}
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900">{p.name}</h3>
-                  {p.description && <p className="text-sm text-gray-500">{p.description}</p>}
-                </div>
+                <ProjectMenu
+                  onEdit={() => handleEdit(p)}
+                  onDelete={() => setDeleteConfirmId(p.id)}
+                />
               </div>
+
+              {deleteConfirmId === p.id && (
+                <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3">
+                  <p className="text-sm font-medium text-red-800">Delete &quot;{p.name}&quot;?</p>
+                  <p className="mt-1 text-xs text-red-600">This will remove the project. This cannot be undone.</p>
+                  <div className="mt-2 flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => handleDelete(p.id)}>
+                      <Trash2 className="mr-1 h-3 w-3" /> Delete
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => setDeleteConfirmId(null)}>Cancel</Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
