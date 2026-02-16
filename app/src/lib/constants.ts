@@ -15,24 +15,13 @@ export const PROVIDER_LABELS: Record<string, string> = {
 }
 
 export const PLAN_LIMITS = {
-  free: { providers: 1, historyDays: 7, members: 1 },
-  starter: { providers: 3, historyDays: 30, members: 5 },
-  pro: { providers: -1, historyDays: 365, members: 20 },
-  enterprise: { providers: -1, historyDays: -1, members: -1 },
+  free: { providers: 1, historyDays: 7, members: 1, maxRequests: 1000 },
+  growth: { providers: -1, historyDays: 365, members: -1, maxRequests: -1 },
 } as const
 
-export const STRIPE_PRICES: Record<string, string> = {
-  starter: process.env.STRIPE_PRICE_STARTER || '',
-  pro: process.env.STRIPE_PRICE_PRO || '',
-  enterprise: process.env.STRIPE_PRICE_ENTERPRISE || '',
-}
-
-export const PLAN_RANK: Record<string, number> = {
-  free: 0,
-  starter: 1,
-  pro: 2,
-  enterprise: 3,
-}
+export const COMMISSION_RATE = 0.20
+export const STRIPE_METERED_PRICE = process.env.STRIPE_METERED_PRICE_ID || ''
+export const STRIPE_METER_EVENT_NAME = process.env.STRIPE_METER_EVENT_NAME || 'llm_savings'
 
 export const NAV_ITEMS = [
   { label: 'Dashboard', href: '/dashboard', icon: 'LayoutDashboard' },

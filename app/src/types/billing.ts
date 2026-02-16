@@ -2,7 +2,6 @@ import type { UserPlan } from './user'
 
 export type SubscriptionStatus =
   | 'active'
-  | 'trialing'
   | 'past_due'
   | 'canceled'
   | 'unpaid'
@@ -13,7 +12,6 @@ export interface SubscriptionInfo {
   status: SubscriptionStatus
   currentPeriodEnd: string
   cancelAtPeriodEnd: boolean
-  trialEnd?: string
   stripeCustomerId?: string
   subscriptionId?: string
 }
@@ -32,7 +30,6 @@ export interface PaymentHistory {
 }
 
 export interface CheckoutRequest {
-  priceId: string
   successUrl: string
   cancelUrl: string
 }
@@ -48,6 +45,16 @@ export interface PortalResponse {
 export interface BillingStatus {
   subscription: SubscriptionInfo
   invoices: PaymentHistory[]
+  commission: CommissionInfo | null
+}
+
+export interface CommissionInfo {
+  currentMonthSavings: number
+  commissionRate: number
+  commissionAmount: number
+  requestCount: number
+  periodStart: string
+  periodEnd: string
 }
 
 export interface PlanLimitCheck {

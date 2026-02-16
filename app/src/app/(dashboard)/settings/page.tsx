@@ -16,7 +16,6 @@ import type { Organization } from '@/types'
 
 const STATUS_VARIANT: Record<string, 'success' | 'warning' | 'danger' | 'info'> = {
   active: 'success',
-  trialing: 'info',
   past_due: 'warning',
   canceled: 'danger',
   unpaid: 'danger',
@@ -25,18 +24,10 @@ const STATUS_VARIANT: Record<string, 'success' | 'warning' | 'danger' | 'info'> 
 
 const STATUS_LABEL: Record<string, string> = {
   active: 'Active',
-  trialing: 'Trial',
   past_due: 'Past Due',
   canceled: 'Canceled',
   unpaid: 'Unpaid',
   incomplete: 'Incomplete',
-}
-
-const PLAN_PRICE: Record<string, number> = {
-  free: 0,
-  starter: 29,
-  pro: 99,
-  enterprise: 299,
 }
 
 export default function SettingsPage() {
@@ -112,11 +103,6 @@ export default function SettingsPage() {
 
   const plan = subscription?.plan || currentUser?.plan || 'free'
   const status = subscription?.status || 'active'
-  const price = PLAN_PRICE[plan] || 0
-
-  const trialDaysRemaining = subscription?.trialEnd
-    ? Math.max(0, Math.ceil((new Date(subscription.trialEnd).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-    : 0
 
   const nextBillingDate = subscription?.currentPeriodEnd
     ? new Date(subscription.currentPeriodEnd).toLocaleDateString('en-US', {
@@ -197,19 +183,8 @@ export default function SettingsPage() {
                 <Badge variant={STATUS_VARIANT[status] || 'info'}>
                   {STATUS_LABEL[status] || status}
                 </Badge>
-                {price > 0 && <span className="text-sm text-gray-600">${price}/month</span>}
+                {plan === 'growth' && <span className="text-sm text-gray-600">20% of savings</span>}
               </div>
-
-              {status === 'trialing' && trialDaysRemaining > 0 && (
-                <p className="text-sm text-blue-600">
-                  {trialDaysRemaining} days remaining in trial
-                  {subscription?.trialEnd && (
-                    <> &middot; Trial ends {new Date(subscription.trialEnd).toLocaleDateString('en-US', {
-                      month: 'short', day: 'numeric', year: 'numeric',
-                    })}</>
-                  )}
-                </p>
-              )}
 
               {status === 'past_due' && (
                 <p className="text-sm text-amber-600">

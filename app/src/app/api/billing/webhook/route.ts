@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getStripe, priceIdToPlan } from '@/lib/stripe'
+import { getStripe } from '@/lib/stripe'
 import { bkendService as bkend } from '@/lib/bkend'
 import type Stripe from 'stripe'
 
@@ -28,22 +28,20 @@ export async function POST(request: NextRequest) {
         const userId = session.metadata?.userId
         if (!userId || !session.subscription) break
 
-        const subscription = await getStripe().subscriptions.retrieve(session.subscription as string)
+        const subscription = await getStripe().subscriptions.retrieve(
+          session.subscription as string
+        )
         const firstItem = subscription.items.data[0]
-        const priceId = firstItem?.price?.id || ''
-        const plan = priceIdToPlan(priceId)
 
         await bkend.patch(`/users/${userId}`, {
-          plan,
+          plan: 'growth',
           subscriptionId: subscription.id,
+          subscriptionItemId: firstItem?.id || null,
           subscriptionStatus: subscription.status,
           currentPeriodEnd: firstItem
             ? new Date(firstItem.current_period_end * 1000).toISOString()
             : null,
           cancelAtPeriodEnd: subscription.cancel_at_period_end,
-          trialEnd: subscription.trial_end
-            ? new Date(subscription.trial_end * 1000).toISOString()
-            : null,
         })
         break
       }
@@ -52,25 +50,19 @@ export async function POST(request: NextRequest) {
         const subscription = event.data.object as Stripe.Subscription
         const customerId = subscription.customer as string
         const subItem = subscription.items.data[0]
-        const priceId = subItem?.price?.id || ''
-        const plan = priceIdToPlan(priceId)
 
-        // Find user by stripeCustomerId
         const users = await bkend.get<{ id: string }[]>('/users', {
           params: { stripeCustomerId: customerId },
         })
         if (users.length === 0) break
 
         await bkend.patch(`/users/${users[0].id}`, {
-          plan,
           subscriptionStatus: subscription.status,
+          subscriptionItemId: subItem?.id || null,
           currentPeriodEnd: subItem
             ? new Date(subItem.current_period_end * 1000).toISOString()
             : null,
           cancelAtPeriodEnd: subscription.cancel_at_period_end,
-          trialEnd: subscription.trial_end
-            ? new Date(subscription.trial_end * 1000).toISOString()
-            : null,
         })
         break
       }
@@ -87,10 +79,10 @@ export async function POST(request: NextRequest) {
         await bkend.patch(`/users/${users[0].id}`, {
           plan: 'free',
           subscriptionId: null,
+          subscriptionItemId: null,
           subscriptionStatus: 'canceled',
           currentPeriodEnd: null,
           cancelAtPeriodEnd: false,
-          trialEnd: null,
         })
         break
       }
@@ -104,7 +96,6 @@ export async function POST(request: NextRequest) {
         })
         if (users.length === 0) break
 
-        // Record payment history
         const orgs = await bkend.get<{ id: string }[]>('/organizations', {
           params: { ownerId: users[0].id },
         })
@@ -115,7 +106,7 @@ export async function POST(request: NextRequest) {
             amount: (invoice.amount_paid || 0) / 100,
             currency: invoice.currency || 'usd',
             status: 'paid',
-            description: invoice.lines?.data?.[0]?.description || 'Subscription payment',
+            description: 'Commission payment — 20% of savings',
             paidAt: new Date().toISOString(),
             invoiceUrl: invoice.hosted_invoice_url || '',
           })

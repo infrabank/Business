@@ -1,14 +1,15 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import type { SubscriptionInfo, PaymentHistory } from '@/types/billing'
+import type { SubscriptionInfo, PaymentHistory, CommissionInfo } from '@/types/billing'
 
 interface UseBillingResult {
   subscription: SubscriptionInfo | null
   invoices: PaymentHistory[]
+  commission: CommissionInfo | null
   isLoading: boolean
   error: string | null
-  createCheckout: (priceId: string) => Promise<void>
+  createCheckout: () => Promise<void>
   openPortal: () => Promise<void>
   refreshStatus: () => Promise<void>
 }
@@ -16,6 +17,7 @@ interface UseBillingResult {
 export function useBilling(): UseBillingResult {
   const [subscription, setSubscription] = useState<SubscriptionInfo | null>(null)
   const [invoices, setInvoices] = useState<PaymentHistory[]>([])
+  const [commission, setCommission] = useState<CommissionInfo | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -28,6 +30,7 @@ export function useBilling(): UseBillingResult {
       const data = await res.json()
       setSubscription(data.subscription)
       setInvoices(data.invoices || [])
+      setCommission(data.commission || null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load billing')
     } finally {
@@ -39,13 +42,13 @@ export function useBilling(): UseBillingResult {
     refreshStatus()
   }, [refreshStatus])
 
-  const createCheckout = useCallback(async (priceId: string) => {
+  const createCheckout = useCallback(async () => {
     try {
       setError(null)
       const res = await fetch('/api/billing/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({}),
       })
       if (!res.ok) {
         const data = await res.json()
@@ -73,5 +76,5 @@ export function useBilling(): UseBillingResult {
     }
   }, [])
 
-  return { subscription, invoices, isLoading, error, createCheckout, openPortal, refreshStatus }
+  return { subscription, invoices, commission, isLoading, error, createCheckout, openPortal, refreshStatus }
 }

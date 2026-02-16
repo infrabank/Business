@@ -121,7 +121,7 @@ export function HeroSection() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-20 text-center">
       <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-4 py-1.5 text-sm font-medium text-emerald-700">
-        <Zap className="h-4 w-4" /> Average 42% cost reduction
+        <Zap className="h-4 w-4" /> Free until we save you money — then just 20% of savings
       </div>
 
       <h1 className="mx-auto max-w-4xl text-5xl font-bold leading-tight tracking-tight text-gray-900 lg:text-6xl">

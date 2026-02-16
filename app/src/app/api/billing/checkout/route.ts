@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getStripe, STRIPE_PRICES } from '@/lib/stripe'
+import { getStripe, STRIPE_METERED_PRICE } from '@/lib/stripe'
 import { bkend } from '@/lib/bkend'
 import { getMeServer } from '@/lib/auth'
 import type { User } from '@/types'
@@ -13,19 +13,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { priceId } = await request.json()
-
-    // Fetch full user with Stripe fields
     const user = await bkend.get<User>(`/users/${authUser.id}`)
 
-    // Validate price ID
-    const validPrices = Object.values(STRIPE_PRICES).filter(Boolean)
-    if (!priceId || !validPrices.includes(priceId)) {
-      return NextResponse.json({ error: 'Invalid price ID' }, { status: 400 })
+    if (!STRIPE_METERED_PRICE) {
+      return NextResponse.json({ error: 'Metered price not configured' }, { status: 500 })
     }
 
     // Check if user already has active subscription
-    if (user.subscriptionStatus === 'active' || user.subscriptionStatus === 'trialing') {
+    if (user.subscriptionStatus === 'active') {
       return NextResponse.json(
         { error: 'Already has active subscription. Use the billing portal to manage.' },
         { status: 400 }
@@ -42,22 +37,17 @@ export async function POST(request: NextRequest) {
       })
       customerId = customer.id
 
-      // Save stripeCustomerId
       await bkend.patch<User>(`/users/${user.id}`, {
         stripeCustomerId: customerId,
       })
     }
 
-    // Determine if trial applies (starter and pro get 14-day trial)
-    const isTrialEligible = priceId === STRIPE_PRICES.starter || priceId === STRIPE_PRICES.pro
-
-    // Create checkout session
+    // Create metered subscription checkout
     const origin = request.headers.get('origin') || ''
     const session = await getStripe().checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
-      line_items: [{ price: priceId, quantity: 1 }],
-      subscription_data: isTrialEligible ? { trial_period_days: 14 } : undefined,
+      line_items: [{ price: STRIPE_METERED_PRICE }],
       success_url: `${origin}/billing/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/pricing`,
       metadata: { userId: user.id },

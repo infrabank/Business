@@ -152,6 +152,11 @@ export const stats: Stat[] = [
 
 export const faqItems: FaqItem[] = [
   {
+    question: 'How does pricing work?',
+    answer:
+      'We use a pure commission model — no monthly fees. We take 20% of the money we save you through caching and smart routing. If we save you nothing, you pay nothing. Your dashboard shows exact savings and commission in real-time.',
+  },
+  {
     question: 'How much will I actually save?',
     answer:
       'It depends on your usage pattern. Teams with repetitive prompts (embeddings, classification, templates) typically save 40-60% from caching alone. AI-powered intent routing adds another 20-30% on top — our classifier detects simple queries and auto-routes them to cheaper models. Your dashboard shows exact savings in real-time.',

@@ -25,7 +25,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
     const user = await bkend.get<User>(`/users/${authUser.id}`)
-    const { maxDays } = checkHistoryLimit((user.plan || 'free') as UserPlan)
+    const plan: UserPlan = (user.plan as UserPlan) || 'free'
+    const { maxDays } = checkHistoryLimit(plan)
 
     const requestedDays = period === '90d' ? 90 : period === '30d' ? 30 : 7
     const days = Math.min(requestedDays, maxDays)

@@ -1,6 +1,6 @@
 import type { SubscriptionStatus } from './billing'
 
-export type UserPlan = 'free' | 'starter' | 'pro' | 'enterprise'
+export type UserPlan = 'free' | 'growth'
 
 export interface User {
   id: string
@@ -10,10 +10,10 @@ export interface User {
   plan: UserPlan
   stripeCustomerId?: string
   subscriptionId?: string
+  subscriptionItemId?: string
   subscriptionStatus?: SubscriptionStatus
   currentPeriodEnd?: string
   cancelAtPeriodEnd?: boolean
-  trialEnd?: string
   createdAt: string
   updatedAt: string
 }
