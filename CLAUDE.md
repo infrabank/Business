@@ -4,70 +4,151 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**LLM Cost Manager** - LLM API 비용을 통합 관리하고 최적화하는 SaaS 플랫폼.
+**LLM Cost Manager** - SaaS platform for unified LLM API cost management and optimization across OpenAI, Anthropic, and Google AI providers. Includes a smart proxy that intercepts LLM API calls to provide caching, model routing, and cost tracking.
 
-AI 시대의 리바이스 청바지 = 모든 AI 사용 기업/개인에게 필수적인 비용관리 서비스.
+## Commands
 
-### Service Definition
+All commands run from the `app/` directory:
 
-- **Product**: LLM 비용관리 & 사용량 분석 플랫폼
-- **Value Prop**: 멀티 프로바이더(OpenAI, Anthropic, Google) API 비용을 단일 대시보드에서 통합 관리
-- **Target**: AI를 도입한 모든 기업과 개인 (SMB 우선)
-- **Revenue**: Freemium SaaS (Free → $29 → $99 → $299/월)
-- **Approach**: 1인 운영, AI-Native 개발, 2-3개월 MVP 출시
-
-## Project Level & Tech Stack
-
-- **bkit Level**: Dynamic (Backend + Auth + DB 필요)
-- **Language**: Korean (primary), English (code/docs)
-- **Frontend**: Next.js 14 (App Router) + Tailwind CSS + TypeScript
-- **Backend**: bkend.ai BaaS (인증, DB, 파일 스토리지)
-- **State**: Zustand
-- **Charts**: Recharts
-- **API Client**: TanStack Query + fetch
-- **Testing**: Vitest + Playwright
-- **Deployment**: Vercel (Frontend) / bkend.ai (Backend)
-
-## Development Methodology
-
-- **PDCA Cycle**: Plan → Do → Check → Act 반복
-- **AI-Native**: Claude Code + bkit 기반 개발
-- **Pipeline**: Phase 1(Schema) → Phase 9(Deployment) 순서 진행
-- **Current Phase**: Design 완료 → Phase 2 Convention / Phase 3 Mockup 진행 예정
-
-## Directory Structure
-
+```bash
+cd "D:\Opencode\Business\app"
+npm run dev      # Dev server (localhost:3000)
+npm run build    # Production build (strict — treat as CI gate)
+npm run lint     # ESLint
 ```
-Business/
-├── .claude/              # Claude Code 설정
-├── .bkit/                # bkit 에이전트 상태
-├── docs/
-│   ├── 01-plan/          # 사업 기획서, 스키마, 요구사항
-│   │   ├── features/     # PDCA Plan 문서
-│   │   └── schema.md     # Phase 1 데이터 모델
-│   ├── 02-design/        # 설계 문서
-│   │   └── features/     # PDCA Design 문서
-│   ├── 03-analysis/      # 갭 분석, 코드 분석
-│   └── 04-reports/       # PDCA 완료 보고서
-├── src/                  # 소스 코드 (Next.js)
-│   ├── app/              # App Router pages
-│   ├── components/       # 공유 UI 컴포넌트
-│   ├── features/         # 기능별 모듈 (auth, dashboard, providers, etc.)
-│   ├── services/         # 비즈니스 로직 + Provider Adapters
-│   ├── lib/              # 유틸리티, bkend 클라이언트
-│   └── types/            # TypeScript 타입 정의
-├── public/               # 정적 파일
-└── CLAUDE.md             # 이 파일
-```
+
+No test runner is configured yet (`vitest`/`playwright` in plan but not in package.json scripts).
+
+## Environment Variables
+
+Copy `.env.example` to `.env.local`. Required for local dev:
+
+| Variable | Purpose |
+|----------|---------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-side RLS bypass (webhooks, cron) |
+| `ENCRYPTION_KEY` | 32-byte hex (64 chars) for AES-256-GCM API key encryption |
+| `STRIPE_SECRET_KEY` | Stripe server key (commission billing) |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signature verification |
+| `STRIPE_METERED_PRICE_ID` | Metered billing price ID |
+| `UPSTASH_REDIS_REST_URL` | Upstash Redis REST URL (proxy rate limiting, caching, budgets) |
+| `UPSTASH_REDIS_REST_TOKEN` | Upstash Redis REST token |
+
+## Architecture
+
+### Monorepo Layout
+
+The Next.js app lives in `app/` (not root). Root contains docs and tooling config. Path alias `@/*` maps to `app/src/*`.
+
+### Two Data Paths
+
+1. **Usage Sync** (polling): `usage-sync.service.ts` calls provider APIs on schedule, stores results in `usage_records` table via `bkend.ts`. Dashboard reads from these stored records.
+
+2. **Smart Proxy** (real-time): Users route LLM calls through `/api/proxy/{openai,anthropic,google}/[...path]` (single-provider) or `/api/proxy/v2/[...path]` (multi-provider auto-detect). The proxy forwards requests, counts tokens, logs to `proxy_logs`, and applies optimizations (Redis caching, model routing, budget alerts).
+
+3. **Centralized Pricing** (`pricing.service.ts`): Single source of truth for model costs. Uses in-memory cache with DB fallback. `computeCost(model, inputTokens, outputTokens)` is the only cost calculation function.
+
+### Data Access Layer — `bkend.ts`
+
+A Supabase wrapper that mimics a REST API. Translates path-based calls to Supabase queries:
+
+- `bkend.get('/providers', { params: { orgId } })` → `supabase.from('providers').select('*').eq('org_id', orgId)`
+- `bkend.post('/usage-records', body)` → `supabase.from('usage_records').insert(body)`
+- Path segments: `/table-name` (list), `/table-name/id` (single), `/table-name/aggregate` (cost sum)
+- Filter suffixes: `_gte`, `_lte`, `_sort`, `_limit`, `_offset`, `metadata.*`
+
+Two exports: `bkend` (user-scoped, respects RLS) and `bkendService` (service role, bypasses RLS for webhooks/cron).
+
+### Supabase Client Selection
+
+Context-aware in `supabase.ts`:
+- Browser → singleton browser client (session from cookies)
+- Server + auth cookies present → server client (user-level RLS)
+- Server + no auth cookies → service client (cron/webhook, bypasses RLS)
+
+### Auth Flow
+
+Supabase Auth with `@supabase/ssr`. Signup goes through `/api/auth/signup` (server-side user creation to bypass email confirmation), then client-side `signInWithPassword`. Session managed via Supabase cookies (`sb-*-auth-token`).
+
+- `getMe()` — client-side, returns `AuthUser` (id/email/name only, no plan info)
+- `getMeServer()` — server-side equivalent
+- Full `User` type (with plan, stripe fields) requires `bkend.get<User>('/users/id')`
+
+### Middleware
+
+`src/middleware.ts` — Supabase SSR middleware that refreshes auth sessions and protects dashboard routes. Proxy API routes (`/api/proxy/*`) are excluded (they use proxy key auth).
+
+### Provider Adapter Pattern
+
+`src/services/providers/` — Strategy pattern for multi-provider support:
+- `ProviderAdapter` interface in `base-adapter.ts`: `validateKey()`, `fetchUsage()`, `getAvailableModels()`
+- Implementations: `OpenAIAdapter`, `AnthropicAdapter`, `GoogleAdapter`
+- Factory: `createAdapter(type)` in `index.ts`
+
+### Proxy Services
+
+`src/services/proxy/` — Smart proxy pipeline with Redis-based distributed infrastructure:
+
+**Core pipeline** (request flow order):
+1. `proxy-key.service.ts` — Key resolution, hashing, encryption (supports `'auto'` provider type)
+2. `rate-limiter.ts` — Redis sliding window rate limiting (async, with in-memory fallback)
+3. `budget-check.service.ts` — Redis O(1) budget counter via `INCRBYFLOAT` (daily reconciliation cron)
+4. `cache.service.ts` — Upstash Redis response cache (non-streaming only)
+5. `model-router.service.ts` — Automatic model downgrade: auto (intent-based) or manual (rule-based)
+6. `proxy-forward.service.ts` — Core forwarding, token counting, cost tracking, streaming passthrough
+7. `token-counter.ts` — Token extraction from JSON and SSE streams (OpenAI, Anthropic, Google formats)
+
+**Supporting services**:
+- `redis.ts` — Shared Upstash Redis client singleton
+- `budget-alert.service.ts` — Threshold alerts (80/90/100%) with Redis dedup
+- `routing-quality.service.ts` — Routing quality scoring from user feedback
+- `provider-detect.service.ts` — Auto-detect provider from request format (model name, body structure, path)
+
+**Proxy routes**:
+- `/api/proxy/{openai,anthropic,google}/[...path]` — Provider-specific endpoints (single-provider keys)
+- `/api/proxy/v2/[...path]` — Unified endpoint (auto-detect provider, multi-provider keys)
+- `/api/proxy/analytics/{timeseries,breakdown}` — Analytics aggregation APIs
+- `/api/proxy/logs/[id]/feedback` — User feedback on routing decisions
+- `/api/cron/reconcile-budgets` — Daily budget counter reconciliation
+
+### Feature Modules
+
+`src/features/{name}/` — Each feature has `components/` and `hooks/` subdirectories. Hooks are custom React hooks that call internal API routes (`/api/*`), not Supabase directly from the client.
+
+### Billing
+
+Commission-based model via Stripe: users pay 20% (`COMMISSION_RATE`) of savings achieved through the proxy. Uses Stripe metered billing with usage reporting via `/api/cron/report-usage`.
+
+- Plans: `free` | `growth` (defined in `types/user.ts`)
+- Limits enforced via `plan-limits.ts` (providers count, history days, request caps)
+- Stripe SDK v20: `current_period_end` is on `SubscriptionItem`, not `Subscription`
+
+### Route Groups
+
+- `(auth)/` — Login, signup pages
+- `(dashboard)/` — All authenticated pages (dashboard, providers, budget, alerts, projects, settings, proxy, reports)
+- Public pages: landing (`/`), pricing, terms, privacy, billing success
+
+## Key Patterns and Gotchas
+
+- **`'use client'`** required for any component using hooks or browser APIs
+- **`useSearchParams()`** must be wrapped in `<Suspense>` for Next.js static generation
+- **Recharts Tooltip** `formatter` callback: cast with `(v) => Number(v)`, not typed parameter `(v: number)`
+- **Badge** component uses `danger` variant, not `error`
+- **Stripe client** uses lazy init (`getStripe()`) to avoid build-time errors from missing env vars
+- **Encryption** format: `iv:tag:ciphertext` (all hex), using AES-256-GCM
+- **Proxy logging** is fire-and-forget (errors swallowed) to avoid impacting request latency
+- API keys are encrypted at rest; decrypted only server-side during sync or proxy forwarding
+- **Proxy key prefix**: `lmc_` — keys are hashed (SHA-256) for storage, never stored in plaintext
+- **bkend query params must be strings**: e.g. `isActive: 'true'` not `isActive: true`
+- **Redis services use graceful fallback**: rate limiter falls back to in-memory Map, budget counter falls back to DB query
 
 ## Conventions
 
-- 모든 코드 커밋 메시지: 영어, conventional commits 형식
-- 변수/함수명: camelCase (TypeScript)
-- 컴포넌트: PascalCase
-- 파일명: kebab-case
-- 문서: 한국어 우선, 기술 용어는 영어 병기
-
-## Permissions
-
-이 프로젝트는 skip-permissions 모드로 설정됨. 모든 파일 읽기/쓰기/실행이 허용됨.
+- Commit messages: English, conventional commits format
+- Variables/functions: `camelCase`; Components: `PascalCase`; Files: `kebab-case`
+- Communication: Korean; Code/docs: English
+- UI framework: Tailwind CSS 4 with `clsx` + `tailwind-merge` for class composition
+- Icons: `lucide-react`
+- Forms: `react-hook-form` + `zod` validation

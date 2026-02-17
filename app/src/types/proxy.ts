@@ -6,8 +6,9 @@ export interface ProxyKey {
   name: string
   keyHash: string
   keyPrefix: string
-  providerType: ProviderType
+  providerType: ProviderType | 'auto'
   encryptedApiKey: string
+  providerApiKeys?: Record<string, string>
   isActive: boolean
   budgetLimit: number | null
   rateLimit: number | null
@@ -18,6 +19,23 @@ export interface ProxyKey {
   enableCache: boolean
   cacheTtl: number | null
   enableModelRouting: boolean
+  budgetAlertThresholds: number[]
+  budgetAlertsEnabled: boolean
+  routingMode: 'auto' | 'manual' | 'off'
+  routingRules: RoutingRule[]
+}
+
+export interface RoutingRule {
+  fromModel: string
+  toModel: string
+  condition: 'always' | 'simple-only' | 'short-only'
+}
+
+export interface RoutingDecision {
+  intent: string
+  confidence: number
+  reason: string
+  wasRouted: boolean
 }
 
 export interface ProxyLog {
@@ -40,37 +58,49 @@ export interface ProxyLog {
   cacheHit: boolean
   savedAmount: number
   originalModel: string | null
+  routingDecision: RoutingDecision | null
+  userFeedback: 'positive' | 'negative' | null
 }
 
 export interface ResolvedProxyKey {
   id: string
   orgId: string
-  providerType: ProviderType
+  providerType: ProviderType | 'auto'
   decryptedApiKey: string
+  providerApiKeys?: Record<string, string>
   budgetLimit: number | null
   rateLimit: number | null
   isActive: boolean
   enableCache: boolean
   cacheTtl: number | null
   enableModelRouting: boolean
+  budgetAlertThresholds: number[]
+  budgetAlertsEnabled: boolean
+  routingMode: 'auto' | 'manual' | 'off'
+  routingRules: RoutingRule[]
 }
 
 export interface CreateProxyKeyRequest {
   name: string
-  providerType: ProviderType
+  providerType: ProviderType | 'auto'
   apiKey: string
+  providerApiKeys?: Record<string, string>
   budgetLimit?: number
   rateLimit?: number
   enableCache?: boolean
   cacheTtl?: number
   enableModelRouting?: boolean
+  budgetAlertThresholds?: number[]
+  budgetAlertsEnabled?: boolean
+  routingMode?: 'auto' | 'manual' | 'off'
+  routingRules?: RoutingRule[]
 }
 
 export interface ProxyKeyDisplay {
   id: string
   name: string
   keyPrefix: string
-  providerType: ProviderType
+  providerType: ProviderType | 'auto'
   isActive: boolean
   budgetLimit: number | null
   rateLimit: number | null
@@ -80,6 +110,10 @@ export interface ProxyKeyDisplay {
   enableCache: boolean
   cacheTtl: number | null
   enableModelRouting: boolean
+  budgetAlertThresholds: number[]
+  budgetAlertsEnabled: boolean
+  routingMode: 'auto' | 'manual' | 'off'
+  routingRules: RoutingRule[]
 }
 
 export interface ProxyLogQuery {

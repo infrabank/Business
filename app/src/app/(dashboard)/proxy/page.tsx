@@ -8,8 +8,13 @@ import { ProxyKeyList } from '@/features/proxy/components/ProxyKeyList'
 import { ProxyLogTable } from '@/features/proxy/components/ProxyLogTable'
 import { SetupInstructions } from '@/features/proxy/components/SetupInstructions'
 import { SavingsDashboard } from '@/features/proxy/components/SavingsDashboard'
+import { ProxyCostTrendChart } from '@/features/proxy/components/ProxyCostTrendChart'
+import { ModelBreakdownChart } from '@/features/proxy/components/ModelBreakdownChart'
+import { KeyBreakdownTable } from '@/features/proxy/components/KeyBreakdownTable'
 import { useProxyKeys } from '@/features/proxy/hooks/useProxyKeys'
 import { useProxyLogs } from '@/features/proxy/hooks/useProxyLogs'
+import { useProxyAnalytics } from '@/features/proxy/hooks/useProxyAnalytics'
+import type { AnalyticsPeriod, BreakdownType } from '@/types/proxy-analytics'
 
 export default function ProxyPage() {
   const { isReady } = useSession()
@@ -17,7 +22,14 @@ export default function ProxyPage() {
   const { keys, loading: keysLoading, error, createKey, toggleKey, removeKey } = useProxyKeys(orgId)
   const { logs, loading: logsLoading, offset, nextPage, prevPage } = useProxyLogs({ orgId })
   const [showForm, setShowForm] = useState(false)
-  const [activeTab, setActiveTab] = useState<'keys' | 'savings' | 'logs'>('keys')
+  const [activeTab, setActiveTab] = useState<'keys' | 'savings' | 'analytics' | 'logs'>('keys')
+  const [analyticsPeriod, setAnalyticsPeriod] = useState<AnalyticsPeriod>('30d')
+  const [breakdownBy, setBreakdownBy] = useState<BreakdownType>('model')
+  const { timeseries, breakdown, isLoading: analyticsLoading } = useProxyAnalytics({
+    orgId,
+    period: analyticsPeriod,
+    breakdownBy,
+  })
 
   if (!isReady) {
     return <div className="py-12 text-center text-gray-400">로딩 중...</div>
@@ -62,6 +74,14 @@ export default function ProxyPage() {
         </button>
         <button
           className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'analytics' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+          }`}
+          onClick={() => setActiveTab('analytics')}
+        >
+          분석
+        </button>
+        <button
+          className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
             activeTab === 'logs' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           }`}
           onClick={() => setActiveTab('logs')}
@@ -96,6 +116,55 @@ export default function ProxyPage() {
 
       {activeTab === 'savings' && (
         <SavingsDashboard />
+      )}
+
+      {activeTab === 'analytics' && (
+        <div className="space-y-6">
+          {/* Controls */}
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+              {(['7d', '30d', '90d'] as AnalyticsPeriod[]).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setAnalyticsPeriod(p)}
+                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                    analyticsPeriod === p ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  {p === '7d' ? '7일' : p === '30d' ? '30일' : '90일'}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+              {([['model', '모델'], ['provider', '프로바이더'], ['key', '키']] as [BreakdownType, string][]).map(([val, label]) => (
+                <button
+                  key={val}
+                  onClick={() => setBreakdownBy(val)}
+                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                    breakdownBy === val ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {analyticsLoading ? (
+            <div className="py-12 text-center text-gray-400">분석 데이터 로딩 중...</div>
+          ) : (
+            <>
+              <ProxyCostTrendChart data={timeseries} />
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                <ModelBreakdownChart
+                  data={breakdown}
+                  title={breakdownBy === 'model' ? '모델별 비용' : breakdownBy === 'provider' ? '프로바이더별 비용' : '키별 비용'}
+                />
+                <KeyBreakdownTable data={breakdown} />
+              </div>
+            </>
+          )}
+        </div>
       )}
 
       {activeTab === 'logs' && (

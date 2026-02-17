@@ -1,25 +1,18 @@
-interface RateLimitEntry {
-  timestamps: number[]
-}
+import { getRedis } from './redis'
 
-// In-memory store (resets on server restart — acceptable for MVP)
-const store = new Map<string, RateLimitEntry>()
-
-// Cleanup old entries every 5 minutes
-const CLEANUP_INTERVAL = 5 * 60 * 1000
+// In-memory fallback (resets on server restart)
+const memStore = new Map<string, { timestamps: number[] }>()
 let lastCleanup = Date.now()
+const CLEANUP_INTERVAL = 5 * 60 * 1000
 
-function cleanup(): void {
+function cleanupMemory(): void {
   const now = Date.now()
   if (now - lastCleanup < CLEANUP_INTERVAL) return
   lastCleanup = now
-
   const windowMs = 60_000
-  for (const [key, entry] of store.entries()) {
+  for (const [key, entry] of memStore.entries()) {
     entry.timestamps = entry.timestamps.filter((t) => now - t < windowMs)
-    if (entry.timestamps.length === 0) {
-      store.delete(key)
-    }
+    if (entry.timestamps.length === 0) memStore.delete(key)
   }
 }
 
@@ -30,49 +23,85 @@ export interface RateLimitResult {
   resetMs: number
 }
 
-export function checkRateLimit(
+/**
+ * Check rate limit using Redis sliding window counter.
+ * Falls back to in-memory when Redis is unavailable.
+ */
+export async function checkRateLimit(
   proxyKeyId: string,
   maxRequestsPerMinute: number | null,
-): RateLimitResult {
-  // No rate limit set
+): Promise<RateLimitResult> {
   if (maxRequestsPerMinute === null || maxRequestsPerMinute <= 0) {
     return { allowed: true, limit: 0, remaining: Infinity, resetMs: 0 }
   }
 
-  cleanup()
-
-  const now = Date.now()
-  const windowMs = 60_000
-  const key = proxyKeyId
-
-  let entry = store.get(key)
-  if (!entry) {
-    entry = { timestamps: [] }
-    store.set(key, entry)
-  }
-
-  // Remove timestamps outside the window
-  entry.timestamps = entry.timestamps.filter((t) => now - t < windowMs)
-
-  if (entry.timestamps.length >= maxRequestsPerMinute) {
-    const oldestInWindow = entry.timestamps[0]
-    const resetMs = oldestInWindow + windowMs - now
-
-    return {
-      allowed: false,
-      limit: maxRequestsPerMinute,
-      remaining: 0,
-      resetMs,
+  const r = getRedis()
+  if (r) {
+    try {
+      return await checkRateLimitRedis(r, proxyKeyId, maxRequestsPerMinute)
+    } catch {
+      // Fall through to in-memory
     }
   }
 
-  // Record this request
-  entry.timestamps.push(now)
+  return checkRateLimitMemory(proxyKeyId, maxRequestsPerMinute)
+}
+
+async function checkRateLimitRedis(
+  r: ReturnType<typeof getRedis> & object,
+  proxyKeyId: string,
+  limit: number,
+): Promise<RateLimitResult> {
+  const minuteBucket = Math.floor(Date.now() / 60_000)
+  const key = `lcm:rl:${proxyKeyId}:${minuteBucket}`
+
+  const count = await r.incr(key)
+
+  // Set TTL on first increment (120s to cover window boundary)
+  if (count === 1) {
+    await r.expire(key, 120)
+  }
+
+  if (count > limit) {
+    const resetMs = (minuteBucket + 1) * 60_000 - Date.now()
+    return { allowed: false, limit, remaining: 0, resetMs }
+  }
 
   return {
     allowed: true,
-    limit: maxRequestsPerMinute,
-    remaining: maxRequestsPerMinute - entry.timestamps.length,
+    limit,
+    remaining: limit - count,
+    resetMs: 0,
+  }
+}
+
+function checkRateLimitMemory(
+  proxyKeyId: string,
+  limit: number,
+): RateLimitResult {
+  cleanupMemory()
+
+  const now = Date.now()
+  const windowMs = 60_000
+
+  let entry = memStore.get(proxyKeyId)
+  if (!entry) {
+    entry = { timestamps: [] }
+    memStore.set(proxyKeyId, entry)
+  }
+
+  entry.timestamps = entry.timestamps.filter((t) => now - t < windowMs)
+
+  if (entry.timestamps.length >= limit) {
+    const resetMs = entry.timestamps[0] + windowMs - now
+    return { allowed: false, limit, remaining: 0, resetMs }
+  }
+
+  entry.timestamps.push(now)
+  return {
+    allowed: true,
+    limit,
+    remaining: limit - entry.timestamps.length,
     resetMs: 0,
   }
 }

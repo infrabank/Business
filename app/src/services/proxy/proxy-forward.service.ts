@@ -1,33 +1,13 @@
 import { bkendService } from '@/lib/bkend'
 import { extractTokensFromJson, extractTokensFromSSEChunks, mergeAnthropicStreamTokens } from './token-counter'
 import { incrementRequestCount } from './proxy-key.service'
+import { incrementBudgetSpend } from './budget-check.service'
+import { checkBudgetAlerts } from './budget-alert.service'
 import { routeModel, calculateRoutingSavings } from './model-router.service'
 import { buildCacheKey, getCachedResponse, setCachedResponse } from './cache.service'
+import { computeCost } from '@/services/pricing.service'
 import type { ProviderType } from '@/types/provider'
 import type { ResolvedProxyKey } from '@/types/proxy'
-
-// Re-export calculateCost from pricing.service for convenience
-// We use a local FALLBACK_PRICING copy to avoid async DB lookup in hot path
-const PRICING: Record<string, { input: number; output: number }> = {
-  'gpt-4o': { input: 2.5, output: 10 },
-  'gpt-4o-mini': { input: 0.15, output: 0.6 },
-  'gpt-4-turbo': { input: 10, output: 30 },
-  'o1': { input: 15, output: 60 },
-  'o1-mini': { input: 3, output: 12 },
-  'o3-mini': { input: 1.1, output: 4.4 },
-  'claude-opus-4-6': { input: 15, output: 75 },
-  'claude-sonnet-4-5': { input: 3, output: 15 },
-  'claude-haiku-4-5': { input: 0.8, output: 4 },
-  'gemini-2.0-flash': { input: 0.1, output: 0.4 },
-  'gemini-2.0-pro': { input: 1.25, output: 5 },
-  'gemini-1.5-pro': { input: 1.25, output: 5 },
-  'gemini-1.5-flash': { input: 0.075, output: 0.3 },
-}
-
-function computeCost(model: string, inputTokens: number, outputTokens: number): number {
-  const pricing = PRICING[model] ?? { input: 1, output: 2 }
-  return (inputTokens * pricing.input + outputTokens * pricing.output) / 1_000_000
-}
 
 interface ProviderConfig {
   baseUrl: string
@@ -102,8 +82,22 @@ export async function forwardRequest(params: {
   let originalModel: string | null = null
   let routedModel: string | null = null
 
+  let routingDecisionData: { intent: string; confidence: number; reason: string; wasRouted: boolean } | null = null
+
   if (resolvedKey.enableModelRouting && body && body.model && typeof body.model === 'string') {
-    const routingResult = await routeModel(body.model, body, resolvedKey.enableModelRouting)
+    const routingResult = await routeModel(
+      body.model,
+      body,
+      resolvedKey.enableModelRouting,
+      resolvedKey.routingMode,
+      resolvedKey.routingRules,
+    )
+    routingDecisionData = {
+      intent: routingResult.intent ?? 'unknown',
+      confidence: 0,
+      reason: routingResult.reason,
+      wasRouted: routingResult.wasRouted,
+    }
     if (routingResult.wasRouted) {
       wasRouted = true
       originalModel = routingResult.originalModel
@@ -142,9 +136,14 @@ export async function forwardRequest(params: {
         savedAmount: cachedEntry.cost,
         originalModel: wasRouted ? originalModel : null,
         originalCost: cachedEntry.cost,
+        routingDecision: routingDecisionData,
       })
 
       incrementRequestCount(resolvedKey.id)
+      incrementBudgetSpend(resolvedKey.id, cachedEntry.cost).catch(() => {})
+      if (resolvedKey.budgetAlertsEnabled && resolvedKey.budgetLimit) {
+        checkBudgetAlerts(resolvedKey.id, resolvedKey.orgId, cachedEntry.cost, resolvedKey.budgetLimit, resolvedKey.budgetAlertThresholds).catch(() => {})
+      }
 
       return new Response(cachedEntry.responseBody, {
         status: 200,
@@ -188,6 +187,7 @@ export async function forwardRequest(params: {
       requestModel: (finalBody?.model as string) || 'unknown',
       wasRouted,
       originalModel,
+      routingDecision: routingDecisionData,
     })
   }
 
@@ -253,10 +253,15 @@ export async function forwardRequest(params: {
     savedAmount,
     originalModel: wasRouted ? originalModel : null,
     originalCost,
+    routingDecision: routingDecisionData,
   })
 
-  // Increment request count
+  // Increment request count + budget spend
   incrementRequestCount(resolvedKey.id)
+  incrementBudgetSpend(resolvedKey.id, cost).catch(() => {})
+  if (resolvedKey.budgetAlertsEnabled && resolvedKey.budgetLimit) {
+    checkBudgetAlerts(resolvedKey.id, resolvedKey.orgId, cost, resolvedKey.budgetLimit, resolvedKey.budgetAlertThresholds).catch(() => {})
+  }
 
   return new Response(JSON.stringify(responseBody), {
     status: upstreamResponse.status,
@@ -278,8 +283,9 @@ function handleStreamingResponse(params: {
   requestModel: string
   wasRouted: boolean
   originalModel: string | null
+  routingDecision: { intent: string; confidence: number; reason: string; wasRouted: boolean } | null
 }): Response {
-  const { upstreamResponse, resolvedKey, providerType, path, startTime, requestModel, wasRouted, originalModel } = params
+  const { upstreamResponse, resolvedKey, providerType, path, startTime, requestModel, wasRouted, originalModel, routingDecision } = params
 
   const chunks: string[] = []
   const reader = upstreamResponse.body!.getReader()
@@ -347,9 +353,14 @@ function handleStreamingResponse(params: {
           savedAmount,
           originalModel: wasRouted ? originalModel : null,
           originalCost,
+          routingDecision,
         })
 
         incrementRequestCount(resolvedKey.id)
+        incrementBudgetSpend(resolvedKey.id, cost).catch(() => {})
+        if (resolvedKey.budgetAlertsEnabled && resolvedKey.budgetLimit) {
+          checkBudgetAlerts(resolvedKey.id, resolvedKey.orgId, cost, resolvedKey.budgetLimit, resolvedKey.budgetAlertThresholds).catch(() => {})
+        }
       } catch (err) {
         controller.error(err)
       }
@@ -386,6 +397,7 @@ function logProxyRequest(data: {
   savedAmount: number
   originalModel: string | null
   originalCost: number
+  routingDecision: { intent: string; confidence: number; reason: string; wasRouted: boolean } | null
 }): void {
   // Separate originalCost to avoid insert failure if column doesn't exist yet
   const { originalCost, ...coreData } = data

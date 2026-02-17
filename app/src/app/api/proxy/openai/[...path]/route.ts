@@ -39,7 +39,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ pat
   }
 
   // Rate limit check
-  const rateResult = checkRateLimit(resolved.id, resolved.rateLimit)
+  const rateResult = await checkRateLimit(resolved.id, resolved.rateLimit)
   if (!rateResult.allowed) {
     return buildRateLimitResponse(rateResult)
   }
@@ -86,7 +86,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ path
     })
   }
 
-  const rateResult = checkRateLimit(resolved.id, resolved.rateLimit)
+  const rateResult = await checkRateLimit(resolved.id, resolved.rateLimit)
   if (!rateResult.allowed) return buildRateLimitResponse(rateResult)
 
   const { path: pathSegments } = await params

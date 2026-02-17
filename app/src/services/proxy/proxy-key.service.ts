@@ -23,18 +23,32 @@ function hashKey(key: string): string {
 export async function createProxyKey(params: {
   orgId: string
   name: string
-  providerType: ProviderType
+  providerType: ProviderType | 'auto'
   apiKey: string
+  providerApiKeys?: Record<string, string>
   budgetLimit?: number
   rateLimit?: number
   enableCache?: boolean
   cacheTtl?: number
   enableModelRouting?: boolean
+  budgetAlertsEnabled?: boolean
+  budgetAlertThresholds?: number[]
+  routingMode?: 'auto' | 'manual' | 'off'
+  routingRules?: Array<{ fromModel: string; toModel: string; condition: 'always' | 'simple-only' | 'short-only' }>
 }): Promise<{ proxyKey: string; display: ProxyKeyDisplay }> {
   const rawKey = generateProxyKey()
   const keyHash = hashKey(rawKey)
   const keyPrefix = rawKey.slice(0, 8) + '...'
   const encryptedApiKey = encrypt(params.apiKey)
+
+  // Encrypt per-provider API keys for 'auto' type
+  let encryptedProviderKeys: Record<string, string> | null = null
+  if (params.providerType === 'auto' && params.providerApiKeys) {
+    encryptedProviderKeys = {}
+    for (const [provider, key] of Object.entries(params.providerApiKeys)) {
+      if (key) encryptedProviderKeys[provider] = encrypt(key)
+    }
+  }
 
   const record = await bkendService.post<ProxyKey>('/proxy-keys', {
     orgId: params.orgId,
@@ -43,6 +57,7 @@ export async function createProxyKey(params: {
     keyPrefix,
     providerType: params.providerType,
     encryptedApiKey,
+    providerApiKeys: encryptedProviderKeys,
     isActive: true,
     budgetLimit: params.budgetLimit ?? null,
     rateLimit: params.rateLimit ?? null,
@@ -50,6 +65,10 @@ export async function createProxyKey(params: {
     enableCache: params.enableCache ?? true,
     cacheTtl: params.cacheTtl ?? null,
     enableModelRouting: params.enableModelRouting ?? false,
+    budgetAlertsEnabled: params.budgetAlertsEnabled ?? false,
+    budgetAlertThresholds: params.budgetAlertThresholds ?? [0.8, 0.9, 1.0],
+    routingMode: params.routingMode ?? 'auto',
+    routingRules: params.routingRules ?? [],
   })
 
   return {
@@ -68,6 +87,10 @@ export async function createProxyKey(params: {
       enableCache: record.enableCache,
       cacheTtl: record.cacheTtl,
       enableModelRouting: record.enableModelRouting,
+      budgetAlertThresholds: record.budgetAlertThresholds ?? [0.8, 0.9, 1.0],
+      budgetAlertsEnabled: record.budgetAlertsEnabled ?? false,
+      routingMode: record.routingMode ?? 'auto',
+      routingRules: record.routingRules ?? [],
     },
   }
 }
@@ -86,17 +109,35 @@ export async function resolveProxyKey(rawKey: string): Promise<ResolvedProxyKey 
     const record = records[0]
     if (!record.isActive) return null
 
+    // Decrypt per-provider keys for 'auto' type
+    let decryptedProviderKeys: Record<string, string> | undefined
+    if (record.providerType === 'auto' && record.providerApiKeys) {
+      decryptedProviderKeys = {}
+      for (const [provider, encKey] of Object.entries(record.providerApiKeys)) {
+        try {
+          decryptedProviderKeys[provider] = decrypt(encKey)
+        } catch {
+          // Skip invalid keys
+        }
+      }
+    }
+
     return {
       id: record.id,
       orgId: record.orgId,
       providerType: record.providerType,
       decryptedApiKey: decrypt(record.encryptedApiKey),
+      providerApiKeys: decryptedProviderKeys,
       budgetLimit: record.budgetLimit,
       rateLimit: record.rateLimit,
       isActive: record.isActive,
       enableCache: record.enableCache,
       cacheTtl: record.cacheTtl,
       enableModelRouting: record.enableModelRouting,
+      budgetAlertsEnabled: record.budgetAlertsEnabled ?? false,
+      budgetAlertThresholds: record.budgetAlertThresholds ?? [0.8, 0.9, 1.0],
+      routingMode: record.routingMode ?? 'auto',
+      routingRules: record.routingRules ?? [],
     }
   } catch {
     return null
@@ -133,6 +174,10 @@ export async function listProxyKeys(orgId: string): Promise<ProxyKeyDisplay[]> {
     enableCache: r.enableCache,
     cacheTtl: r.cacheTtl,
     enableModelRouting: r.enableModelRouting,
+    budgetAlertThresholds: r.budgetAlertThresholds ?? [0.8, 0.9, 1.0],
+    budgetAlertsEnabled: r.budgetAlertsEnabled ?? false,
+    routingMode: r.routingMode ?? 'auto',
+    routingRules: r.routingRules ?? [],
   }))
 }
 
@@ -155,6 +200,10 @@ export async function updateProxyKey(
     enableCache: record.enableCache,
     cacheTtl: record.cacheTtl,
     enableModelRouting: record.enableModelRouting,
+    budgetAlertThresholds: record.budgetAlertThresholds ?? [0.8, 0.9, 1.0],
+    budgetAlertsEnabled: record.budgetAlertsEnabled ?? false,
+    routingMode: record.routingMode ?? 'auto',
+    routingRules: record.routingRules ?? [],
   }
 }
 

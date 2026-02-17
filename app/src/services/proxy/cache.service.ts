@@ -1,5 +1,5 @@
 import { createHash } from 'crypto'
-import { Redis } from '@upstash/redis'
+import { getRedis } from './redis'
 
 export interface CacheEntry {
   responseBody: string
@@ -17,18 +17,6 @@ export interface CacheStats {
   totalSaved: number // total $ saved from cache hits
   entries: number
   hitRate: number // percentage 0-100
-}
-
-// Redis client - lazy initialized to avoid errors when env vars are missing
-let redis: Redis | null = null
-
-function getRedis(): Redis | null {
-  if (redis) return redis
-  const url = process.env.UPSTASH_REDIS_REST_URL
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN
-  if (!url || !token) return null
-  redis = new Redis({ url, token })
-  return redis
 }
 
 // Cache key prefix to avoid collisions

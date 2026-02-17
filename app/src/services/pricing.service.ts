@@ -1,7 +1,11 @@
 import { bkend } from '@/lib/bkend'
 import type { ModelPricing, ProviderType } from '@/types'
 
-const FALLBACK_PRICING: Record<string, { input: number; output: number }> = {
+// ---------------------------------------------------------------------------
+// Single source of truth for model pricing (used by proxy-forward, model-router)
+// ---------------------------------------------------------------------------
+
+export const FALLBACK_PRICING: Record<string, { input: number; output: number }> = {
   'gpt-4o': { input: 2.5, output: 10 },
   'gpt-4o-mini': { input: 0.15, output: 0.6 },
   'gpt-4-turbo': { input: 10, output: 30 },
@@ -15,6 +19,64 @@ const FALLBACK_PRICING: Record<string, { input: number; output: number }> = {
   'gemini-2.0-pro': { input: 1.25, output: 5 },
   'gemini-1.5-pro': { input: 1.25, output: 5 },
   'gemini-1.5-flash': { input: 0.075, output: 0.3 },
+}
+
+// In-memory cache from DB, refreshed hourly
+let priceCache: Record<string, { input: number; output: number }> | null = null
+let cacheLoadedAt = 0
+const CACHE_TTL_MS = 60 * 60 * 1000 // 1 hour
+
+/**
+ * Sync pricing lookup — uses cache → fallback (no DB call)
+ * Safe for hot path (proxy forwarding)
+ */
+export function getModelPricingSync(model: string): { input: number; output: number } {
+  if (priceCache && Date.now() - cacheLoadedAt < CACHE_TTL_MS) {
+    const cached = priceCache[model]
+    if (cached) return cached
+  }
+  return FALLBACK_PRICING[model] ?? { input: 1, output: 2 }
+}
+
+/**
+ * Compute cost from model name and token counts.
+ * Single source — replaces duplicated computeCost in proxy-forward and model-router.
+ */
+export function computeCost(model: string, inputTokens: number, outputTokens: number): number {
+  const pricing = getModelPricingSync(model)
+  return (inputTokens * pricing.input + outputTokens * pricing.output) / 1_000_000
+}
+
+/**
+ * Get all pricing as a record (for model-router alternatives map)
+ */
+export function getAllPricing(): Record<string, { input: number; output: number }> {
+  if (priceCache && Date.now() - cacheLoadedAt < CACHE_TTL_MS) {
+    return { ...FALLBACK_PRICING, ...priceCache }
+  }
+  return { ...FALLBACK_PRICING }
+}
+
+/**
+ * Refresh in-memory price cache from DB. Call periodically or at startup.
+ */
+export async function refreshPriceCache(): Promise<void> {
+  try {
+    const pricings = await bkend.get<ModelPricing[]>('/model-pricings', {
+      params: { _limit: '200' },
+    })
+    const today = new Date().toISOString().split('T')[0]
+    const cache: Record<string, { input: number; output: number }> = {}
+    for (const p of pricings) {
+      if (p.effectiveFrom <= today && (!p.effectiveTo || p.effectiveTo >= today)) {
+        cache[p.model] = { input: p.inputPricePer1M, output: p.outputPricePer1M }
+      }
+    }
+    priceCache = cache
+    cacheLoadedAt = Date.now()
+  } catch {
+    // Keep existing cache or fallback
+  }
 }
 
 export async function getModelPricing(

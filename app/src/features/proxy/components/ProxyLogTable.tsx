@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { DataTable } from '@/components/ui/DataTable'
@@ -15,6 +16,21 @@ interface ProxyLogTableProps {
 }
 
 export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }: ProxyLogTableProps) {
+  const [feedbackState, setFeedbackState] = useState<Record<string, 'positive' | 'negative'>>({})
+
+  const submitFeedback = async (logId: string, feedback: 'positive' | 'negative') => {
+    try {
+      const res = await fetch(`/api/proxy/logs/${logId}/feedback`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feedback }),
+      })
+      if (res.ok) setFeedbackState((prev) => ({ ...prev, [logId]: feedback }))
+    } catch {
+      // Silent fail
+    }
+  }
+
   const columns = [
     {
       key: 'createdAt',
@@ -117,6 +133,43 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
           )}
         </div>
       ),
+    },
+    {
+      key: 'feedback',
+      header: '피드백',
+      align: 'center' as const,
+      render: (log: ProxyLog) => {
+        if (!log.originalModel) return <span className="text-xs text-gray-300">-</span>
+        const current = feedbackState[log.id] ?? log.userFeedback
+        return (
+          <div className="flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => submitFeedback(log.id, 'positive')}
+              className={`rounded px-1.5 py-0.5 text-xs transition-colors ${
+                current === 'positive'
+                  ? 'bg-emerald-100 text-emerald-700'
+                  : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+              }`}
+              title="라우팅 결과 만족"
+            >
+              +
+            </button>
+            <button
+              type="button"
+              onClick={() => submitFeedback(log.id, 'negative')}
+              className={`rounded px-1.5 py-0.5 text-xs transition-colors ${
+                current === 'negative'
+                  ? 'bg-red-100 text-red-700'
+                  : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+              }`}
+              title="라우팅 결과 불만족"
+            >
+              -
+            </button>
+          </div>
+        )
+      },
     },
   ]
 

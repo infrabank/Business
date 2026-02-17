@@ -9,22 +9,8 @@
  * Decision matrix: intent complexity × token count → route or keep
  */
 
-// Local pricing copy to avoid circular dependencies
-const PRICING: Record<string, { input: number; output: number }> = {
-  'gpt-4o': { input: 2.5, output: 10 },
-  'gpt-4o-mini': { input: 0.15, output: 0.6 },
-  'gpt-4-turbo': { input: 10, output: 30 },
-  'o1': { input: 15, output: 60 },
-  'o1-mini': { input: 3, output: 12 },
-  'o3-mini': { input: 1.1, output: 4.4 },
-  'claude-opus-4-6': { input: 15, output: 75 },
-  'claude-sonnet-4-5': { input: 3, output: 15 },
-  'claude-haiku-4-5': { input: 0.8, output: 4 },
-  'gemini-2.0-flash': { input: 0.1, output: 0.4 },
-  'gemini-2.0-pro': { input: 1.25, output: 5 },
-  'gemini-1.5-pro': { input: 1.25, output: 5 },
-  'gemini-1.5-flash': { input: 0.075, output: 0.3 },
-}
+import { getAllPricing } from '@/services/pricing.service'
+import type { RoutingRule } from '@/types/proxy'
 
 // Model routing alternatives map
 const MODEL_ALTERNATIVES: Record<string, string> = {
@@ -447,7 +433,7 @@ function estimateInputTokens(body: Record<string, unknown>): number {
 // ============================================================================
 
 function getModelCost(model: string): number {
-  const pricing = PRICING[model]
+  const pricing = getAllPricing()[model]
   if (!pricing) return 0
   return (pricing.input + pricing.output) / 2
 }
@@ -494,9 +480,11 @@ export interface RoutingResult {
 export async function routeModel(
   originalModel: string,
   body: Record<string, unknown>,
-  enableRouting: boolean
+  enableRouting: boolean,
+  routingMode: 'auto' | 'manual' | 'off' = 'auto',
+  manualRules?: RoutingRule[],
 ): Promise<RoutingResult> {
-  if (!enableRouting) {
+  if (!enableRouting || routingMode === 'off') {
     return {
       originalModel,
       routedModel: originalModel,
@@ -506,6 +494,57 @@ export async function routeModel(
     }
   }
 
+  // Manual routing mode: use user-defined rules
+  if (routingMode === 'manual' && manualRules && manualRules.length > 0) {
+    const rule = manualRules.find((r) => r.fromModel === originalModel)
+    if (rule) {
+      if (rule.condition === 'always') {
+        const savingsPercent = calculateSavingsPercent(originalModel, rule.toModel)
+        return {
+          originalModel,
+          routedModel: rule.toModel,
+          wasRouted: true,
+          estimatedSavingsPercent: Math.round(savingsPercent),
+          reason: `Manual rule: always route ${originalModel} → ${rule.toModel}`,
+        }
+      }
+      // For conditional rules, classify intent first
+      const intent = await classifyIntentHybrid(body)
+      const estimatedTokens = estimateInputTokens(body)
+      if (
+        (rule.condition === 'simple-only' && intent.routable) ||
+        (rule.condition === 'short-only' && estimatedTokens < 500)
+      ) {
+        const savingsPercent = calculateSavingsPercent(originalModel, rule.toModel)
+        return {
+          originalModel,
+          routedModel: rule.toModel,
+          wasRouted: true,
+          estimatedSavingsPercent: Math.round(savingsPercent),
+          reason: `Manual rule (${rule.condition}): ${originalModel} → ${rule.toModel}`,
+          intent: intent.category,
+        }
+      }
+      return {
+        originalModel,
+        routedModel: originalModel,
+        wasRouted: false,
+        estimatedSavingsPercent: 0,
+        reason: `Manual rule condition '${rule.condition}' not met`,
+        intent: intent.category,
+      }
+    }
+    // No matching rule for this model
+    return {
+      originalModel,
+      routedModel: originalModel,
+      wasRouted: false,
+      estimatedSavingsPercent: 0,
+      reason: 'No manual routing rule for this model',
+    }
+  }
+
+  // Auto routing mode
   const alternative = MODEL_ALTERNATIVES[originalModel]
   if (!alternative) {
     return {
@@ -567,8 +606,9 @@ export function calculateRoutingSavings(
   inputTokens: number,
   outputTokens: number
 ): number {
-  const originalPricing = PRICING[originalModel]
-  const routedPricing = PRICING[routedModel]
+  const prices = getAllPricing()
+  const originalPricing = prices[originalModel]
+  const routedPricing = prices[routedModel]
   if (!originalPricing || !routedPricing) return 0
 
   const originalCost =

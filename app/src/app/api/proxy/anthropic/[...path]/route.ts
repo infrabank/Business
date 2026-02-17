@@ -38,7 +38,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ pat
     })
   }
 
-  const rateResult = checkRateLimit(resolved.id, resolved.rateLimit)
+  const rateResult = await checkRateLimit(resolved.id, resolved.rateLimit)
   if (!rateResult.allowed) return buildRateLimitResponse(rateResult)
 
   const budgetResult = await checkBudget(resolved.orgId, resolved.id, resolved.budgetLimit)
