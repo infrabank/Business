@@ -1,7 +1,7 @@
 {
-  "sessionCount": 51,
+  "sessionCount": 53,
   "lastSession": {
-    "startedAt": "2026-02-17T12:21:29.145Z",
+    "startedAt": "2026-02-17T13:24:21.351Z",
     "platform": "claude",
     "level": "Starter"
   },
@@ -81,6 +81,14 @@
       "startedAt": "2026-02-17T20:30:00.000Z",
       "archivedAt": "2026-02-17T22:00:00.000Z",
       "archivedTo": "docs/archive/2026-02/onboarding-flow/"
+    },
+    "usage-analytics": {
+      "phase": "archived",
+      "matchRate": 98,
+      "iterationCount": 0,
+      "startedAt": "2026-02-17T22:30:00.000Z",
+      "archivedAt": "2026-02-18T01:00:00.000Z",
+      "archivedTo": "docs/archive/2026-02/usage-analytics/"
     }
   }
 }

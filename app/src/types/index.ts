@@ -15,3 +15,4 @@ export type { AnomalyDetectionSettings, AnomalyEvent, AnomalyType, AnomalySeveri
 export type { NotificationChannel, NotificationPreferences, NotificationLog, ChannelType, DeliveryStatus, DeliveryMode, EmailConfig, SlackConfig, WebhookConfig, ChannelSendPayload, ChannelSendResult } from './notification'
 export type { ReportFormat, ReportPeriodPreset, MonthlyReport, ReportSummary, ExportOptions } from './report'
 export type { CurrencyCode, DateFormatType, NumberFormatType, DashboardPeriod, UserPreferences, SettingsTab, ChangePasswordRequest, DeleteAccountRequest, ResetDataRequest } from './settings'
+export type { AnalyticsEventType, AnalyticsEvent, TrackEvent, EventBatchPayload, AnalyticsSummary, PageStat, FeatureStat, FunnelStep, RetentionCohort, AnalyticsPeriod, DailyUserCount } from './analytics'

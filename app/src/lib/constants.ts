@@ -34,6 +34,7 @@ export const NAV_ITEMS = [
   { label: '팀', href: '/team', icon: 'Users' },
   { label: '플레이그라운드', href: '/playground', icon: 'Terminal' },
   { label: '템플릿', href: '/templates', icon: 'BookTemplate' },
+  { label: '분석', href: '/analytics', icon: 'BarChart3' },
 ] as const
 
 export interface RateLimitConfig {

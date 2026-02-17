@@ -19,6 +19,7 @@
 | api-playground | 2026-02-17 | 96% | 0 | 4 |
 | prompt-templates | 2026-02-17 | 97% | 0 | 4 |
 | onboarding-flow | 2026-02-17 | 96% | 0 | 4 |
+| usage-analytics | 2026-02-18 | 98% | 0 | 4 |
 
 ## business-setup
 
@@ -274,3 +275,20 @@
 | Design | [onboarding-flow.design.md](./onboarding-flow/onboarding-flow.design.md) |
 | Analysis | [onboarding-flow.analysis.md](./onboarding-flow/onboarding-flow.analysis.md) |
 | Report | [onboarding-flow.report.md](./onboarding-flow/onboarding-flow.report.md) |
+
+## usage-analytics
+
+**사용자 행동 분석 - DAU/WAU/MAU, 페이지 방문, 기능 사용률, 퍼널 전환율, 리텐션 코호트**
+
+- **Duration**: 2026-02-17 ~ 2026-02-18 (AI-native development)
+- **Match Rate**: 98% (first pass, no iterations needed)
+- **Scope**: 8 FRs, 18 new files, 5 modified files, ~1,443 LOC
+
+### Documents
+
+| Document | Path |
+|----------|------|
+| Plan | [usage-analytics.plan.md](./usage-analytics/usage-analytics.plan.md) |
+| Design | [usage-analytics.design.md](./usage-analytics/usage-analytics.design.md) |
+| Analysis | [usage-analytics.analysis.md](./usage-analytics/usage-analytics.analysis.md) |
+| Report | [usage-analytics.report.md](./usage-analytics/usage-analytics.report.md) |

@@ -37,6 +37,7 @@ export async function middleware(request: NextRequest) {
   const protectedPaths = [
     '/dashboard', '/providers', '/budget', '/alerts',
     '/reports', '/projects', '/settings', '/billing', '/proxy', '/team',
+    '/analytics',
   ]
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p))
 
@@ -65,6 +66,7 @@ export const config = {
     '/proxy/:path*',
     '/team/:path*',
     '/api/proxy/:path*',
+    '/analytics/:path*',
     '/login',
     '/signup',
   ],
