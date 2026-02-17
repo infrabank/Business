@@ -1,6 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
+import { OnboardingWizard } from '@/features/onboarding/components/OnboardingWizard'
 import { StatCard } from '@/features/dashboard/components/StatCard'
 import { CostTrendChart } from '@/features/dashboard/components/CostTrendChart'
 import { ProviderPieChart } from '@/features/dashboard/components/ProviderPieChart'
@@ -47,8 +48,21 @@ export default function DashboardPage() {
   const { isReady } = useSession()
   const orgId = useAppStore((s) => s.currentOrgId)
 
+  const [showOnboarding, setShowOnboarding] = useState<boolean | null>(null)
   const [period, setPeriod] = useState<DashboardPeriod>('30d')
   const [selectedProviders, setSelectedProviders] = useState<ProviderType[]>([])
+
+  // Check onboarding status
+  useEffect(() => {
+    fetch('/api/onboarding')
+      .then((res) => res.json())
+      .then((data) => setShowOnboarding(!data.onboardingCompleted))
+      .catch(() => setShowOnboarding(false))
+  }, [])
+
+  const handleOnboardingComplete = useCallback(() => {
+    setShowOnboarding(false)
+  }, [])
 
   const { summary, chartData, isLoading, error: dashError } = useDashboard({
     orgId,
@@ -66,7 +80,16 @@ export default function DashboardPage() {
     }
   }, [summary, selectedProviders.length])
 
-  if (!isReady || isLoading) {
+  // Show onboarding wizard for new users
+  if (showOnboarding === true) {
+    return (
+      <div className="min-h-[80vh] bg-gradient-to-br from-slate-50 to-blue-50/30 -m-6 p-6">
+        <OnboardingWizard onComplete={handleOnboardingComplete} />
+      </div>
+    )
+  }
+
+  if (!isReady || isLoading || showOnboarding === null) {
     return (
       <div className="space-y-8">
         <div className="flex items-center justify-between">

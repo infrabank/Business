@@ -12,11 +12,13 @@ import { useApiKeys } from '../hooks/useApiKeys'
 import { bkend } from '@/lib/bkend'
 import { PROVIDER_COLORS, PROVIDER_LABELS } from '@/lib/constants'
 import Link from 'next/link'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, RotateCcw } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 
 export function GeneralTab() {
   const { currentUser } = useSession()
   const orgId = useAppStore((s) => s.currentOrgId)
+  const router = useRouter()
   const { preferences, isSaving, updatePreference } = usePreferences()
   const { keys, isLoading: keysLoading } = useApiKeys(orgId)
 
@@ -146,6 +148,30 @@ export function GeneralTab() {
               </select>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Onboarding */}
+      <Card>
+        <CardHeader><h2 className="text-lg font-semibold text-gray-900">온보딩</h2></CardHeader>
+        <CardContent>
+          <p className="text-sm text-gray-500">초기 설정 위자드를 다시 실행합니다</p>
+          <Button
+            variant="outline"
+            size="sm"
+            className="mt-3"
+            onClick={async () => {
+              await fetch('/api/onboarding', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ onboardingCompleted: false, onboardingStep: 1 }),
+              })
+              toast('info', '온보딩이 초기화되었습니다.')
+              router.push('/dashboard')
+            }}
+          >
+            <RotateCcw className="mr-2 h-4 w-4" /> 온보딩 다시 시작
+          </Button>
         </CardContent>
       </Card>
 

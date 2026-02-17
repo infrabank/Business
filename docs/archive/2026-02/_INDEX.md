@@ -18,6 +18,7 @@
 | settings-preferences | 2026-02-17 | 99% | 0 | 4 |
 | api-playground | 2026-02-17 | 96% | 0 | 4 |
 | prompt-templates | 2026-02-17 | 97% | 0 | 4 |
+| onboarding-flow | 2026-02-17 | 96% | 0 | 4 |
 
 ## business-setup
 
@@ -256,3 +257,20 @@
 | Design | [prompt-templates.design.md](./prompt-templates/prompt-templates.design.md) |
 | Analysis | [prompt-templates.analysis.md](./prompt-templates/prompt-templates.analysis.md) |
 | Report | [prompt-templates.report.md](./prompt-templates/prompt-templates.report.md) |
+
+## onboarding-flow
+
+**신규 사용자 온보딩 위자드 - 5단계 가이드 (프로바이더 등록 → API 키 검증 → 첫 동기화)**
+
+- **Duration**: 2026-02-17 (single day, AI-native development)
+- **Match Rate**: 96% (first pass, no iterations needed)
+- **Scope**: 8 FRs, 8 new files, 2 modified files, ~750 LOC
+
+### Documents
+
+| Document | Path |
+|----------|------|
+| Plan | [onboarding-flow.plan.md](./onboarding-flow/onboarding-flow.plan.md) |
+| Design | [onboarding-flow.design.md](./onboarding-flow/onboarding-flow.design.md) |
+| Analysis | [onboarding-flow.analysis.md](./onboarding-flow/onboarding-flow.analysis.md) |
+| Report | [onboarding-flow.report.md](./onboarding-flow/onboarding-flow.report.md) |

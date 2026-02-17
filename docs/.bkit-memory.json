@@ -1,7 +1,7 @@
 {
-  "sessionCount": 49,
+  "sessionCount": 51,
   "lastSession": {
-    "startedAt": "2026-02-17T11:46:02.671Z",
+    "startedAt": "2026-02-17T12:21:29.145Z",
     "platform": "claude",
     "level": "Starter"
   },
@@ -73,6 +73,14 @@
       "startedAt": "2026-02-17T18:30:00.000Z",
       "archivedAt": "2026-02-17T20:00:00.000Z",
       "archivedTo": "docs/archive/2026-02/prompt-templates/"
+    },
+    "onboarding-flow": {
+      "phase": "archived",
+      "matchRate": 96,
+      "iterationCount": 0,
+      "startedAt": "2026-02-17T20:30:00.000Z",
+      "archivedAt": "2026-02-17T22:00:00.000Z",
+      "archivedTo": "docs/archive/2026-02/onboarding-flow/"
     }
   }
 }
