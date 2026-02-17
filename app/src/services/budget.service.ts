@@ -1,5 +1,6 @@
 import { bkend } from '@/lib/bkend'
 import type { Budget, Alert } from '@/types'
+import { dispatchNotification } from './notification.service'
 
 interface UsageAggregation {
   totalCost: number
@@ -47,6 +48,13 @@ export async function checkBudgetThresholds(orgId: string, token: string): Promi
           }, { token })
 
           alerts.push(alert)
+
+          // Dispatch to external notification channels
+          try {
+            await dispatchNotification(alert, orgId, token)
+          } catch {
+            // fire-and-forget: notification failure should not block budget check
+          }
         }
 
         break // Only trigger highest threshold

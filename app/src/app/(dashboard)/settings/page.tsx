@@ -1,112 +1,44 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card, CardHeader, CardContent } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
-import { Badge } from '@/components/ui/Badge'
-import { toast } from '@/components/ui/Toast'
-import { useBilling } from '@/features/billing/hooks/useBilling'
-import { useAppStore } from '@/lib/store'
+import { useState, Suspense } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { useSession } from '@/hooks/useSession'
-import { bkend } from '@/lib/bkend'
-import { CreditCard, ExternalLink } from 'lucide-react'
-import Link from 'next/link'
-import type { Organization } from '@/types'
+import { SettingsTabs } from '@/features/settings/components/SettingsTabs'
+import { GeneralTab } from '@/features/settings/components/GeneralTab'
+import { OrganizationTab } from '@/features/settings/components/OrganizationTab'
+import { NotificationsTab } from '@/features/settings/components/NotificationsTab'
+import { SubscriptionTab } from '@/features/settings/components/SubscriptionTab'
+import { SecurityTab } from '@/features/settings/components/SecurityTab'
+import type { SettingsTab } from '@/types/settings'
 
-const STATUS_VARIANT: Record<string, 'success' | 'warning' | 'danger' | 'info'> = {
-  active: 'success',
-  past_due: 'warning',
-  canceled: 'danger',
-  unpaid: 'danger',
-  incomplete: 'warning',
-}
+function SettingsContent() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const tabParam = searchParams.get('tab') as SettingsTab | null
+  const [activeTab, setActiveTab] = useState<SettingsTab>(tabParam || 'general')
 
-const STATUS_LABEL: Record<string, string> = {
-  active: '활성',
-  past_due: '결제 지연',
-  canceled: '해지됨',
-  unpaid: '미결제',
-  incomplete: '미완료',
+  const handleTabChange = (tab: SettingsTab) => {
+    setActiveTab(tab)
+    router.replace(`/settings?tab=${tab}`, { scroll: false })
+  }
+
+  return (
+    <>
+      <SettingsTabs activeTab={activeTab} onTabChange={handleTabChange} />
+
+      <div className="mt-6">
+        {activeTab === 'general' && <GeneralTab />}
+        {activeTab === 'organization' && <OrganizationTab />}
+        {activeTab === 'notifications' && <NotificationsTab />}
+        {activeTab === 'subscription' && <SubscriptionTab />}
+        {activeTab === 'security' && <SecurityTab />}
+      </div>
+    </>
+  )
 }
 
 export default function SettingsPage() {
-  const { isReady, currentUser } = useSession()
-  const orgId = useAppStore((s) => s.currentOrgId)
-  const { subscription, invoices, commission, isLoading: billingLoading, openPortal } = useBilling()
-
-  const [profileName, setProfileName] = useState('')
-  const [profileEmail, setProfileEmail] = useState('')
-  const [orgName, setOrgName] = useState('')
-  const [orgSlug, setOrgSlug] = useState('')
-  const [billingEmail, setBillingEmail] = useState('')
-  const [orgLoading, setOrgLoading] = useState(true)
-  const [profileSaving, setProfileSaving] = useState(false)
-  const [orgSaving, setOrgSaving] = useState(false)
-
-  // Load user data
-  useEffect(() => {
-    if (currentUser) {
-      setProfileName(currentUser.name || '')
-      setProfileEmail(currentUser.email || '')
-    }
-  }, [currentUser])
-
-  // Load org data
-  useEffect(() => {
-    async function loadOrg() {
-      if (!orgId) { setOrgLoading(false); return }
-      try {
-        const orgs = await bkend.get<Organization[]>('/organizations', { params: { id: orgId } })
-        if (orgs.length > 0) {
-          setOrgName(orgs[0].name || '')
-          setOrgSlug(orgs[0].slug || '')
-          setBillingEmail(orgs[0].billingEmail || currentUser?.email || '')
-        }
-      } catch {
-        // ignore
-      } finally {
-        setOrgLoading(false)
-      }
-    }
-    loadOrg()
-  }, [orgId, currentUser?.email])
-
-  const handleSaveProfile = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setProfileSaving(true)
-    try {
-      await bkend.patch(`/users/${currentUser!.id}`, { name: profileName })
-      toast('success', '프로필이 업데이트되었습니다.')
-    } catch {
-      toast('error', '프로필 업데이트에 실패했습니다.')
-    } finally {
-      setProfileSaving(false)
-    }
-  }
-
-  const handleUpdateOrg = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!orgId) return
-    setOrgSaving(true)
-    try {
-      await bkend.patch(`/organizations/${orgId}`, { name: orgName, slug: orgSlug, billingEmail })
-      toast('success', '조직 정보가 업데이트되었습니다.')
-    } catch {
-      toast('error', '조직 업데이트에 실패했습니다.')
-    } finally {
-      setOrgSaving(false)
-    }
-  }
-
-  const plan = subscription?.plan || currentUser?.plan || 'free'
-  const status = subscription?.status || 'active'
-
-  const nextBillingDate = subscription?.currentPeriodEnd
-    ? new Date(subscription.currentPeriodEnd).toLocaleDateString('en-US', {
-        year: 'numeric', month: 'long', day: 'numeric',
-      })
-    : null
+  const { isReady } = useSession()
 
   if (!isReady) {
     return (
@@ -131,168 +63,9 @@ export default function SettingsPage() {
         <p className="text-gray-500">계정 및 조직 관리</p>
       </div>
 
-      <Card>
-        <CardHeader><h2 className="text-lg font-semibold text-gray-900">프로필</h2></CardHeader>
-        <CardContent>
-          <form className="max-w-md space-y-4" onSubmit={handleSaveProfile}>
-            <Input id="name" label="이름" value={profileName} onChange={(e) => setProfileName(e.target.value)} />
-            <Input id="email" label="이메일" type="email" value={profileEmail} onChange={(e) => setProfileEmail(e.target.value)} />
-            <Button type="submit" disabled={profileSaving}>
-              {profileSaving ? '저장 중...' : '변경사항 저장'}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader><h2 className="text-lg font-semibold text-gray-900">조직</h2></CardHeader>
-        <CardContent>
-          {orgLoading ? (
-            <div className="max-w-md space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-10 animate-pulse rounded bg-gray-100" />
-              ))}
-            </div>
-          ) : (
-            <form className="max-w-md space-y-4" onSubmit={handleUpdateOrg}>
-              <Input id="orgName" label="조직 이름" value={orgName} onChange={(e) => setOrgName(e.target.value)} />
-              <Input id="slug" label="URL 슬러그" value={orgSlug} onChange={(e) => setOrgSlug(e.target.value)} />
-              <Input id="billingEmail" label="청구 이메일" type="email" value={billingEmail} onChange={(e) => setBillingEmail(e.target.value)} />
-              <Button type="submit" disabled={orgSaving}>
-                {orgSaving ? '저장 중...' : '조직 정보 업데이트'}
-              </Button>
-            </form>
-          )}
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader><h2 className="text-lg font-semibold text-gray-900">팀 관리</h2></CardHeader>
-        <CardContent>
-          <p className="text-sm text-gray-500">멤버 초대, 역할 관리, 접근제어를 설정하세요.</p>
-          <Link href="/team" className="mt-3 inline-block">
-            <Button variant="outline">팀 관리 페이지로 이동</Button>
-          </Link>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader><h2 className="text-lg font-semibold text-gray-900">구독</h2></CardHeader>
-        <CardContent>
-          {billingLoading ? (
-            <div className="animate-pulse space-y-3">
-              <div className="h-6 w-48 rounded bg-gray-200" />
-              <div className="h-4 w-64 rounded bg-gray-200" />
-            </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Badge variant="info">{plan.charAt(0).toUpperCase() + plan.slice(1)} 플랜</Badge>
-                <Badge variant={STATUS_VARIANT[status] || 'info'}>
-                  {STATUS_LABEL[status] || status}
-                </Badge>
-                {plan === 'growth' && <span className="text-sm text-gray-600">절감액의 20%</span>}
-              </div>
-
-              {status === 'past_due' && (
-                <p className="text-sm text-amber-600">
-                  결제에 실패했습니다. 서비스 중단을 방지하려면 결제 수단을 업데이트해주세요.
-                </p>
-              )}
-
-              {subscription?.cancelAtPeriodEnd && (
-                <p className="text-sm text-red-600">
-                  현재 기간 종료 시 구독이 해지됩니다 ({nextBillingDate})
-                </p>
-              )}
-
-              {nextBillingDate && !subscription?.cancelAtPeriodEnd && plan !== 'free' && (
-                <p className="text-sm text-gray-500">다음 결제일: {nextBillingDate}</p>
-              )}
-
-              <div className="flex gap-3">
-                {plan !== 'free' && subscription?.stripeCustomerId && (
-                  <Button variant="outline" onClick={openPortal}>
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    결제 관리
-                  </Button>
-                )}
-                <Link href="/pricing">
-                  <Button variant={plan === 'free' ? 'primary' : 'outline'}>
-                    {plan === 'free' ? '플랜 업그레이드' : '플랜 변경'}
-                  </Button>
-                </Link>
-              </div>
-
-              {invoices.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="mb-3 text-sm font-medium text-gray-700">최근 청구서</h3>
-                  <div className="divide-y rounded-lg border">
-                    {invoices.map((inv) => (
-                      <div key={inv.id} className="flex items-center justify-between px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <span className="text-sm text-gray-600">
-                            {new Date(inv.createdAt).toLocaleDateString('en-US', {
-                              month: 'short', day: 'numeric', year: 'numeric',
-                            })}
-                          </span>
-                          <span className="text-sm font-medium text-gray-900">
-                            ${inv.amount.toFixed(2)}
-                          </span>
-                          <Badge variant={inv.status === 'paid' ? 'success' : 'warning'}>
-                            {inv.status}
-                          </Badge>
-                        </div>
-                        {inv.invoiceUrl && (
-                          <a
-                            href={inv.invoiceUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-sm text-blue-600 hover:text-blue-800"
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                          </a>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {plan === 'growth' && commission && (
-        <Card>
-          <CardHeader><h2 className="text-lg font-semibold text-gray-900">이번 달 수수료</h2></CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-              <div className="rounded-lg bg-gray-50 p-4 text-center">
-                <p className="text-xs font-medium text-gray-500">요청 수</p>
-                <p className="mt-1 text-2xl font-bold text-gray-900">{commission.requestCount.toLocaleString()}</p>
-              </div>
-              <div className="rounded-lg bg-emerald-50 p-4 text-center">
-                <p className="text-xs font-medium text-emerald-600">절감액</p>
-                <p className="mt-1 text-2xl font-bold text-emerald-600">${commission.currentMonthSavings.toFixed(2)}</p>
-              </div>
-              <div className="rounded-lg bg-blue-50 p-4 text-center">
-                <p className="text-xs font-medium text-blue-600">수수료 (20%)</p>
-                <p className="mt-1 text-2xl font-bold text-blue-600">${commission.commissionAmount.toFixed(2)}</p>
-              </div>
-              <div className="rounded-lg bg-emerald-100 p-4 text-center">
-                <p className="text-xs font-medium text-emerald-700">순 절감액</p>
-                <p className="mt-1 text-2xl font-bold text-emerald-700">
-                  ${(commission.currentMonthSavings - commission.commissionAmount).toFixed(2)}
-                </p>
-              </div>
-            </div>
-            <p className="mt-3 text-xs text-gray-400">
-              기간: {new Date(commission.periodStart).toLocaleDateString('ko-KR')} — {new Date(commission.periodEnd).toLocaleDateString('ko-KR')}
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      <Suspense fallback={<div className="h-12 animate-pulse rounded-lg bg-gray-100" />}>
+        <SettingsContent />
+      </Suspense>
     </div>
   )
 }

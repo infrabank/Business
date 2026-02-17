@@ -51,7 +51,7 @@ export function checkRequestLimit(plan: UserPlan, currentCount: number): PlanLim
 
 export function isFeatureAvailable(
   plan: UserPlan,
-  feature: 'optimization' | 'analytics' | 'export' | 'team' | 'budget_alerts'
+  feature: 'optimization' | 'analytics' | 'export' | 'team' | 'budget_alerts' | 'anomaly_detection' | 'notifications'
 ): boolean {
   if (plan === 'growth') return true
   return false

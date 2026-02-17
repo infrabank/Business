@@ -24,7 +24,9 @@ import {
   Layers,
   Database,
   KeyRound,
+  Shield,
 } from 'lucide-react'
+import { useAnomalyHistory } from '@/features/anomaly/hooks/useAnomalyHistory'
 import type { DashboardPeriod } from '@/types/dashboard'
 import type { ProviderType, OptimizationCategory } from '@/types'
 
@@ -55,6 +57,7 @@ export default function DashboardPage() {
     comparison: true,
   })
   const { tips, applyTip, dismissTip } = useOptimization(orgId)
+  const { events: anomalyEvents } = useAnomalyHistory(orgId, 7)
 
   // Initialize provider filter from summary data
   useEffect(() => {
@@ -72,8 +75,8 @@ export default function DashboardPage() {
             <p className="text-slate-500">LLM 지출 한눈에 보기</p>
           </div>
         </div>
-        <div className="grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
-          {[...Array(5)].map((_, i) => (
+        <div className="grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+          {[...Array(6)].map((_, i) => (
             <div key={i} className="loading-skeleton h-28 rounded-2xl" />
           ))}
         </div>
@@ -138,7 +141,7 @@ export default function DashboardPage() {
       )}
 
       {/* Stat Cards */}
-      <div className="grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
         <StatCard
           title="이번 달 총 비용"
           value={formatCurrency(summary.totalCost.current)}
@@ -166,6 +169,13 @@ export default function DashboardPage() {
           variant={forecastVariant}
           icon={<TrendingUp className="h-4 w-4 text-slate-400" />}
         />
+        <StatCard
+          title="이상 감지"
+          value={`${anomalyEvents.length}건`}
+          subtitle="최근 7일"
+          variant={anomalyEvents.some((e) => e.severity === 'critical') ? 'danger' : anomalyEvents.length > 0 ? 'warning' : 'default'}
+          icon={<Shield className="h-4 w-4 text-slate-400" />}
+        />
       </div>
 
       {/* Cost Trend Chart */}
@@ -173,6 +183,7 @@ export default function DashboardPage() {
         data={chartData}
         title={`일별 비용 (최근 ${PERIOD_LABELS[period]})`}
         showComparison
+        anomalyEvents={anomalyEvents}
       />
 
       {/* Provider + Model Charts */}

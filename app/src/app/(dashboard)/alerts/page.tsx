@@ -1,12 +1,15 @@
 'use client'
 
+import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Bell, CheckCircle } from 'lucide-react'
 import { useAlerts } from '@/features/alerts/hooks/useAlerts'
+import { AnomalyDetailPanel } from '@/features/anomaly/components/AnomalyDetailPanel'
 import { useAppStore } from '@/lib/store'
 import { useSession } from '@/hooks/useSession'
+import type { Alert } from '@/types'
 
 const typeVariant: Record<string, 'warning' | 'info' | 'danger' | 'default'> = {
   budget_warning: 'warning',
@@ -19,6 +22,7 @@ export default function AlertsPage() {
   const { isReady } = useSession()
   const orgId = useAppStore((s) => s.currentOrgId)
   const { alerts, isLoading, markAsRead, markAllRead } = useAlerts(orgId)
+  const [selectedAnomaly, setSelectedAnomaly] = useState<Alert | null>(null)
 
   if (!isReady || isLoading) {
     return (
@@ -48,6 +52,22 @@ export default function AlertsPage() {
         </Button>
       </div>
 
+      {/* Anomaly detail panel */}
+      {selectedAnomaly && selectedAnomaly.type === 'anomaly' && (
+        <AnomalyDetailPanel
+          alert={selectedAnomaly}
+          onSuppress={async (pattern) => {
+            await fetch('/api/anomaly/suppress', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ orgId, pattern }),
+            })
+            setSelectedAnomaly(null)
+          }}
+          onClose={() => setSelectedAnomaly(null)}
+        />
+      )}
+
       {alerts.length === 0 ? (
         <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
           <p className="text-gray-500">알림이 없습니다. 예산 임계값에 도달하면 알림이 표시됩니다.</p>
@@ -57,8 +77,15 @@ export default function AlertsPage() {
           {alerts.map((a) => (
             <Card
               key={a.id}
-              className={a.isRead ? 'opacity-60' : 'cursor-pointer'}
-              onClick={() => !a.isRead && markAsRead(a.id)}
+              className={`${a.isRead ? 'opacity-60' : 'cursor-pointer'} ${
+                selectedAnomaly?.id === a.id ? 'ring-2 ring-amber-400' : ''
+              }`}
+              onClick={() => {
+                if (a.type === 'anomaly') {
+                  setSelectedAnomaly(selectedAnomaly?.id === a.id ? null : a)
+                }
+                if (!a.isRead) markAsRead(a.id)
+              }}
             >
               <CardContent className="flex items-start gap-3 py-4">
                 <Bell className={`mt-0.5 h-5 w-5 ${a.isRead ? 'text-gray-300' : 'text-blue-500'}`} />

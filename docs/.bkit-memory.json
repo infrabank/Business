@@ -1,7 +1,7 @@
 {
-  "sessionCount": 40,
+  "sessionCount": 46,
   "lastSession": {
-    "startedAt": "2026-02-17T08:02:23.380Z",
+    "startedAt": "2026-02-17T10:24:53.615Z",
     "platform": "claude",
     "level": "Starter"
   },
@@ -20,26 +20,43 @@
       "deployment": "Vercel"
     }
   },
-  "pdcaPhase": "archived",
-  "currentFeature": "team-management",
-  "matchRate": 98,
+  "pdcaPhase": null,
+  "currentFeature": null,
+  "matchRate": null,
   "iterationCount": 0,
-  "completedPhases": [
-    "plan",
-    "design",
-    "do",
-    "check",
-    "report",
-    "archived"
-  ],
+  "completedPhases": [],
   "archivedFeatures": {
-    "team-management": {
+    "anomaly-detection": {
       "phase": "archived",
-      "matchRate": 98,
+      "matchRate": 100,
       "iterationCount": 0,
-      "startedAt": "2026-02-17T00:00:00Z",
-      "archivedAt": "2026-02-17T08:30:00Z",
-      "archivedTo": "docs/archive/2026-02/team-management/"
+      "startedAt": "2026-02-17T08:13:17.982Z",
+      "archivedAt": "2026-02-17T09:00:00.000Z",
+      "archivedTo": "docs/archive/2026-02/anomaly-detection/"
+    },
+    "notifications": {
+      "phase": "archived",
+      "matchRate": 97,
+      "iterationCount": 0,
+      "startedAt": "2026-02-17T09:30:00.000Z",
+      "archivedAt": "2026-02-17T11:00:00.000Z",
+      "archivedTo": "docs/archive/2026-02/notifications/"
+    },
+    "reports-export": {
+      "phase": "archived",
+      "matchRate": 94,
+      "iterationCount": 0,
+      "startedAt": "2026-02-17T11:30:00.000Z",
+      "archivedAt": "2026-02-17T13:00:00.000Z",
+      "archivedTo": "docs/archive/2026-02/reports-export/"
+    },
+    "settings-preferences": {
+      "phase": "archived",
+      "matchRate": 99,
+      "iterationCount": 0,
+      "startedAt": "2026-02-17T13:30:00.000Z",
+      "archivedAt": "2026-02-17T15:00:00.000Z",
+      "archivedTo": "docs/archive/2026-02/settings-preferences/"
     }
   }
 }

@@ -5,6 +5,7 @@ import {
   ComposedChart,
   Area,
   Line,
+  ReferenceDot,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -13,11 +14,13 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import type { ChartDataPoint } from '@/types/dashboard'
+import type { AnomalyEvent } from '@/types/anomaly'
 
 interface CostTrendChartProps {
   data: ChartDataPoint[]
   title?: string
   showComparison?: boolean
+  anomalyEvents?: AnomalyEvent[]
 }
 
 function CustomTooltip({
@@ -57,7 +60,7 @@ function CustomTooltip({
   )
 }
 
-export function CostTrendChart({ data, title = '비용 추이', showComparison = false }: CostTrendChartProps) {
+export function CostTrendChart({ data, title = '비용 추이', showComparison = false, anomalyEvents }: CostTrendChartProps) {
   const hasComparison = showComparison && data.some((d) => d.previousCost != null)
 
   return (
@@ -99,6 +102,22 @@ export function CostTrendChart({ data, title = '비용 추이', showComparison =
                   dot={false}
                 />
               )}
+              {anomalyEvents?.map((event) => {
+                const dateKey = event.detectedAt.split('T')[0]
+                const dataPoint = data.find((d) => d.date === dateKey)
+                if (!dataPoint) return null
+                return (
+                  <ReferenceDot
+                    key={event.id}
+                    x={dateKey}
+                    y={dataPoint.cost}
+                    r={6}
+                    fill={event.severity === 'critical' ? '#EF4444' : '#F59E0B'}
+                    stroke="#fff"
+                    strokeWidth={2}
+                  />
+                )
+              })}
             </ComposedChart>
           </ResponsiveContainer>
         </div>

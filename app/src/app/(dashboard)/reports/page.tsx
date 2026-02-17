@@ -1,82 +1,119 @@
 'use client'
 
-import { useState } from 'react'
-import { Card, CardContent } from '@/components/ui/Card'
-import { Button } from '@/components/ui/Button'
-import { Badge } from '@/components/ui/Badge'
-import { Download, FileText, Calendar } from 'lucide-react'
+import { useState, useCallback } from 'react'
 import { useAppStore } from '@/lib/store'
 import { useSession } from '@/hooks/useSession'
+import { useReports } from '@/features/reports/hooks/useReports'
+import { PeriodSelector } from '@/features/reports/components/PeriodSelector'
+import { MonthlyReportList } from '@/features/reports/components/MonthlyReportList'
+import { ReportDetail } from '@/features/reports/components/ReportDetail'
+import { Card, CardContent } from '@/components/ui/Card'
+import { FileText } from 'lucide-react'
 
 export default function ReportsPage() {
-  const { isReady } = useSession()
+  const { isReady, currentUser } = useSession()
   const orgId = useAppStore((s) => s.currentOrgId)
-  const [exporting, setExporting] = useState<string | null>(null)
+  const isGrowth = currentUser?.plan === 'growth'
 
-  const handleExport = async (period?: string) => {
-    if (!orgId) return
-    const key = period || 'all'
-    setExporting(key)
-    try {
-      const params = new URLSearchParams({ orgId })
-      if (period) params.set('period', period)
-      const res = await fetch(`/api/reports/export?${params}`)
-      if (!res.ok) throw new Error('Export failed')
-      const blob = await res.blob()
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `usage-report${period ? `-${period}` : ''}.csv`
-      a.click()
-      URL.revokeObjectURL(url)
-    } catch {
-      // Silent fail for now
-    } finally {
-      setExporting(null)
-    }
+  const {
+    monthlyReports,
+    summary,
+    planGated,
+    isLoading,
+    isSummaryLoading,
+    error,
+    fetchSummary,
+    exportReport,
+  } = useReports(orgId)
+
+  const [selectedPeriod, setSelectedPeriod] = useState<{ from: string; to: string } | null>(null)
+
+  const handlePeriodChange = useCallback((from: string, to: string) => {
+    setSelectedPeriod({ from, to })
+    fetchSummary(from, to)
+  }, [fetchSummary])
+
+  const handleSelectMonth = useCallback((month: string) => {
+    const [y, m] = month.split('-').map(Number)
+    const from = `${month}-01`
+    const lastDay = new Date(y, m, 0).getDate()
+    const to = `${month}-${String(lastDay).padStart(2, '0')}`
+    setSelectedPeriod({ from, to })
+    fetchSummary(from, to)
+  }, [fetchSummary])
+
+  const handleExport = useCallback((format: 'csv' | 'json' | 'pdf') => {
+    if (!selectedPeriod) return
+    exportReport(format, selectedPeriod.from, selectedPeriod.to)
+  }, [exportReport, selectedPeriod])
+
+  if (!isReady) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+      </div>
+    )
   }
-
-  const reports = [
-    { title: '2026년 1월', cost: '$3,215.82', date: '2026-01-31', period: '2026-01', status: '준비됨' },
-    { title: '2026년 2월 (진행 중)', cost: '$2,847.53', date: '2026-02-15', period: '2026-02', status: '진행 중' },
-  ]
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">리포트</h1>
-          <p className="text-gray-500">비용 데이터 내보내기 및 리포트 생성</p>
-        </div>
-        <Button onClick={() => handleExport()} disabled={exporting === 'all'}>
-          <Download className="mr-2 h-4 w-4" />
-          {exporting === 'all' ? '내보내는 중...' : 'CSV 내보내기'}
-        </Button>
+      {/* Page header */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">리포트</h1>
+        <p className="text-gray-500">비용 분석 리포트 및 데이터 내보내기</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {reports.map((r) => (
-          <Card key={r.title}>
-            <CardContent className="py-5">
-              <div className="flex items-center gap-2 text-gray-400">
-                <Calendar className="h-4 w-4" />
-                <span className="text-xs">{r.date}</span>
-              </div>
-              <h3 className="mt-2 font-semibold text-gray-900">{r.title}</h3>
-              <p className="mt-1 text-2xl font-bold text-gray-900">{r.cost}</p>
-              <div className="mt-3 flex items-center gap-2">
-                <Badge variant={r.status === '준비됨' ? 'success' : 'info'}>{r.status}</Badge>
-              </div>
-              <div className="mt-4 flex items-center gap-2">
-                <Button variant="outline" size="sm" onClick={() => handleExport(r.period)} disabled={exporting === r.period}>
-                  <Download className="mr-1 h-4 w-4" />
-                  {exporting === r.period ? '내보내는 중...' : 'CSV'}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+      {/* Period selector */}
+      <Card>
+        <CardContent className="py-4">
+          <p className="mb-2 text-sm font-medium text-gray-700">기간 선택</p>
+          <PeriodSelector onPeriodChange={handlePeriodChange} isGrowth={isGrowth} />
+        </CardContent>
+      </Card>
+
+      {/* Error state */}
+      {error && (
+        <div className="rounded-lg border border-red-100 bg-red-50 p-4 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+
+      {/* Monthly report list */}
+      <MonthlyReportList
+        reports={monthlyReports}
+        isLoading={isLoading}
+        isGrowth={isGrowth}
+        onSelectMonth={handleSelectMonth}
+      />
+
+      {/* Report detail */}
+      {isSummaryLoading && (
+        <Card>
+          <CardContent className="flex items-center justify-center py-12">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
+            <span className="ml-3 text-sm text-gray-500">리포트 생성 중...</span>
+          </CardContent>
+        </Card>
+      )}
+
+      {summary && !isSummaryLoading && (
+        <ReportDetail
+          summary={summary}
+          planGated={planGated}
+          isGrowth={isGrowth}
+          onExport={handleExport}
+        />
+      )}
+
+      {/* Empty state when no period selected */}
+      {!summary && !isSummaryLoading && !isLoading && (
+        <Card>
+          <CardContent className="py-12 text-center">
+            <FileText className="mx-auto h-8 w-8 text-gray-300" />
+            <p className="mt-2 text-sm text-gray-500">기간을 선택하거나 월별 카드를 클릭하여 상세 리포트를 확인하세요</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

@@ -12,6 +12,10 @@
 | landing-page | 2026-02-16 | 100% | 0 | 4 |
 | smart-proxy-v2 | 2026-02-17 | 97% | 0 | 4 |
 | team-management | 2026-02-17 | 98% | 0 | 4 |
+| anomaly-detection | 2026-02-17 | 100% | 0 | 4 |
+| notifications | 2026-02-17 | 97% | 0 | 4 |
+| reports-export | 2026-02-17 | 94% | 0 | 4 |
+| settings-preferences | 2026-02-17 | 99% | 0 | 4 |
 
 ## business-setup
 
@@ -148,3 +152,71 @@
 | Design | [team-management.design.md](./team-management/team-management.design.md) |
 | Analysis | [team-management.analysis.md](./team-management/team-management.analysis.md) |
 | Report | [team-management.report.md](./team-management/team-management.report.md) |
+
+## anomaly-detection
+
+**이상 지출 자동 감지 - Z-score 기반 비용 급증, 토큰 스파이크, 모델별 이상 사용량 탐지**
+
+- **Duration**: 2026-02-17 (single day, AI-native development)
+- **Match Rate**: 100% (first pass, no iterations needed)
+- **Scope**: 8 FRs, 13 new files, 6 modified files, ~1,400 LOC
+
+### Documents
+
+| Document | Path |
+|----------|------|
+| Plan | [anomaly-detection.plan.md](./anomaly-detection/anomaly-detection.plan.md) |
+| Design | [anomaly-detection.design.md](./anomaly-detection/anomaly-detection.design.md) |
+| Analysis | [anomaly-detection.analysis.md](./anomaly-detection/anomaly-detection.analysis.md) |
+| Report | [anomaly-detection.report.md](./anomaly-detection/anomaly-detection.report.md) |
+
+## notifications
+
+**외부 알림 시스템 - Email, Slack, Webhook을 통한 예산 경고, 이상 감지 알림 전달**
+
+- **Duration**: 2026-02-17 (single day, AI-native development)
+- **Match Rate**: 97% (first pass, no iterations needed)
+- **Scope**: 8 FRs, 16 new files, 7 modified files, ~1,600 LOC
+
+### Documents
+
+| Document | Path |
+|----------|------|
+| Plan | [notifications.plan.md](./notifications/notifications.plan.md) |
+| Design | [notifications.design.md](./notifications/notifications.design.md) |
+| Analysis | [notifications.analysis.md](./notifications/notifications.analysis.md) |
+| Report | [notifications.report.md](./notifications/notifications.report.md) |
+
+## reports-export
+
+**비용 리포트 & 데이터 내보내기 - 동적 리포트 생성, 멀티 포맷(CSV/JSON/PDF), 기간별 분석, 월간 이메일**
+
+- **Duration**: 2026-02-17 (single day, AI-native development)
+- **Match Rate**: 94% (first pass, no iterations needed)
+- **Scope**: 8 FRs, 10 new files, 4 modified files, ~1,085 LOC
+
+### Documents
+
+| Document | Path |
+|----------|------|
+| Plan | [reports-export.plan.md](./reports-export/reports-export.plan.md) |
+| Design | [reports-export.design.md](./reports-export/reports-export.design.md) |
+| Analysis | [reports-export.analysis.md](./reports-export/reports-export.analysis.md) |
+| Report | [reports-export.report.md](./reports-export/reports-export.report.md) |
+
+## settings-preferences
+
+**설정 페이지 고도화 - 탭 네비게이션, 사용자 환경설정, 보안 설정, Danger Zone**
+
+- **Duration**: 2026-02-17 (single day, AI-native development)
+- **Match Rate**: 99% (first pass, no iterations needed)
+- **Scope**: 8 FRs, 14 new files, 3 modified files, ~1,310 LOC
+
+### Documents
+
+| Document | Path |
+|----------|------|
+| Plan | [settings-preferences.plan.md](./settings-preferences/settings-preferences.plan.md) |
+| Design | [settings-preferences.design.md](./settings-preferences/settings-preferences.design.md) |
+| Analysis | [settings-preferences.analysis.md](./settings-preferences/settings-preferences.analysis.md) |
+| Report | [settings-preferences.report.md](./settings-preferences/settings-preferences.report.md) |
