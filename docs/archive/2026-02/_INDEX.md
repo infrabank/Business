@@ -11,6 +11,7 @@
 | billing-payments | 2026-02-16 | 98% | 1 | 4 |
 | landing-page | 2026-02-16 | 100% | 0 | 4 |
 | smart-proxy-v2 | 2026-02-17 | 97% | 0 | 4 |
+| team-management | 2026-02-17 | 98% | 0 | 4 |
 
 ## business-setup
 
@@ -130,3 +131,20 @@
 | Design | [smart-proxy-v2.design.md](./smart-proxy-v2/smart-proxy-v2.design.md) |
 | Analysis | [smart-proxy-v2.analysis.md](./smart-proxy-v2/smart-proxy-v2.analysis.md) |
 | Report | [smart-proxy-v2.report.md](./smart-proxy-v2/smart-proxy-v2.report.md) |
+
+## team-management
+
+**팀/멤버 관리 - 초대, 역할 기반 접근제어(RBAC), 조직 멤버십 관리**
+
+- **Duration**: 2026-02-17 (single day, AI-native development)
+- **Match Rate**: 98% (first pass, no iterations needed)
+- **Scope**: 8 FRs, 16 new files, 4 modified files, 20 total, ~935 LOC
+
+### Documents
+
+| Document | Path |
+|----------|------|
+| Plan | [team-management.plan.md](./team-management/team-management.plan.md) |
+| Design | [team-management.design.md](./team-management/team-management.design.md) |
+| Analysis | [team-management.analysis.md](./team-management/team-management.analysis.md) |
+| Report | [team-management.report.md](./team-management/team-management.report.md) |

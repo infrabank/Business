@@ -31,6 +31,7 @@ export const NAV_ITEMS = [
   { label: '알림', href: '/alerts', icon: 'Bell' },
   { label: '리포트', href: '/reports', icon: 'FileText' },
   { label: '프록시', href: '/proxy', icon: 'ArrowLeftRight' },
+  { label: '팀', href: '/team', icon: 'Users' },
 ] as const
 
 export interface RateLimitConfig {

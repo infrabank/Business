@@ -18,3 +18,18 @@ export interface Member {
   joinedAt: string
   user?: { name: string; email: string; avatarUrl?: string }
 }
+
+export interface MemberWithUser extends Member {
+  user: { name: string; email: string; avatarUrl?: string }
+}
+
+export interface Invitation {
+  id: string
+  orgId: string
+  email: string
+  role: MemberRole
+  status: 'pending' | 'accepted' | 'declined' | 'expired'
+  invitedBy: string
+  createdAt: string
+  expiresAt: string
+}

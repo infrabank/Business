@@ -36,7 +36,7 @@ export async function middleware(request: NextRequest) {
   // Protected routes require auth
   const protectedPaths = [
     '/dashboard', '/providers', '/budget', '/alerts',
-    '/reports', '/projects', '/settings', '/billing', '/proxy',
+    '/reports', '/projects', '/settings', '/billing', '/proxy', '/team',
   ]
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p))
 
@@ -63,6 +63,7 @@ export const config = {
     '/settings/:path*',
     '/billing/:path*',
     '/proxy/:path*',
+    '/team/:path*',
     '/api/proxy/:path*',
     '/login',
     '/signup',

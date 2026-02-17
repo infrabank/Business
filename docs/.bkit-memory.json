@@ -1,7 +1,7 @@
 {
-  "sessionCount": 38,
+  "sessionCount": 40,
   "lastSession": {
-    "startedAt": "2026-02-17T02:14:29.895Z",
+    "startedAt": "2026-02-17T08:02:23.380Z",
     "platform": "claude",
     "level": "Starter"
   },
@@ -21,17 +21,25 @@
     }
   },
   "pdcaPhase": "archived",
-  "currentFeature": "smart-proxy-v2",
-  "matchRate": 97,
+  "currentFeature": "team-management",
+  "matchRate": 98,
   "iterationCount": 0,
-  "archivedAt": "2026-02-17T12:00:00Z",
-  "archivedTo": "docs/archive/2026-02/smart-proxy-v2/",
   "completedPhases": [
     "plan",
     "design",
     "do",
     "check",
     "report",
-    "archive"
-  ]
+    "archived"
+  ],
+  "archivedFeatures": {
+    "team-management": {
+      "phase": "archived",
+      "matchRate": 98,
+      "iterationCount": 0,
+      "startedAt": "2026-02-17T00:00:00Z",
+      "archivedAt": "2026-02-17T08:30:00Z",
+      "archivedTo": "docs/archive/2026-02/team-management/"
+    }
+  }
 }

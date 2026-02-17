@@ -76,8 +76,7 @@ export default function SettingsPage() {
     e.preventDefault()
     setProfileSaving(true)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800))
-      // TODO: Call bkend.patch('/users/me', { name: profileName, email: profileEmail })
+      await bkend.patch(`/users/${currentUser!.id}`, { name: profileName })
       toast('success', '프로필이 업데이트되었습니다.')
     } catch {
       toast('error', '프로필 업데이트에 실패했습니다.')
@@ -91,8 +90,7 @@ export default function SettingsPage() {
     if (!orgId) return
     setOrgSaving(true)
     try {
-      await new Promise((resolve) => setTimeout(resolve, 800))
-      // TODO: Call bkend.patch(`/organizations/${orgId}`, { name: orgName, slug: orgSlug, billingEmail })
+      await bkend.patch(`/organizations/${orgId}`, { name: orgName, slug: orgSlug, billingEmail })
       toast('success', '조직 정보가 업데이트되었습니다.')
     } catch {
       toast('error', '조직 업데이트에 실패했습니다.')
@@ -165,6 +163,16 @@ export default function SettingsPage() {
               </Button>
             </form>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader><h2 className="text-lg font-semibold text-gray-900">팀 관리</h2></CardHeader>
+        <CardContent>
+          <p className="text-sm text-gray-500">멤버 초대, 역할 관리, 접근제어를 설정하세요.</p>
+          <Link href="/team" className="mt-3 inline-block">
+            <Button variant="outline">팀 관리 페이지로 이동</Button>
+          </Link>
         </CardContent>
       </Card>
 
