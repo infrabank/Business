@@ -102,14 +102,14 @@ export function PeriodSelector({ onPeriodChange, isGrowth }: PeriodSelectorProps
             type="date"
             value={customFrom}
             onChange={(e) => setCustomFrom(e.target.value)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900"
+            className="rounded-lg border border-gray-200 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm text-gray-900"
           />
           <span className="text-gray-400">~</span>
           <input
             type="date"
             value={customTo}
             onChange={(e) => setCustomTo(e.target.value)}
-            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm text-gray-900"
+            className="rounded-lg border border-gray-200 bg-white dark:bg-slate-900 px-3 py-1.5 text-sm text-gray-900"
           />
           <Button size="sm" onClick={handleCustomApply} disabled={!customFrom || !customTo}>
             적용

@@ -12,9 +12,9 @@ export function FaqSection() {
   }
 
   return (
-    <section id="faq" className="py-24 bg-white">
+    <section id="faq" className="py-24 bg-white dark:bg-slate-900">
       <div className="mx-auto max-w-3xl px-4">
-        <h2 className="text-center text-4xl font-bold tracking-tight text-slate-900">
+        <h2 className="text-center text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
           자주 묻는 질문
         </h2>
 
@@ -24,7 +24,7 @@ export function FaqSection() {
             return (
               <details
                 key={index}
-                className="group rounded-2xl border border-slate-200/60 bg-white shadow-sm hover:shadow-md transition-all"
+                className="group rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-sm hover:shadow-md transition-all"
                 open={isOpen}
               >
                 <summary
@@ -32,7 +32,7 @@ export function FaqSection() {
                     e.preventDefault()
                     toggle(index)
                   }}
-                  className="cursor-pointer px-6 py-5 font-semibold text-slate-900 flex items-center justify-between"
+                  className="cursor-pointer px-6 py-5 font-semibold text-slate-900 dark:text-slate-100 flex items-center justify-between"
                 >
                   <span>{item.question}</span>
                   <ChevronDown
@@ -47,7 +47,7 @@ export function FaqSection() {
                   }`}
                 >
                   <div className="min-h-0">
-                    <p className="px-6 pb-5 text-sm text-slate-600 leading-relaxed">{item.answer}</p>
+                    <p className="px-6 pb-5 text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{item.answer}</p>
                   </div>
                 </div>
               </details>

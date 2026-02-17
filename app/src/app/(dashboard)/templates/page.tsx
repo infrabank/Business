@@ -93,11 +93,11 @@ function TemplatesContent() {
 
       {/* Limit Warning */}
       {tmpl.limitReached && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 dark:bg-amber-950/50 p-4">
           <div className="flex items-start gap-3">
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
             <div>
-              <p className="text-sm font-medium text-amber-700">
+              <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
                 Free 플랜은 최대 {tmpl.templateLimit}개의 템플릿을 사용할 수 있습니다
               </p>
               <Link
@@ -112,9 +112,9 @@ function TemplatesContent() {
       )}
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200/60 bg-white p-4 shadow-sm">
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-4 shadow-sm">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 dark:text-slate-500" />
           <Input
             value={tmpl.search}
             onChange={(e) => tmpl.setSearch(e.target.value)}
@@ -125,7 +125,7 @@ function TemplatesContent() {
         <select
           value={tmpl.category}
           onChange={(e) => tmpl.setCategory(e.target.value)}
-          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+          className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
         >
           <option value="">전체 카테고리</option>
           {DEFAULT_CATEGORIES.map((c) => (
@@ -137,7 +137,7 @@ function TemplatesContent() {
         <select
           value={tmpl.sort}
           onChange={(e) => tmpl.setSort(e.target.value as TemplateSortOption)}
-          className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+          className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
         >
           {sortOptions.map((o) => (
             <option key={o.value} value={o.value}>
@@ -145,7 +145,7 @@ function TemplatesContent() {
             </option>
           ))}
         </select>
-        <span className="text-xs text-slate-400">총 {tmpl.total}개</span>
+        <span className="text-xs text-slate-400 dark:text-slate-500">총 {tmpl.total}개</span>
       </div>
 
       {/* Template Grid */}
@@ -172,9 +172,9 @@ function TemplatesContent() {
       {/* Delete Confirmation */}
       {deleteTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl">
-            <h3 className="text-lg font-bold text-slate-900">템플릿 삭제</h3>
-            <p className="mt-2 text-sm text-slate-500">
+          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">템플릿 삭제</h3>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">
               &quot;{deleteTarget.name}&quot; 템플릿을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
             </p>
             <div className="mt-4 flex justify-end gap-3">

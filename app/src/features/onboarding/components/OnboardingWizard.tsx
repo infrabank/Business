@@ -36,11 +36,11 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           {[...Array(5)].map((_, i) => (
             <div key={i} className="flex flex-col items-center gap-1">
               <div className="h-8 w-8 animate-pulse rounded-full bg-slate-200" />
-              <div className="h-3 w-12 animate-pulse rounded bg-slate-100" />
+              <div className="h-3 w-12 animate-pulse rounded bg-slate-100 dark:bg-slate-800" />
             </div>
           ))}
         </div>
-        <div className="mt-8 h-64 animate-pulse rounded-2xl bg-slate-100" />
+        <div className="mt-8 h-64 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-800" />
       </div>
     )
   }
@@ -64,7 +64,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     <div className="mx-auto max-w-2xl px-4 py-8">
       <StepIndicator currentStep={state.step} totalSteps={5} />
 
-      <div className="mt-8 rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm">
+      <div className="mt-8 rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-6 shadow-sm">
         {state.step === 1 && <WelcomeStep />}
         {state.step === 2 && (
           <ProviderStep
@@ -108,7 +108,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
           {state.step < 5 && (
             <button
               onClick={handleSkip}
-              className="text-sm text-slate-400 hover:text-slate-600"
+              className="text-sm text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-400 dark:text-slate-500"
             >
               건너뛰기
             </button>

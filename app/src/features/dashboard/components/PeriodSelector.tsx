@@ -16,7 +16,7 @@ const PERIODS: { value: DashboardPeriod; label: string }[] = [
 
 export function PeriodSelector({ value, onChange }: PeriodSelectorProps) {
   return (
-    <div className="flex items-center gap-1 rounded-xl bg-slate-100/80 p-1">
+    <div className="flex items-center gap-1 rounded-xl bg-slate-100/80 dark:bg-slate-800 p-1">
       {PERIODS.map((p) => (
         <button
           key={p.value}
@@ -24,8 +24,8 @@ export function PeriodSelector({ value, onChange }: PeriodSelectorProps) {
           className={cn(
             'rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200',
             value === p.value
-              ? 'bg-white text-indigo-700 shadow-sm font-semibold'
-              : 'text-slate-500 hover:text-slate-700',
+              ? 'bg-white dark:bg-slate-900 text-indigo-700 dark:text-indigo-400 shadow-sm font-semibold'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300',
           )}
         >
           {p.label}

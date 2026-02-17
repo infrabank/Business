@@ -48,7 +48,7 @@ export function InviteMemberModal({ onClose, onInvited }: InviteMemberModalProps
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-xl">
         <h2 className="text-lg font-semibold text-gray-900">멤버 초대</h2>
         <p className="mt-1 text-sm text-gray-500">이메일로 팀 멤버를 초대하세요.</p>
         <form className="mt-4 space-y-4" onSubmit={handleSubmit}>

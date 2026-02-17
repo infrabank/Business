@@ -17,8 +17,8 @@ export function NotificationsTab() {
     <Card>
       <CardHeader>
         <div className="flex items-center gap-2">
-          <Bell className="h-5 w-5 text-gray-400" />
-          <h2 className="text-lg font-semibold text-gray-900">알림 채널</h2>
+          <Bell className="h-5 w-5 text-gray-400 dark:text-slate-400" />
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">알림 채널</h2>
         </div>
       </CardHeader>
       <CardContent>

@@ -60,7 +60,7 @@ export function GeneralTab() {
     <div className="space-y-6">
       {/* Profile */}
       <Card>
-        <CardHeader><h2 className="text-lg font-semibold text-gray-900">프로필</h2></CardHeader>
+        <CardHeader><h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">프로필</h2></CardHeader>
         <CardContent>
           <form className="max-w-md space-y-4" onSubmit={handleSaveProfile}>
             <Input
@@ -70,14 +70,14 @@ export function GeneralTab() {
               onChange={(e) => setProfileName(e.target.value)}
             />
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">이메일</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">이메일</label>
               <input
                 type="email"
                 value={profileEmail}
                 disabled
-                className="w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-500"
+                className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-950 px-3 py-2 text-sm text-gray-500 dark:text-slate-400"
               />
-              <p className="mt-1 text-xs text-gray-400">이메일은 변경할 수 없습니다.</p>
+              <p className="mt-1 text-xs text-gray-400 dark:text-slate-400">이메일은 변경할 수 없습니다.</p>
             </div>
             <Button type="submit" disabled={profileSaving}>
               {profileSaving ? '저장 중...' : '변경사항 저장'}
@@ -90,18 +90,18 @@ export function GeneralTab() {
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">환경설정</h2>
-            {isSaving && <span className="text-xs text-gray-400">저장 중...</span>}
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">환경설정</h2>
+            {isSaving && <span className="text-xs text-gray-400 dark:text-slate-400">저장 중...</span>}
           </div>
         </CardHeader>
         <CardContent>
           <div className="max-w-md space-y-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">통화 표시</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">통화 표시</label>
               <select
                 value={preferences.currency}
                 onChange={(e) => updatePreference('currency', e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="USD">USD ($)</option>
                 <option value="KRW">KRW (&#8361;)</option>
@@ -111,11 +111,11 @@ export function GeneralTab() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">날짜 형식</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">날짜 형식</label>
               <select
                 value={preferences.dateFormat}
                 onChange={(e) => updatePreference('dateFormat', e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="YYYY-MM-DD">YYYY-MM-DD</option>
                 <option value="MM/DD/YYYY">MM/DD/YYYY</option>
@@ -124,11 +124,11 @@ export function GeneralTab() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">숫자 형식</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">숫자 형식</label>
               <select
                 value={preferences.numberFormat}
                 onChange={(e) => updatePreference('numberFormat', e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="1,000.00">1,000.00</option>
                 <option value="1.000,00">1.000,00</option>
@@ -136,11 +136,11 @@ export function GeneralTab() {
             </div>
 
             <div>
-              <label className="mb-1 block text-sm font-medium text-gray-700">대시보드 기본 기간</label>
+              <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">대시보드 기본 기간</label>
               <select
                 value={preferences.dashboardPeriod}
                 onChange={(e) => updatePreference('dashboardPeriod', Number(e.target.value))}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value={7}>최근 7일</option>
                 <option value={30}>최근 30일</option>
@@ -153,9 +153,9 @@ export function GeneralTab() {
 
       {/* Onboarding */}
       <Card>
-        <CardHeader><h2 className="text-lg font-semibold text-gray-900">온보딩</h2></CardHeader>
+        <CardHeader><h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">온보딩</h2></CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-500">초기 설정 위자드를 다시 실행합니다</p>
+          <p className="text-sm text-gray-500 dark:text-slate-400">초기 설정 위자드를 다시 실행합니다</p>
           <Button
             variant="outline"
             size="sm"
@@ -177,18 +177,18 @@ export function GeneralTab() {
 
       {/* API Key Summary */}
       <Card>
-        <CardHeader><h2 className="text-lg font-semibold text-gray-900">API 키 현황</h2></CardHeader>
+        <CardHeader><h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">API 키 현황</h2></CardHeader>
         <CardContent>
           {keysLoading ? (
             <div className="space-y-3">
               {[...Array(2)].map((_, i) => (
-                <div key={i} className="h-12 animate-pulse rounded-lg bg-gray-100" />
+                <div key={i} className="h-12 animate-pulse rounded-lg bg-gray-100 dark:bg-slate-800" />
               ))}
             </div>
           ) : keys.length === 0 ? (
-            <div className="py-4 text-center text-sm text-gray-500">
+            <div className="py-4 text-center text-sm text-gray-500 dark:text-slate-400">
               등록된 API 키가 없습니다.
-              <Link href="/providers" className="ml-1 text-blue-600 hover:text-blue-800">
+              <Link href="/providers" className="ml-1 text-blue-600 dark:text-indigo-400 hover:text-blue-800 dark:hover:text-indigo-300">
                 프로바이더 추가하기
               </Link>
             </div>
@@ -197,7 +197,7 @@ export function GeneralTab() {
               {keys.map((k) => (
                 <div
                   key={k.keyId}
-                  className="flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3"
+                  className="flex items-center justify-between rounded-lg border border-gray-100 dark:border-slate-800 px-4 py-3"
                 >
                   <div className="flex items-center gap-3">
                     <span
@@ -205,15 +205,15 @@ export function GeneralTab() {
                       style={{ backgroundColor: k.isActive ? (PROVIDER_COLORS[k.providerType] || '#6B7280') : '#D1D5DB' }}
                     />
                     <div>
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-medium text-gray-900 dark:text-slate-100">
                         {PROVIDER_LABELS[k.providerType] || k.providerName}
                       </span>
-                      <span className="ml-2 font-mono text-xs text-gray-400">{k.keyPrefix}...</span>
+                      <span className="ml-2 font-mono text-xs text-gray-400 dark:text-slate-400">{k.keyPrefix}...</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-gray-400">{k.label}</span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-gray-400 dark:text-slate-400">{k.label}</span>
+                    <span className="text-xs text-gray-400 dark:text-slate-400">
                       {formatSyncTime(k.lastSyncAt)}
                     </span>
                   </div>
@@ -222,7 +222,7 @@ export function GeneralTab() {
               <div className="pt-2">
                 <Link
                   href="/providers"
-                  className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-800"
+                  className="inline-flex items-center gap-1 text-sm text-blue-600 dark:text-indigo-400 hover:text-blue-800 dark:hover:text-indigo-300"
                 >
                   프로바이더 페이지에서 키 관리
                   <ExternalLink className="h-3.5 w-3.5" />

@@ -66,16 +66,16 @@ export default function SignupPage() {
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-violet-400/10 blur-3xl" />
       </div>
       <div className="relative w-full max-w-sm">
-        <div className="rounded-3xl border border-slate-200/60 bg-white/95 backdrop-blur-sm p-10 shadow-2xl">
+        <div className="rounded-3xl border border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm p-10 shadow-2xl">
           <div className="mb-8 text-center">
             <Link href="/" className="inline-flex items-center gap-2 font-bold">
               <Zap className="h-10 w-10 text-indigo-600" />
               <span className="text-2xl text-gradient">LLM Cost Manager</span>
             </Link>
-            <p className="mt-3 text-slate-500">무료 계정 만들기</p>
+            <p className="mt-3 text-slate-500 dark:text-slate-400">무료 계정 만들기</p>
           </div>
           <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
-            {error && <div className="rounded-xl bg-rose-50 border border-rose-200/60 p-4 text-sm text-rose-600">{error}</div>}
+            {error && <div className="rounded-xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200/60 dark:border-rose-800/60 p-4 text-sm text-rose-600 dark:text-rose-400">{error}</div>}
             <Input
               id="name"
               label="이름"
@@ -122,7 +122,7 @@ export default function SignupPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-[34px] text-slate-400 hover:text-slate-600 transition-colors"
+                className="absolute right-3 top-[34px] text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                 aria-label={showPassword ? '비밀번호 숨기기' : '비밀번호 표시'}
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -132,8 +132,8 @@ export default function SignupPage() {
               {isLoading ? '계정 생성 중...' : '계정 만들기'}
             </Button>
           </form>
-          <p className="mt-6 text-center text-xs text-slate-500">무료 플랜은 1개 프로바이더, 7일 히스토리, 기본 대시보드를 포함합니다.</p>
-          <p className="mt-4 text-center text-sm text-slate-500">
+          <p className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400">무료 플랜은 1개 프로바이더, 7일 히스토리, 기본 대시보드를 포함합니다.</p>
+          <p className="mt-4 text-center text-sm text-slate-500 dark:text-slate-400">
             이미 계정이 있으신가요?{' '}
             <Link href="/login" className="font-semibold text-indigo-600 hover:text-indigo-700">로그인</Link>
           </p>

@@ -26,7 +26,7 @@ export function AnomalyHistoryList({ orgId }: AnomalyHistoryListProps) {
         <CardContent>
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-16 animate-pulse rounded-xl bg-slate-100" />
+              <div key={i} className="h-16 animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800" />
             ))}
           </div>
         </CardContent>
@@ -39,33 +39,33 @@ export function AnomalyHistoryList({ orgId }: AnomalyHistoryListProps) {
       <CardHeader>
         <div className="flex items-center gap-2">
           <Activity className="h-5 w-5 text-indigo-500" />
-          <h3 className="text-lg font-bold text-slate-900">이상 감지 이력</h3>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">이상 감지 이력</h3>
           <Badge variant="default">{events.length}건</Badge>
         </div>
       </CardHeader>
       <CardContent>
         {events.length === 0 ? (
-          <p className="text-sm text-slate-500">최근 30일 간 감지된 이상이 없습니다.</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">최근 30일 간 감지된 이상이 없습니다.</p>
         ) : (
           <div className="space-y-3">
             {events.map((event) => (
               <div
                 key={event.id}
-                className="flex items-start gap-3 rounded-xl border border-slate-100 p-4 hover:bg-slate-50/50 transition-colors"
+                className="flex items-start gap-3 rounded-xl border border-slate-100 dark:border-slate-800 p-4 hover:bg-slate-50 dark:bg-slate-800/50/50 transition-colors"
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <Badge variant={event.severity === 'critical' ? 'danger' : 'warning'}>
                       {event.severity}
                     </Badge>
-                    <span className="text-sm font-medium text-slate-900">
+                    <span className="text-sm font-medium text-slate-900 dark:text-slate-100">
                       {TYPE_LABELS[event.type] ?? event.type}
                     </span>
                     {event.model && (
-                      <span className="text-xs text-slate-500">{event.model}</span>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">{event.model}</span>
                     )}
                   </div>
-                  <p className="mt-1 text-sm text-slate-600">
+                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
                     감지값: ${event.detectedValue.toFixed(2)} / 기준값: ${event.baselineValue.toFixed(2)}
                     {event.zScore > 0 && ` (Z-score: ${event.zScore})`}
                   </p>

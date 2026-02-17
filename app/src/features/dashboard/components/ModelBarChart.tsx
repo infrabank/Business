@@ -16,13 +16,13 @@ export function ModelBarChart({ data }: ModelBarChartProps) {
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-bold text-slate-900">비용 상위 모델</h3>
+        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">비용 상위 모델</h3>
       </CardHeader>
       <CardContent>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 20, left: 80, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" className="dark:stroke-slate-700" />
               <XAxis type="number" tick={{ fontSize: 12, fill: '#94A3B8' }} tickFormatter={(v) => `$${v}`} />
               <YAxis type="category" dataKey="name" tick={{ fontSize: 12, fill: '#94A3B8' }} width={75} />
               <Tooltip
@@ -35,6 +35,7 @@ export function ModelBarChart({ data }: ModelBarChartProps) {
                   padding: '1rem',
                   boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)'
                 }}
+                wrapperClassName="dark:[&_.recharts-tooltip-wrapper]:!border-slate-700 dark:[&_.recharts-tooltip-wrapper]:!bg-slate-900/95"
               />
               <Bar dataKey="cost" fill="#4F46E5" radius={[0, 4, 4, 0]} />
             </BarChart>

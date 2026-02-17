@@ -40,16 +40,16 @@ function CustomTooltip({
   const previous = payload.find((p) => p.dataKey === 'previousCost')
 
   return (
-    <div className="rounded-xl border border-slate-200/60 bg-white/95 backdrop-blur-sm p-4 shadow-xl">
-      <p className="mb-1 text-sm font-medium text-slate-500">날짜: {label}</p>
-      <p className="text-sm font-bold text-indigo-600">
+    <div className="rounded-xl border border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm p-4 shadow-xl">
+      <p className="mb-1 text-sm font-medium text-slate-500 dark:text-slate-400">날짜: {label}</p>
+      <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
         현재: ${Number(current?.value ?? 0).toFixed(2)}
       </p>
       {showComparison && previous?.value != null && (
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           이전: ${Number(previous.value).toFixed(2)}
           {current?.value != null && previous.value > 0 && (
-            <span className={current.value > previous.value ? ' text-rose-500' : ' text-green-500'}>
+            <span className={current.value > previous.value ? ' text-rose-500 dark:text-rose-400' : ' text-green-500 dark:text-green-400'}>
               {' '}({current.value > previous.value ? '+' : ''}
               {(((current.value - previous.value) / previous.value) * 100).toFixed(1)}%)
             </span>
@@ -66,7 +66,7 @@ export function CostTrendChart({ data, title = '비용 추이', showComparison =
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">{title}</h3>
       </CardHeader>
       <CardContent>
         <div className="h-80">

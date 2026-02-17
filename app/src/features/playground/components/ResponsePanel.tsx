@@ -22,10 +22,10 @@ export function ResponsePanel({ result, error, loading }: ResponsePanelProps) {
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm">
+      <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-6 shadow-sm">
         <div className="flex items-center gap-3">
           <span className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
-          <span className="text-sm text-slate-500">AI 응답을 기다리는 중...</span>
+          <span className="text-sm text-slate-500 dark:text-slate-400">AI 응답을 기다리는 중...</span>
         </div>
       </div>
     )
@@ -33,12 +33,12 @@ export function ResponsePanel({ result, error, loading }: ResponsePanelProps) {
 
   if (error) {
     return (
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-6">
+      <div className="rounded-2xl border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/50 p-6">
         <div className="flex items-start gap-3">
-          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-500" />
+          <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-red-500 dark:text-red-400" />
           <div>
-            <p className="text-sm font-medium text-red-700">실행 오류</p>
-            <p className="mt-1 text-sm text-red-600">{error}</p>
+            <p className="text-sm font-medium text-red-700 dark:text-red-400">실행 오류</p>
+            <p className="mt-1 text-sm text-red-600 dark:text-red-400">{error}</p>
           </div>
         </div>
       </div>
@@ -47,30 +47,30 @@ export function ResponsePanel({ result, error, loading }: ResponsePanelProps) {
 
   if (!result) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-8 text-center">
+      <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-8 text-center">
         <p className="text-sm text-slate-400">프롬프트를 실행하면 응답이 여기에 표시됩니다</p>
       </div>
     )
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200/60 bg-white shadow-sm">
+    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-sm">
       {/* Response Content */}
       <div className="relative px-5 py-4">
         <button
           onClick={handleCopy}
-          className="absolute right-4 top-4 rounded-lg p-1.5 text-slate-300 hover:bg-slate-100 hover:text-slate-500 transition-colors"
+          className="absolute right-4 top-4 rounded-lg p-1.5 text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-500 dark:hover:text-slate-400 transition-colors"
           title="복사"
         >
           {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
         </button>
-        <pre className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-700 pr-8">
+        <pre className="whitespace-pre-wrap break-words text-sm leading-relaxed text-slate-700 dark:text-slate-300 pr-8">
           {result.response}
         </pre>
       </div>
 
       {/* Metrics Bar */}
-      <div className="flex flex-wrap items-center gap-4 rounded-b-2xl border-t border-slate-100 bg-slate-50/30 px-5 py-3">
+      <div className="flex flex-wrap items-center gap-4 rounded-b-2xl border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/50 px-5 py-3">
         <MetricPill label="Input" value={`${result.inputTokens.toLocaleString()} tokens`} />
         <MetricPill label="Output" value={`${result.outputTokens.toLocaleString()} tokens`} />
         <MetricPill label="Cost" value={`$${result.cost.toFixed(4)}`} color="emerald" />
@@ -82,9 +82,9 @@ export function ResponsePanel({ result, error, loading }: ResponsePanelProps) {
 
 function MetricPill({ label, value, color = 'slate' }: { label: string; value: string; color?: string }) {
   const colorClasses: Record<string, string> = {
-    slate: 'bg-slate-100 text-slate-600',
-    emerald: 'bg-emerald-50 text-emerald-600',
-    blue: 'bg-blue-50 text-blue-600',
+    slate: 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400',
+    emerald: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400',
+    blue: 'bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400',
   }
   return (
     <span className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium ${colorClasses[color]}`}>

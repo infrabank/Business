@@ -86,23 +86,23 @@ export function TemplateSidebar({
 
   return (
     <div
-      className={`fixed bottom-0 right-0 top-16 z-30 w-80 border-l border-slate-200/60 bg-white shadow-xl transition-transform duration-300 ${
+      className={`fixed bottom-0 right-0 top-16 z-30 w-80 border-l border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-xl transition-transform duration-300 ${
         isOpen ? 'translate-x-0' : 'translate-x-full'
       }`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-        <h3 className="text-sm font-bold text-slate-900">템플릿</h3>
+      <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-4 py-3">
+        <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">템플릿</h3>
         <button
           onClick={onToggle}
-          className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+          className="rounded-lg p-1 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:bg-slate-800 hover:text-slate-600 dark:text-slate-400 dark:text-slate-500"
         >
           <X className="h-4 w-4" />
         </button>
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-100 px-2">
+      <div className="flex border-b border-slate-100 dark:border-slate-800 px-2">
         {tabs.map((t) => {
           const Icon = t.icon
           return (
@@ -111,8 +111,8 @@ export function TemplateSidebar({
               onClick={() => setTab(t.key)}
               className={`flex flex-1 items-center justify-center gap-1 py-2.5 text-xs font-medium transition-colors ${
                 tab === t.key
-                  ? 'border-b-2 border-indigo-500 text-indigo-700'
-                  : 'text-slate-500 hover:text-slate-700'
+                  ? 'border-b-2 border-indigo-500 text-indigo-700 dark:text-indigo-400'
+                  : 'text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:text-slate-300 dark:text-slate-500'
               }`}
             >
               <Icon className="h-3.5 w-3.5" />
@@ -127,12 +127,12 @@ export function TemplateSidebar({
         {loading ? (
           <div className="space-y-2 p-3">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="h-16 animate-pulse rounded-xl bg-slate-100" />
+              <div key={i} className="h-16 animate-pulse rounded-xl bg-slate-100 dark:bg-slate-800" />
             ))}
           </div>
         ) : templates.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">
               {tab === 'favorites'
                 ? '즐겨찾기한 템플릿이 없습니다'
                 : '템플릿이 없습니다'}
@@ -150,12 +150,12 @@ export function TemplateSidebar({
                     onClick={() => handleTemplateClick(template)}
                     className={`w-full rounded-xl p-3 text-left transition-colors ${
                       isActive
-                        ? 'bg-indigo-50 ring-1 ring-indigo-200'
-                        : 'hover:bg-slate-50'
+                        ? 'bg-indigo-50 dark:bg-indigo-950/50 ring-1 ring-indigo-200'
+                        : 'hover:bg-slate-50 dark:bg-slate-800/50'
                     }`}
                   >
                     <div className="flex items-start justify-between">
-                      <span className="truncate text-sm font-medium text-slate-900">
+                      <span className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">
                         {template.name}
                       </span>
                       <Badge variant="default" className="ml-2 shrink-0 text-[10px]">
@@ -163,7 +163,7 @@ export function TemplateSidebar({
                       </Badge>
                     </div>
                     {vars.length > 0 && (
-                      <p className="mt-1 text-xs text-slate-400">
+                      <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
                         변수 {vars.length}개
                       </p>
                     )}
@@ -171,7 +171,7 @@ export function TemplateSidebar({
 
                   {/* Inline variable form */}
                   {isActive && vars.length > 0 && (
-                    <div className="mx-2 mb-2 rounded-xl border border-indigo-100 bg-indigo-50/50 p-3">
+                    <div className="mx-2 mb-2 rounded-xl border border-indigo-100 bg-indigo-50 dark:bg-indigo-950/50/50 p-3">
                       <VariableForm
                         variables={vars}
                         values={variableValues}
@@ -196,7 +196,7 @@ export function TemplateSidebar({
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-0 left-0 right-0 border-t border-slate-100 bg-white px-4 py-3">
+      <div className="absolute bottom-0 left-0 right-0 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3">
         <Link
           href="/templates"
           className="text-xs font-medium text-indigo-600 hover:text-indigo-800"

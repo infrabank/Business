@@ -72,7 +72,7 @@ export function SetupInstructions() {
               key={tab}
               className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                 activeTab === tab
-                  ? 'bg-white text-gray-900 shadow-sm'
+                  ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
               onClick={() => setActiveTab(tab)}

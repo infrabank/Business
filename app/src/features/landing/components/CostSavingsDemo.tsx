@@ -28,24 +28,24 @@ export function CostSavingsDemo() {
   const savingsPercent = withoutLCM > 0 ? ((totalSaved / withoutLCM) * 100).toFixed(1) : '0'
 
   return (
-    <section className="py-24 bg-slate-50">
+    <section className="py-24 bg-slate-50 dark:bg-slate-800/50">
       <div className="mx-auto max-w-6xl px-4">
         <div className="text-center">
-          <h2 className="text-4xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
             얼마나 절감할 수 있는지 확인하세요
           </h2>
-          <p className="mt-4 text-lg text-slate-600">
+          <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">
             사용량에 맞게 슬라이더를 조정하세요. 절감액은 실시간으로 계산됩니다.
           </p>
         </div>
 
         <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Controls */}
-          <div className="space-y-8 rounded-2xl border border-slate-200/60 bg-white p-8 shadow-sm">
+          <div className="space-y-8 rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-8 shadow-sm">
             <div>
-              <label className="flex items-center justify-between text-sm font-medium text-slate-700">
+              <label className="flex items-center justify-between text-sm font-medium text-slate-700 dark:text-slate-300">
                 <span>월간 API 요청 수</span>
-                <span className="rounded-lg bg-slate-100 px-3 py-1 font-mono text-sm font-bold text-slate-900">
+                <span className="rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-1 font-mono text-sm font-bold text-slate-900 dark:text-slate-100">
                   {monthlyRequests.toLocaleString()}
                 </span>
               </label>
@@ -65,7 +65,7 @@ export function CostSavingsDemo() {
             </div>
 
             <div>
-              <label className="mb-3 block text-sm font-medium text-slate-700">주요 모델</label>
+              <label className="mb-3 block text-sm font-medium text-slate-700 dark:text-slate-300">주요 모델</label>
               <div className="grid grid-cols-3 gap-2">
                 {MODELS.map((m, i) => (
                   <button
@@ -73,8 +73,8 @@ export function CostSavingsDemo() {
                     onClick={() => setSelectedModel(i)}
                     className={`rounded-lg border-2 px-3 py-2 text-sm font-medium transition-all ${
                       selectedModel === i
-                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
-                        : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                        ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700'
+                        : 'border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600'
                     }`}
                   >
                     {m.name}
@@ -84,9 +84,9 @@ export function CostSavingsDemo() {
             </div>
 
             <div>
-              <label className="flex items-center justify-between text-sm font-medium text-slate-700">
+              <label className="flex items-center justify-between text-sm font-medium text-slate-700 dark:text-slate-300">
                 <span>예상 캐시 적중률</span>
-                <span className="rounded-lg bg-slate-100 px-3 py-1 font-mono text-sm font-bold text-slate-900">
+                <span className="rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-1 font-mono text-sm font-bold text-slate-900 dark:text-slate-100">
                   {cacheHitRate}%
                 </span>
               </label>
@@ -112,10 +112,10 @@ export function CostSavingsDemo() {
           {/* Results */}
           <div className="flex flex-col gap-4">
             {/* Before vs After */}
-            <div className="grid grid-cols-3 gap-3 rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm">
+            <div className="grid grid-cols-3 gap-3 rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-6 shadow-sm">
               <div className="rounded-lg bg-red-50 p-4 text-center">
                 <p className="text-xs font-medium text-red-500">LCM 없이</p>
-                <p className="mt-2 text-2xl font-bold text-slate-900">
+                <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-slate-100">
                   ${withoutLCM.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </p>
                 <p className="mt-1 text-[10px] text-slate-400">/월</p>
@@ -129,7 +129,7 @@ export function CostSavingsDemo() {
                   {savingsPercent}%
                 </span>
               </div>
-              <div className="rounded-lg bg-indigo-50 p-4 text-center">
+              <div className="rounded-lg bg-indigo-50 dark:bg-indigo-950/50 p-4 text-center">
                 <p className="text-xs font-medium text-indigo-500">LCM 사용</p>
                 <p className="mt-2 text-2xl font-bold text-indigo-700">
                   ${withLCM.toLocaleString(undefined, { maximumFractionDigits: 0 })}
@@ -139,17 +139,17 @@ export function CostSavingsDemo() {
             </div>
 
             {/* Breakdown */}
-            <div className="rounded-2xl border border-slate-200/60 bg-white p-6 shadow-sm">
-              <h4 className="text-sm font-semibold text-slate-700">절감 내역</h4>
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-6 shadow-sm">
+              <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">절감 내역</h4>
               <div className="mt-4 space-y-4">
                 <div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">응답 캐싱</span>
+                    <span className="text-slate-600 dark:text-slate-400">응답 캐싱</span>
                     <span className="font-semibold text-emerald-600">
                       -${cacheSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     </span>
                   </div>
-                  <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                  <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <div
                       className="h-full rounded-full bg-indigo-500 transition-all duration-500"
                       style={{ width: `${withoutLCM > 0 ? (cacheSavings / withoutLCM) * 100 : 0}%` }}
@@ -161,12 +161,12 @@ export function CostSavingsDemo() {
                 </div>
                 <div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600">스마트 모델 라우팅</span>
+                    <span className="text-slate-600 dark:text-slate-400">스마트 모델 라우팅</span>
                     <span className="font-semibold text-emerald-600">
                       -${routingSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     </span>
                   </div>
-                  <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                  <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <div
                       className="h-full rounded-full bg-violet-500 transition-all duration-500"
                       style={{ width: `${withoutLCM > 0 ? (routingSavings / withoutLCM) * 100 : 0}%` }}

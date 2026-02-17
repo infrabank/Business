@@ -89,7 +89,7 @@ export function NotificationSettings({ orgId, plan }: NotificationSettingsProps)
   }
 
   if (isLoading) {
-    return <div className="mt-6 space-y-3">{[...Array(3)].map((_, i) => <div key={i} className="h-10 animate-pulse rounded-lg bg-gray-100" />)}</div>
+    return <div className="mt-6 space-y-3">{[...Array(3)].map((_, i) => <div key={i} className="h-10 animate-pulse rounded-lg bg-gray-100 dark:bg-slate-800" />)}</div>
   }
 
   const recentLogs = logs.slice(0, 10)
@@ -98,38 +98,38 @@ export function NotificationSettings({ orgId, plan }: NotificationSettingsProps)
     <div className="mt-6 space-y-6">
       {/* Settings */}
       <div className="space-y-4">
-        <h3 className="text-sm font-medium text-gray-700">알림 설정</h3>
+        <h3 className="text-sm font-medium text-gray-700 dark:text-slate-300">알림 설정</h3>
 
         {/* Enable toggle */}
         <div className="flex items-center justify-between">
           <div>
-            <span className="text-sm text-gray-900">알림 수신</span>
-            <p className="text-xs text-gray-500">외부 채널로의 알림 전송을 켜거나 끕니다</p>
+            <span className="text-sm text-gray-900 dark:text-slate-100">알림 수신</span>
+            <p className="text-xs text-gray-500 dark:text-slate-400">외부 채널로의 알림 전송을 켜거나 끕니다</p>
           </div>
           <button
             onClick={() => setEnabled(!enabled)}
             className={`h-6 w-11 rounded-full transition ${enabled ? 'bg-emerald-500' : 'bg-gray-300'}`}
           >
-            <div className={`h-5 w-5 rounded-full bg-white shadow transition-transform ${enabled ? 'translate-x-5.5' : 'translate-x-0.5'}`} style={{ transform: enabled ? 'translateX(22px)' : 'translateX(2px)' }} />
+            <div className={`h-5 w-5 rounded-full bg-white dark:bg-slate-900 shadow transition-transform ${enabled ? 'translate-x-5.5' : 'translate-x-0.5'}`} style={{ transform: enabled ? 'translateX(22px)' : 'translateX(2px)' }} />
           </button>
         </div>
 
         {/* Delivery mode */}
         <div className="space-y-2">
-          <span className="text-sm text-gray-900">전송 모드</span>
+          <span className="text-sm text-gray-900 dark:text-slate-100">전송 모드</span>
           <div className="grid gap-2 sm:grid-cols-3">
             {DELIVERY_MODE_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => setDeliveryMode(opt.value)}
                 className={`rounded-lg border p-3 text-left transition ${
-                  deliveryMode === opt.value ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                  deliveryMode === opt.value ? 'border-blue-500 bg-blue-50' : 'border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:border-slate-600'
                 }`}
               >
-                <span className={`text-sm font-medium ${deliveryMode === opt.value ? 'text-blue-700' : 'text-gray-900'}`}>
+                <span className={`text-sm font-medium ${deliveryMode === opt.value ? 'text-blue-700' : 'text-gray-900 dark:text-slate-100'}`}>
                   {opt.label}
                 </span>
-                <p className="mt-0.5 text-xs text-gray-500">{opt.desc}</p>
+                <p className="mt-0.5 text-xs text-gray-500 dark:text-slate-400">{opt.desc}</p>
               </button>
             ))}
           </div>
@@ -140,7 +140,7 @@ export function NotificationSettings({ orgId, plan }: NotificationSettingsProps)
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Clock className="h-4 w-4 text-gray-400" />
-              <span className="text-sm text-gray-900">일별 다이제스트</span>
+              <span className="text-sm text-gray-900 dark:text-slate-100">일별 다이제스트</span>
               {!isFeatureAvailable(plan, 'notifications') && (
                 <Badge variant="warning">Growth</Badge>
               )}
@@ -150,27 +150,27 @@ export function NotificationSettings({ orgId, plan }: NotificationSettingsProps)
               disabled={!isFeatureAvailable(plan, 'notifications')}
               className={`h-6 w-11 rounded-full transition ${digestEnabled ? 'bg-emerald-500' : 'bg-gray-300'} disabled:cursor-not-allowed`}
             >
-              <div className="h-5 w-5 rounded-full bg-white shadow transition-transform" style={{ transform: digestEnabled ? 'translateX(22px)' : 'translateX(2px)' }} />
+              <div className="h-5 w-5 rounded-full bg-white dark:bg-slate-900 shadow transition-transform" style={{ transform: digestEnabled ? 'translateX(22px)' : 'translateX(2px)' }} />
             </button>
           </div>
 
           {digestEnabled && isFeatureAvailable(plan, 'notifications') && (
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <label className="text-xs font-medium text-gray-600">발송 시간</label>
+                <label className="text-xs font-medium text-gray-600 dark:text-slate-400">발송 시간</label>
                 <input
                   type="time"
                   value={digestTime}
                   onChange={(e) => setDigestTime(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm"
+                  className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-slate-600 px-3 py-1.5 text-sm"
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-gray-600">타임존</label>
+                <label className="text-xs font-medium text-gray-600 dark:text-slate-400">타임존</label>
                 <select
                   value={timezone}
                   onChange={(e) => setTimezone(e.target.value)}
-                  className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-1.5 text-sm"
+                  className="mt-1 block w-full rounded-lg border border-gray-300 dark:border-slate-600 px-3 py-1.5 text-sm"
                 >
                   {TIMEZONE_OPTIONS.map((tz) => (
                     <option key={tz} value={tz}>{tz}</option>
@@ -181,7 +181,7 @@ export function NotificationSettings({ orgId, plan }: NotificationSettingsProps)
           )}
 
           {!isFeatureAvailable(plan, 'notifications') && (
-            <p className="text-xs text-amber-600">
+            <p className="text-xs text-amber-600 dark:text-amber-400">
               <Link href="/pricing" className="underline">Growth 플랜</Link>에서 사용 가능합니다.
             </p>
           )}
@@ -195,7 +195,7 @@ export function NotificationSettings({ orgId, plan }: NotificationSettingsProps)
       {/* Recent Logs */}
       {recentLogs.length > 0 && (
         <div className="space-y-3">
-          <h3 className="text-sm font-medium text-gray-700">최근 전송 이력</h3>
+          <h3 className="text-sm font-medium text-gray-700 dark:text-slate-300">최근 전송 이력</h3>
           <div className="divide-y rounded-lg border">
             {recentLogs.map((log) => {
               const StatusIcon = STATUS_ICON[log.status] || Clock
@@ -203,7 +203,7 @@ export function NotificationSettings({ orgId, plan }: NotificationSettingsProps)
                 <div key={log.id} className="flex items-center gap-3 px-4 py-2.5">
                   <span className="text-base">{CHANNEL_ICON[log.channelType] || '📨'}</span>
                   <div className="flex-1 min-w-0">
-                    <span className="text-sm text-gray-900 truncate block">{log.alertId === 'digest' ? '일별 다이제스트' : `Alert #${log.alertId.slice(0, 8)}`}</span>
+                    <span className="text-sm text-gray-900 dark:text-slate-100 truncate block">{log.alertId === 'digest' ? '일별 다이제스트' : `Alert #${log.alertId.slice(0, 8)}`}</span>
                   </div>
                   <Badge variant={STATUS_VARIANT[log.status] || 'default'}>
                     {STATUS_LABEL[log.status] || log.status}

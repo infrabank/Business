@@ -32,7 +32,7 @@ export function AnomalyDetailPanel({ alert, onSuppress, onClose }: AnomalyDetail
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-amber-500" />
-            <span className="font-bold text-slate-900">이상 감지 상세</span>
+            <span className="font-bold text-slate-900 dark:text-slate-100">이상 감지 상세</span>
             <Badge variant={severity === 'critical' ? 'danger' : 'warning'}>
               {severity}
             </Badge>
@@ -43,15 +43,15 @@ export function AnomalyDetailPanel({ alert, onSuppress, onClose }: AnomalyDetail
         {/* Bar comparison */}
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-slate-600">기준값</span>
-            <span className="font-medium text-slate-900">${baselineValue.toFixed(2)}</span>
+            <span className="text-slate-600 dark:text-slate-400">기준값</span>
+            <span className="font-medium text-slate-900 dark:text-slate-100">${baselineValue.toFixed(2)}</span>
           </div>
           <div className="h-2 rounded-full bg-slate-200">
             <div className="h-2 rounded-full bg-slate-400" style={{ width: '100%' }} />
           </div>
 
           <div className="flex justify-between text-sm">
-            <span className="text-slate-600">감지값</span>
+            <span className="text-slate-600 dark:text-slate-400">감지값</span>
             <span className="font-bold text-rose-600">${detectedValue.toFixed(2)} ({ratio}%)</span>
           </div>
           <div className="h-2 rounded-full bg-slate-200">
@@ -63,7 +63,7 @@ export function AnomalyDetailPanel({ alert, onSuppress, onClose }: AnomalyDetail
         </div>
 
         {model && (
-          <p className="text-sm text-slate-600">모델: <span className="font-medium">{model}</span></p>
+          <p className="text-sm text-slate-600 dark:text-slate-400">모델: <span className="font-medium">{model}</span></p>
         )}
 
         {onSuppress && anomalyType && (

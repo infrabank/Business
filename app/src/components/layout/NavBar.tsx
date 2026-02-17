@@ -11,6 +11,7 @@ import {
 import { useState, useRef, useEffect } from 'react'
 import { getSupabaseBrowserClient } from '@/lib/supabase'
 import { useAppStore } from '@/lib/store'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 const iconMap: Record<string, React.ElementType> = {
   LayoutDashboard, Plug, FolderOpen, Wallet, Bell, FileText, Terminal, BookTemplate, BarChart3,
@@ -56,7 +57,7 @@ export function NavBar() {
 
   return (
     <>
-      <nav className="fixed top-0 z-50 flex h-16 w-full items-center border-b border-slate-200/60 bg-white/80 backdrop-blur-xl px-4 lg:px-6">
+      <nav className="fixed top-0 z-50 flex h-16 w-full items-center border-b border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl px-4 lg:px-6">
         <Link href="/dashboard" className="flex items-center gap-2 font-bold text-indigo-600">
           <Zap className="h-6 w-6" />
           <span className="text-lg text-gradient">LLM Cost Manager</span>
@@ -72,7 +73,7 @@ export function NavBar() {
                 href={item.href}
                 className={cn(
                   'flex items-center gap-2 rounded-xl px-3.5 py-2 text-sm font-medium transition-all duration-200',
-                  active ? 'bg-indigo-50 text-indigo-700 font-semibold' : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100/80'
+                  active ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400 font-semibold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/80'
                 )}
               >
                 {Icon && <Icon className="h-4 w-4" />}
@@ -83,7 +84,11 @@ export function NavBar() {
         </div>
 
         <div className="ml-auto flex items-center gap-2">
-          <Link href="/settings" className="hidden rounded-xl p-2.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 lg:block">
+          <div className="hidden lg:block">
+            <ThemeToggle />
+          </div>
+
+          <Link href="/settings" className="hidden rounded-xl p-2.5 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 lg:block">
             <Settings className="h-5 w-5" />
           </Link>
 
@@ -98,22 +103,22 @@ export function NavBar() {
               {userInitial}
             </button>
             {userMenuOpen && (
-              <div className="absolute right-0 top-12 z-10 w-52 rounded-2xl border border-slate-200/60 bg-white/95 backdrop-blur-xl py-2 shadow-xl" role="menu">
-                <div className="border-b border-slate-100 px-3 py-2">
-                  <p className="text-sm font-semibold text-slate-900 truncate">{currentUser?.name || 'User'}</p>
-                  <p className="text-xs text-slate-500 truncate">{currentUser?.email || ''}</p>
+              <div className="absolute right-0 top-12 z-10 w-52 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl py-2 shadow-xl" role="menu">
+                <div className="border-b border-slate-100 dark:border-slate-800 px-3 py-2">
+                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{currentUser?.name || 'User'}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{currentUser?.email || ''}</p>
                 </div>
                 <Link
                   href="/settings"
                   onClick={() => setUserMenuOpen(false)}
-                  className="flex w-full items-center gap-2 rounded-lg mx-1 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                  className="flex w-full items-center gap-2 rounded-lg mx-1 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800"
                   role="menuitem"
                 >
                   <Settings className="h-4 w-4" /> 설정
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className="flex w-full items-center gap-2 rounded-lg mx-1 px-3 py-2 text-sm text-rose-600 hover:bg-rose-50"
+                  className="flex w-full items-center gap-2 rounded-lg mx-1 px-3 py-2 text-sm text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50"
                   role="menuitem"
                 >
                   <LogOut className="h-4 w-4" /> 로그아웃
@@ -123,7 +128,7 @@ export function NavBar() {
           </div>
 
           <button
-            className="rounded-xl p-2.5 text-slate-500 hover:bg-slate-100 lg:hidden"
+            className="rounded-xl p-2.5 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 lg:hidden"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}
@@ -134,27 +139,30 @@ export function NavBar() {
       </nav>
 
       {mobileOpen && (
-        <div className="fixed inset-0 top-16 z-40 bg-white/95 backdrop-blur-xl p-6 lg:hidden">
+        <div className="fixed inset-0 top-16 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-6 lg:hidden">
           <div className="flex flex-col gap-1">
+            <div className="mb-3 flex justify-center">
+              <ThemeToggle />
+            </div>
             {NAV_ITEMS.map((item) => {
               const Icon = iconMap[item.icon]
               const active = pathname.startsWith(item.href)
               return (
                 <Link key={item.href} href={item.href} onClick={() => setMobileOpen(false)}
-                  className={cn('flex items-center gap-3 rounded-2xl px-5 py-4 text-base font-medium', active ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100')}>
+                  className={cn('flex items-center gap-3 rounded-2xl px-5 py-4 text-base font-medium', active ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800')}>
                   {Icon && <Icon className="h-5 w-5" />}
                   {item.label}
                 </Link>
               )
             })}
-            <hr className="my-3 border-slate-100" />
+            <hr className="my-3 border-slate-100 dark:border-slate-800" />
             <Link href="/settings" onClick={() => setMobileOpen(false)}
-              className={cn('flex items-center gap-3 rounded-2xl px-5 py-4 text-base font-medium', pathname === '/settings' ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-100')}>
+              className={cn('flex items-center gap-3 rounded-2xl px-5 py-4 text-base font-medium', pathname === '/settings' ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800')}>
               <Settings className="h-5 w-5" />
               설정
             </Link>
             <button onClick={() => { setMobileOpen(false); handleLogout() }}
-              className="flex items-center gap-3 rounded-2xl px-5 py-4 text-base font-medium text-rose-600 hover:bg-rose-50">
+              className="flex items-center gap-3 rounded-2xl px-5 py-4 text-base font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50">
               <LogOut className="h-5 w-5" />
               로그아웃
             </button>

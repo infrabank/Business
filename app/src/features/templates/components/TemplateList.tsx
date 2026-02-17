@@ -28,7 +28,7 @@ export function TemplateList({
         {[...Array(6)].map((_, i) => (
           <div
             key={i}
-            className="h-48 animate-pulse rounded-2xl bg-slate-100"
+            className="h-48 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-800"
           />
         ))}
       </div>
@@ -37,9 +37,9 @@ export function TemplateList({
 
   if (templates.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 py-16">
-        <p className="text-sm text-slate-500">템플릿이 없습니다.</p>
-        <p className="mt-1 text-xs text-slate-400">
+      <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-slate-200 dark:border-slate-700 py-16">
+        <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">템플릿이 없습니다.</p>
+        <p className="mt-1 text-xs text-slate-400 dark:text-slate-500">
           새 템플릿을 만들어 자주 사용하는 프롬프트를 저장하세요.
         </p>
       </div>

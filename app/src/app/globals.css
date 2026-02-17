@@ -44,6 +44,11 @@
   --foreground: #0F172A;
 }
 
+.dark {
+  --background: #0B1120;
+  --foreground: #E2E8F0;
+}
+
 /* Keyframes */
 @keyframes fade-in {
   from { opacity: 0; }
@@ -102,17 +107,26 @@ body {
   background-color: rgb(99 102 241 / 0.15);
   color: #1E1B4B;
 }
+.dark ::selection {
+  background-color: rgb(99 102 241 / 0.3);
+  color: #E0E7FF;
+}
 
 /* Scrollbar */
 * {
   scrollbar-width: thin;
   scrollbar-color: #CBD5E1 transparent;
 }
+.dark * {
+  scrollbar-color: #334155 transparent;
+}
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+.dark ::-webkit-scrollbar-thumb { background: #334155; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
 /* Custom Utilities */
 @utility text-gradient {
@@ -131,11 +145,17 @@ body {
     radial-gradient(ellipse 80% 50% at 50% -20%, rgb(99 102 241 / 0.12), transparent),
     radial-gradient(ellipse 60% 50% at 80% 50%, rgb(139 92 246 / 0.08), transparent),
     radial-gradient(ellipse 50% 50% at 20% 80%, rgb(14 165 233 / 0.06), transparent),
-    #F8FAFC;
+    var(--background);
 }
 
 @utility loading-skeleton {
   background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+@utility loading-skeleton-dark {
+  background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
   background-size: 200% 100%;
   animation: shimmer 2s infinite linear;
 }

@@ -40,10 +40,10 @@ const ICONS: Record<ToastType, React.ElementType> = {
 }
 
 const STYLES: Record<ToastType, string> = {
-  success: 'border-emerald-200/60 bg-emerald-50/90 text-emerald-800',
-  error: 'border-rose-200/60 bg-rose-50/90 text-rose-800',
-  warning: 'border-amber-200/60 bg-amber-50/90 text-amber-800',
-  info: 'border-indigo-200/60 bg-indigo-50/90 text-indigo-800',
+  success: 'border-emerald-200/60 bg-emerald-50/90 text-emerald-800 dark:border-emerald-800/60 dark:bg-emerald-950/90 dark:text-emerald-300',
+  error: 'border-rose-200/60 bg-rose-50/90 text-rose-800 dark:border-rose-800/60 dark:bg-rose-950/90 dark:text-rose-300',
+  warning: 'border-amber-200/60 bg-amber-50/90 text-amber-800 dark:border-amber-800/60 dark:bg-amber-950/90 dark:text-amber-300',
+  info: 'border-indigo-200/60 bg-indigo-50/90 text-indigo-800 dark:border-indigo-800/60 dark:bg-indigo-950/90 dark:text-indigo-300',
 }
 
 const ICON_STYLES: Record<ToastType, string> = {

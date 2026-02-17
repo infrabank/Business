@@ -61,24 +61,24 @@ export function ConfirmModal({
   if (!isOpen) return null
 
   const colors = variant === 'danger'
-    ? { bg: 'bg-red-50', border: 'border-red-200', icon: 'text-red-600', btn: 'bg-red-600 hover:bg-red-700' }
-    : { bg: 'bg-amber-50', border: 'border-amber-200', icon: 'text-amber-600', btn: 'bg-amber-600 hover:bg-amber-700' }
+    ? { bg: 'bg-red-50 dark:bg-red-950/30', border: 'border-red-200 dark:border-red-900/50', icon: 'text-red-600 dark:text-red-400', btn: 'bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800' }
+    : { bg: 'bg-amber-50 dark:bg-amber-950/30', border: 'border-amber-200 dark:border-amber-900/50', icon: 'text-amber-600 dark:text-amber-400', btn: 'bg-amber-600 hover:bg-amber-700 dark:bg-amber-700 dark:hover:bg-amber-800' }
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-black/50 dark:bg-black/70"
         onClick={isLoading ? undefined : onClose}
       />
       <div className={`relative mx-4 w-full max-w-md rounded-xl border ${colors.border} ${colors.bg} p-6 shadow-xl`}>
         <div className="mb-4 flex items-center gap-3">
           <AlertTriangle className={`h-6 w-6 ${colors.icon}`} />
-          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">{title}</h3>
         </div>
 
-        <p className="mb-4 text-sm text-gray-600">{description}</p>
+        <p className="mb-4 text-sm text-gray-600 dark:text-slate-300">{description}</p>
 
-        <p className="mb-2 text-sm font-medium text-gray-700">
+        <p className="mb-2 text-sm font-medium text-gray-700 dark:text-slate-300">
           계속하려면 <span className="font-mono font-bold">{confirmText}</span>을(를) 입력하세요:
         </p>
         <Input

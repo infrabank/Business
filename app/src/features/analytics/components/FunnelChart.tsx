@@ -15,14 +15,14 @@ interface FunnelChartProps {
 
 export function FunnelChart({ data, isLoading }: FunnelChartProps) {
   if (isLoading) {
-    return <div className="h-80 animate-pulse rounded-2xl bg-slate-100" />
+    return <div className="h-80 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-800" />
   }
 
   if (data.length === 0) {
     return (
       <Card>
-        <CardHeader><h3 className="text-lg font-bold text-slate-900">퍼널 전환율</h3></CardHeader>
-        <CardContent><p className="text-sm text-slate-500">데이터가 충분하지 않습니다.</p></CardContent>
+        <CardHeader><h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">퍼널 전환율</h3></CardHeader>
+        <CardContent><p className="text-sm text-slate-500 dark:text-slate-400">데이터가 충분하지 않습니다.</p></CardContent>
       </Card>
     )
   }
@@ -30,8 +30,8 @@ export function FunnelChart({ data, isLoading }: FunnelChartProps) {
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-bold text-slate-900">퍼널 전환율</h3>
-        <p className="text-sm text-slate-500">회원가입 → 7일 리텐션 전환 경로</p>
+        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">퍼널 전환율</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400">회원가입 → 7일 리텐션 전환 경로</p>
       </CardHeader>
       <CardContent>
         <div className="h-72">

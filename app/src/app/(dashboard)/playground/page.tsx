@@ -27,7 +27,7 @@ export default function PlaygroundPage() {
         </div>
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-48 animate-pulse rounded-2xl bg-gray-100" />
+            <div key={i} className="h-48 animate-pulse rounded-2xl bg-gray-100 dark:bg-slate-800" />
           ))}
         </div>
       </div>
@@ -59,8 +59,8 @@ function PlaygroundContent() {
           onClick={() => pg.setSidebarOpen(!pg.sidebarOpen)}
           className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition-colors ${
             pg.sidebarOpen
-              ? 'bg-indigo-50 text-indigo-700'
-              : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
+              ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:bg-slate-800/50'
           }`}
         >
           <BookTemplate className="h-3.5 w-3.5" />
@@ -68,13 +68,13 @@ function PlaygroundContent() {
         </button>
 
         {/* Mode Toggle */}
-        <div className="flex rounded-xl border border-slate-200 bg-white p-1">
+        <div className="flex rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-1">
           <button
             onClick={() => pg.setMode('single')}
             className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
               pg.mode === 'single'
-                ? 'bg-indigo-50 text-indigo-700'
-                : 'text-slate-500 hover:text-slate-700'
+                ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300'
             }`}
           >
             <Terminal className="h-3.5 w-3.5" />
@@ -84,8 +84,8 @@ function PlaygroundContent() {
             onClick={() => pg.setMode('compare')}
             className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
               pg.mode === 'compare'
-                ? 'bg-indigo-50 text-indigo-700'
-                : 'text-slate-500 hover:text-slate-700'
+                ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-300'
             }`}
           >
             <GitCompare className="h-3.5 w-3.5" />
@@ -97,12 +97,12 @@ function PlaygroundContent() {
 
       {/* No providers warning */}
       {pg.providers.length === 0 && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+        <div className="rounded-2xl border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/50 p-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500 dark:text-amber-400" />
             <div>
-              <p className="text-sm font-medium text-amber-700">프로바이더가 없습니다</p>
-              <p className="mt-1 text-sm text-amber-600">
+              <p className="text-sm font-medium text-amber-700 dark:text-amber-400">프로바이더가 없습니다</p>
+              <p className="mt-1 text-sm text-amber-600 dark:text-amber-400">
                 플레이그라운드를 사용하려면 먼저 프로바이더를 등록하세요.
               </p>
               <Link href="/providers" className="mt-2 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-800">
@@ -115,11 +115,11 @@ function PlaygroundContent() {
 
       {/* Limit Warning */}
       {pg.limitReached && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+        <div className="rounded-2xl border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-950/50 p-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500" />
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-500 dark:text-amber-400" />
             <div>
-              <p className="text-sm font-medium text-amber-700">
+              <p className="text-sm font-medium text-amber-700 dark:text-amber-400">
                 오늘의 실행 한도({pg.dailyLimit}회)에 도달했습니다
               </p>
               <Link href="/pricing" className="mt-1 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-800">
@@ -132,7 +132,7 @@ function PlaygroundContent() {
 
       {/* Model Selection + Parameters */}
       {pg.providers.length > 0 && (
-        <div className="flex flex-wrap items-end gap-6 rounded-2xl border border-slate-200/60 bg-white p-4 shadow-sm">
+        <div className="flex flex-wrap items-end gap-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-4 shadow-sm">
           <div className={pg.mode === 'compare' ? 'grid grid-cols-1 gap-4 md:grid-cols-2 flex-1' : 'flex-1'}>
             <ModelSelector
               providers={pg.providers}
@@ -172,7 +172,7 @@ function PlaygroundContent() {
         <div className="flex justify-end">
           <button
             onClick={() => setSaveAsTemplate(true)}
-            className="text-xs text-slate-500 hover:text-indigo-600 transition-colors"
+            className="text-xs text-slate-500 dark:text-slate-400 hover:text-indigo-600 transition-colors"
           >
             템플릿으로 저장
           </button>

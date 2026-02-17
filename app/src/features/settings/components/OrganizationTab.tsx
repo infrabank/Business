@@ -57,12 +57,12 @@ export function OrganizationTab() {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader><h2 className="text-lg font-semibold text-gray-900">조직 정보</h2></CardHeader>
+        <CardHeader><h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">조직 정보</h2></CardHeader>
         <CardContent>
           {orgLoading ? (
             <div className="max-w-md space-y-4">
               {[...Array(3)].map((_, i) => (
-                <div key={i} className="h-10 animate-pulse rounded bg-gray-100" />
+                <div key={i} className="h-10 animate-pulse rounded bg-gray-100 dark:bg-slate-800" />
               ))}
             </div>
           ) : (
@@ -79,9 +79,9 @@ export function OrganizationTab() {
       </Card>
 
       <Card>
-        <CardHeader><h2 className="text-lg font-semibold text-gray-900">팀 관리</h2></CardHeader>
+        <CardHeader><h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">팀 관리</h2></CardHeader>
         <CardContent>
-          <p className="text-sm text-gray-500">멤버 초대, 역할 관리, 접근제어를 설정하세요.</p>
+          <p className="text-sm text-gray-500 dark:text-slate-400">멤버 초대, 역할 관리, 접근제어를 설정하세요.</p>
           <Link href="/team" className="mt-3 inline-block">
             <Button variant="outline">팀 관리 페이지로 이동</Button>
           </Link>

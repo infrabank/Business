@@ -33,8 +33,8 @@ export function ProviderFilter({ providers, selected, onChange }: ProviderFilter
         className={cn(
           'rounded-xl border px-3 py-1 text-sm font-medium transition-colors',
           allSelected
-            ? 'bg-indigo-50 text-indigo-700 border-indigo-200 font-semibold'
-            : 'border-slate-200 text-slate-500 hover:bg-slate-50',
+            ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 font-semibold'
+            : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800',
         )}
       >
         전체
@@ -50,8 +50,8 @@ export function ProviderFilter({ providers, selected, onChange }: ProviderFilter
             className={cn(
               'inline-flex items-center gap-1.5 rounded-xl border px-3 py-1 text-sm font-medium transition-colors',
               isActive
-                ? 'bg-indigo-50 text-indigo-700 border-indigo-200 font-semibold'
-                : 'border-slate-200 text-slate-500 hover:bg-slate-50',
+                ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 font-semibold'
+                : 'border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800',
             )}
           >
             {isActive && (

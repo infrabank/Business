@@ -39,25 +39,25 @@ export function PlaygroundEditor({
   )
 
   return (
-    <div className="rounded-2xl border border-slate-200/60 bg-white shadow-sm" onKeyDown={handleKeyDown}>
+    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-sm" onKeyDown={handleKeyDown}>
       {/* System Prompt Toggle */}
       <button
         type="button"
         onClick={() => setShowSystem(!showSystem)}
-        className="flex w-full items-center gap-2 rounded-t-2xl border-b border-slate-100 px-4 py-2.5 text-xs font-medium text-slate-400 hover:text-slate-600 hover:bg-slate-50/50 transition-colors"
+        className="flex w-full items-center gap-2 rounded-t-2xl border-b border-slate-100 dark:border-slate-800 px-4 py-2.5 text-xs font-medium text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50/50 dark:hover:bg-slate-800 transition-colors"
       >
         {showSystem ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
         System Prompt (optional)
       </button>
 
       {showSystem && (
-        <div className="border-b border-slate-100 px-4 py-3">
+        <div className="border-b border-slate-100 dark:border-slate-800 px-4 py-3">
           <textarea
             value={systemPrompt}
             onChange={(e) => onSystemPromptChange(e.target.value)}
             placeholder="시스템 프롬프트를 입력하세요..."
             rows={3}
-            className="w-full resize-none rounded-lg border-0 bg-slate-50/50 px-3 py-2 text-sm text-slate-700 placeholder:text-slate-300 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100"
+            className="w-full resize-none rounded-lg border-0 bg-slate-50/50 dark:bg-slate-800/50 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-300 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-100 dark:focus:ring-indigo-950/50"
           />
         </div>
       )}
@@ -69,12 +69,12 @@ export function PlaygroundEditor({
           onChange={(e) => onUserPromptChange(e.target.value)}
           placeholder="프롬프트를 입력하세요... (Ctrl+Enter로 실행)"
           rows={5}
-          className="w-full resize-none rounded-lg border-0 bg-transparent px-1 py-1 text-sm text-slate-800 placeholder:text-slate-300 focus:outline-none"
+          className="w-full resize-none rounded-lg border-0 bg-transparent px-1 py-1 text-sm text-slate-800 dark:text-slate-200 placeholder:text-slate-300 dark:placeholder:text-slate-500 focus:outline-none"
         />
       </div>
 
       {/* Bottom Bar */}
-      <div className="flex items-center justify-between rounded-b-2xl border-t border-slate-100 bg-slate-50/30 px-4 py-2.5">
+      <div className="flex items-center justify-between rounded-b-2xl border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-800/50 px-4 py-2.5">
         <div className="text-xs text-slate-400">
           {estimate && userPrompt.trim() ? (
             <span>

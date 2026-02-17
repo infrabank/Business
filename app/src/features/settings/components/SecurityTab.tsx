@@ -139,8 +139,8 @@ export function SecurityTab() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Lock className="h-5 w-5 text-gray-400" />
-            <h2 className="text-lg font-semibold text-gray-900">비밀번호 변경</h2>
+            <Lock className="h-5 w-5 text-gray-400 dark:text-slate-400" />
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">비밀번호 변경</h2>
           </div>
         </CardHeader>
         <CardContent>
@@ -162,7 +162,7 @@ export function SecurityTab() {
               required
             />
             {newPassword && newPassword.length < 8 && (
-              <p className="text-xs text-amber-600">8자 이상 입력해주세요.</p>
+              <p className="text-xs text-amber-600 dark:text-amber-500">8자 이상 입력해주세요.</p>
             )}
             <Input
               id="confirmPassword"
@@ -173,7 +173,7 @@ export function SecurityTab() {
               required
             />
             {confirmPassword && newPassword !== confirmPassword && (
-              <p className="text-xs text-red-600">비밀번호가 일치하지 않습니다.</p>
+              <p className="text-xs text-red-600 dark:text-red-500">비밀번호가 일치하지 않습니다.</p>
             )}
             <Button type="submit" disabled={passwordSaving || !currentPassword || !newPassword || !confirmPassword}>
               {passwordSaving ? '변경 중...' : '비밀번호 변경'}
@@ -186,28 +186,28 @@ export function SecurityTab() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <AlertTriangle className="h-5 w-5 text-red-500" />
-            <h2 className="text-lg font-semibold text-red-600">Danger Zone</h2>
+            <AlertTriangle className="h-5 w-5 text-red-500 dark:text-red-400" />
+            <h2 className="text-lg font-semibold text-red-600 dark:text-red-400">Danger Zone</h2>
           </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
             {/* Data Reset */}
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+            <div className="rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 p-4">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <Database className="h-4 w-4 text-red-600" />
-                    <h3 className="text-sm font-semibold text-gray-900">데이터 초기화</h3>
+                    <Database className="h-4 w-4 text-red-600 dark:text-red-400" />
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-100">데이터 초기화</h3>
                   </div>
-                  <p className="mt-1 text-sm text-gray-600">
+                  <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">
                     조직의 모든 사용량 데이터가 영구 삭제됩니다. 이 작업은 되돌릴 수 없습니다.
                   </p>
                 </div>
                 <Button
                   variant="outline"
                   onClick={() => { loadOrgName(); setResetModalOpen(true) }}
-                  className="shrink-0 border-red-300 text-red-600 hover:bg-red-100"
+                  className="shrink-0 border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/40"
                 >
                   데이터 초기화
                 </Button>
@@ -215,18 +215,18 @@ export function SecurityTab() {
             </div>
 
             {/* Account Delete */}
-            <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+            <div className="rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/20 p-4">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <Trash2 className="h-4 w-4 text-red-600" />
-                    <h3 className="text-sm font-semibold text-gray-900">계정 삭제</h3>
+                    <Trash2 className="h-4 w-4 text-red-600 dark:text-red-400" />
+                    <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-100">계정 삭제</h3>
                   </div>
-                  <p className="mt-1 text-sm text-gray-600">
+                  <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">
                     계정, 조직, 모든 데이터가 영구 삭제됩니다.
                   </p>
                   {isGrowthActive && (
-                    <p className="mt-1 text-sm font-medium text-amber-600">
+                    <p className="mt-1 text-sm font-medium text-amber-600 dark:text-amber-500">
                       Growth 구독을 먼저 해지해야 합니다. 구독 탭에서 결제 관리를 이용하세요.
                     </p>
                   )}
@@ -235,7 +235,7 @@ export function SecurityTab() {
                   variant="outline"
                   onClick={() => setDeleteModalOpen(true)}
                   disabled={isGrowthActive}
-                  className="shrink-0 border-red-300 text-red-600 hover:bg-red-100"
+                  className="shrink-0 border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-950/40"
                 >
                   계정 삭제
                 </Button>

@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import type { CurrencyCode, DateFormatType, NumberFormatType, DashboardPeriod } from '@/types/settings'
+import type { Theme } from '@/types/theme'
 
 interface User {
   id: string
@@ -13,6 +14,7 @@ interface Preferences {
   dateFormat: DateFormatType
   numberFormat: NumberFormatType
   dashboardPeriod: DashboardPeriod
+  theme: Theme
 }
 
 interface AppState {
@@ -39,6 +41,7 @@ export const useAppStore = create<AppState>((set) => ({
     dateFormat: 'YYYY-MM-DD',
     numberFormat: '1,000.00',
     dashboardPeriod: 30,
+    theme: 'system',
   },
   preferencesLoaded: false,
   setCurrentUser: (user) => set({ currentUser: user }),

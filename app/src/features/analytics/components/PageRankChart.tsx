@@ -28,14 +28,14 @@ interface PageRankChartProps {
 
 export function PageRankChart({ data, isLoading }: PageRankChartProps) {
   if (isLoading) {
-    return <div className="h-80 animate-pulse rounded-2xl bg-slate-100" />
+    return <div className="h-80 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-800" />
   }
 
   if (data.length === 0) {
     return (
       <Card>
-        <CardHeader><h3 className="text-lg font-bold text-slate-900">페이지별 방문 순위</h3></CardHeader>
-        <CardContent><p className="text-sm text-slate-500">데이터가 충분하지 않습니다.</p></CardContent>
+        <CardHeader><h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">페이지별 방문 순위</h3></CardHeader>
+        <CardContent><p className="text-sm text-slate-500 dark:text-slate-400">데이터가 충분하지 않습니다.</p></CardContent>
       </Card>
     )
   }
@@ -48,7 +48,7 @@ export function PageRankChart({ data, isLoading }: PageRankChartProps) {
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-bold text-slate-900">페이지별 방문 순위</h3>
+        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">페이지별 방문 순위</h3>
       </CardHeader>
       <CardContent>
         <div className="h-72">

@@ -99,15 +99,15 @@ export function TemplateEditor({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-          <h2 className="text-lg font-bold text-slate-900">
+        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-6 py-4">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
             {isEdit ? '템플릿 수정' : '새 템플릿 만들기'}
           </h2>
           <button
             onClick={onCancel}
-            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-lg p-1.5 text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:bg-slate-800 hover:text-slate-600 dark:text-slate-400 dark:text-slate-500"
           >
             <X className="h-5 w-5" />
           </button>
@@ -116,7 +116,7 @@ export function TemplateEditor({
         <div className="space-y-4 px-6 py-5">
           {/* Name */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">
+            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300 dark:text-slate-500">
               템플릿 이름 <span className="text-rose-500">*</span>
             </label>
             <Input
@@ -128,7 +128,7 @@ export function TemplateEditor({
 
           {/* Description */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">
+            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300 dark:text-slate-500">
               설명
             </label>
             <textarea
@@ -136,19 +136,19 @@ export function TemplateEditor({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="템플릿 설명 (선택사항)"
               rows={2}
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
 
           {/* Category */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">
+            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300 dark:text-slate-500">
               카테고리
             </label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             >
               {DEFAULT_CATEGORIES.map((c) => (
                 <option key={c.value} value={c.value}>
@@ -163,7 +163,7 @@ export function TemplateEditor({
             <button
               type="button"
               onClick={() => setShowSystem(!showSystem)}
-              className="flex items-center gap-1.5 text-sm font-medium text-slate-700"
+              className="flex items-center gap-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 dark:text-slate-500"
             >
               시스템 프롬프트
               {showSystem ? (
@@ -178,14 +178,14 @@ export function TemplateEditor({
                 onChange={(e) => setSystemPrompt(e.target.value)}
                 placeholder="시스템 프롬프트 (선택사항)"
                 rows={4}
-                className="mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               />
             )}
           </div>
 
           {/* User Prompt */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">
+            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300 dark:text-slate-500">
               유저 프롬프트 <span className="text-rose-500">*</span>
             </label>
             <textarea
@@ -193,20 +193,20 @@ export function TemplateEditor({
               onChange={(e) => setUserPrompt(e.target.value)}
               placeholder={'유저 프롬프트 — {{변수명}} 형식으로 변수를 사용할 수 있습니다'}
               rows={6}
-              className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
 
           {/* Detected Variables */}
           {detectedVars.length > 0 && (
-            <div className="rounded-xl border border-indigo-100 bg-indigo-50/50 p-3">
-              <p className="mb-2 text-xs font-medium text-indigo-700">
+            <div className="rounded-xl border border-indigo-100 bg-indigo-50 dark:bg-indigo-950/50/50 p-3">
+              <p className="mb-2 text-xs font-medium text-indigo-700 dark:text-indigo-400">
                 감지된 변수 ({detectedVars.length}개)
               </p>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                 {detectedVars.map((v) => (
                   <div key={v.name} className="flex items-center gap-2">
-                    <span className="shrink-0 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                    <span className="shrink-0 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700 dark:text-indigo-400">
                       {`{{${v.name}}}`}
                     </span>
                     <input
@@ -219,7 +219,7 @@ export function TemplateEditor({
                         }))
                       }
                       placeholder="기본값"
-                      className="flex-1 rounded-lg border border-indigo-200 bg-white px-2 py-1 text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                      className="flex-1 rounded-lg border border-indigo-200 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-700 dark:text-slate-300 dark:text-slate-500 placeholder:text-slate-400 dark:text-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                     />
                   </div>
                 ))}
@@ -229,11 +229,11 @@ export function TemplateEditor({
 
           {/* Visibility */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">
+            <label className="mb-1.5 block text-sm font-medium text-slate-700 dark:text-slate-300 dark:text-slate-500">
               공개 범위
             </label>
             <div className="flex gap-3">
-              <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm has-[:checked]:border-indigo-300 has-[:checked]:bg-indigo-50">
+              <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 text-sm has-[:checked]:border-indigo-300 has-[:checked]:bg-indigo-50 dark:bg-indigo-950/50">
                 <input
                   type="radio"
                   name="visibility"
@@ -244,7 +244,7 @@ export function TemplateEditor({
                 />
                 개인 (나만 사용)
               </label>
-              <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm has-[:checked]:border-indigo-300 has-[:checked]:bg-indigo-50">
+              <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-2.5 text-sm has-[:checked]:border-indigo-300 has-[:checked]:bg-indigo-50 dark:bg-indigo-950/50">
                 <input
                   type="radio"
                   name="visibility"
@@ -263,7 +263,7 @@ export function TemplateEditor({
             <button
               type="button"
               onClick={() => setShowParams(!showParams)}
-              className="flex items-center gap-1.5 text-sm font-medium text-slate-700"
+              className="flex items-center gap-1.5 text-sm font-medium text-slate-700 dark:text-slate-300 dark:text-slate-500"
             >
               기본 파라미터
               {showParams ? (
@@ -275,7 +275,7 @@ export function TemplateEditor({
             {showParams && (
               <div className="mt-2 grid grid-cols-2 gap-3">
                 <div>
-                  <label className="mb-1 block text-xs text-slate-500">
+                  <label className="mb-1 block text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500">
                     Temperature ({defaultTemperature ?? '-'})
                   </label>
                   <input
@@ -291,7 +291,7 @@ export function TemplateEditor({
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs text-slate-500">
+                  <label className="mb-1 block text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500">
                     Max Tokens
                   </label>
                   <input
@@ -305,7 +305,7 @@ export function TemplateEditor({
                       )
                     }
                     placeholder="1024"
-                    className="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                   />
                 </div>
               </div>
@@ -314,7 +314,7 @@ export function TemplateEditor({
         </div>
 
         {/* Actions */}
-        <div className="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
+        <div className="flex items-center justify-end gap-3 border-t border-slate-100 dark:border-slate-800 px-6 py-4">
           <Button variant="secondary" onClick={onCancel} disabled={saving}>
             취소
           </Button>

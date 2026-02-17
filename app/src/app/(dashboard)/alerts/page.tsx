@@ -28,12 +28,12 @@ export default function AlertsPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">알림</h1>
-          <p className="text-gray-500">알림 및 경고</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">알림</h1>
+          <p className="text-gray-500 dark:text-slate-400">알림 및 경고</p>
         </div>
         <div className="space-y-3">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-20 animate-pulse rounded-xl bg-gray-100" />
+            <div key={i} className="h-20 animate-pulse rounded-xl bg-gray-100 dark:bg-slate-800" />
           ))}
         </div>
       </div>
@@ -44,8 +44,8 @@ export default function AlertsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">알림</h1>
-          <p className="text-gray-500">알림 및 경고</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">알림</h1>
+          <p className="text-gray-500 dark:text-slate-400">알림 및 경고</p>
         </div>
         <Button variant="outline" size="sm" onClick={markAllRead}>
           <CheckCircle className="mr-2 h-4 w-4" /> 모두 읽음 처리
@@ -69,8 +69,8 @@ export default function AlertsPage() {
       )}
 
       {alerts.length === 0 ? (
-        <div className="rounded-xl border border-gray-200 bg-white p-12 text-center">
-          <p className="text-gray-500">알림이 없습니다. 예산 임계값에 도달하면 알림이 표시됩니다.</p>
+        <div className="rounded-xl border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 p-12 text-center">
+          <p className="text-gray-500 dark:text-slate-400">알림이 없습니다. 예산 임계값에 도달하면 알림이 표시됩니다.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -88,15 +88,15 @@ export default function AlertsPage() {
               }}
             >
               <CardContent className="flex items-start gap-3 py-4">
-                <Bell className={`mt-0.5 h-5 w-5 ${a.isRead ? 'text-gray-300' : 'text-blue-500'}`} />
+                <Bell className={`mt-0.5 h-5 w-5 ${a.isRead ? 'text-gray-300 dark:text-slate-600' : 'text-blue-500 dark:text-blue-400'}`} />
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
                     <Badge variant={typeVariant[a.type] ?? 'default'}>{a.type.replace(/_/g, ' ')}</Badge>
-                    <span className="font-medium text-gray-900">{a.title}</span>
-                    {!a.isRead && <span className="h-2 w-2 rounded-full bg-blue-500" />}
+                    <span className="font-medium text-gray-900 dark:text-slate-100">{a.title}</span>
+                    {!a.isRead && <span className="h-2 w-2 rounded-full bg-blue-500 dark:bg-blue-400" />}
                   </div>
-                  <p className="mt-1 text-sm text-gray-600">{a.message}</p>
-                  <p className="mt-1 text-xs text-gray-400">{new Date(a.sentAt).toLocaleString('ko-KR')}</p>
+                  <p className="mt-1 text-sm text-gray-600 dark:text-slate-400">{a.message}</p>
+                  <p className="mt-1 text-xs text-gray-400 dark:text-slate-500">{new Date(a.sentAt).toLocaleString('ko-KR')}</p>
                 </div>
               </CardContent>
             </Card>

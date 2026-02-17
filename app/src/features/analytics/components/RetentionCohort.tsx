@@ -19,14 +19,14 @@ function getRetentionColor(rate: number): string {
 
 export function RetentionCohort({ data, isLoading }: RetentionCohortProps) {
   if (isLoading) {
-    return <div className="h-64 animate-pulse rounded-2xl bg-slate-100" />
+    return <div className="h-64 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-800" />
   }
 
   if (data.length === 0) {
     return (
       <Card>
-        <CardHeader><h3 className="text-lg font-bold text-slate-900">리텐션 코호트</h3></CardHeader>
-        <CardContent><p className="text-sm text-slate-500">데이터가 충분하지 않습니다.</p></CardContent>
+        <CardHeader><h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">리텐션 코호트</h3></CardHeader>
+        <CardContent><p className="text-sm text-slate-500 dark:text-slate-400">데이터가 충분하지 않습니다.</p></CardContent>
       </Card>
     )
   }
@@ -36,18 +36,18 @@ export function RetentionCohort({ data, isLoading }: RetentionCohortProps) {
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-bold text-slate-900">리텐션 코호트</h3>
-        <p className="text-sm text-slate-500">주간 코호트별 재방문율</p>
+        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">리텐션 코호트</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400">주간 코호트별 재방문율</p>
       </CardHeader>
       <CardContent>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr>
-                <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500">코호트</th>
-                <th className="px-3 py-2 text-center text-xs font-semibold text-slate-500">크기</th>
+                <th className="px-3 py-2 text-left text-xs font-semibold text-slate-500 dark:text-slate-400">코호트</th>
+                <th className="px-3 py-2 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">크기</th>
                 {Array.from({ length: maxWeeks }).map((_, i) => (
-                  <th key={i} className="px-3 py-2 text-center text-xs font-semibold text-slate-500">
+                  <th key={i} className="px-3 py-2 text-center text-xs font-semibold text-slate-500 dark:text-slate-400">
                     W{i}
                   </th>
                 ))}
@@ -56,10 +56,10 @@ export function RetentionCohort({ data, isLoading }: RetentionCohortProps) {
             <tbody>
               {data.map((cohort) => (
                 <tr key={cohort.cohortWeek}>
-                  <td className="px-3 py-2 text-xs font-medium text-slate-700 whitespace-nowrap">
+                  <td className="px-3 py-2 text-xs font-medium text-slate-700 dark:text-slate-300 whitespace-nowrap">
                     {cohort.cohortWeek}
                   </td>
-                  <td className="px-3 py-2 text-center text-xs text-slate-600">
+                  <td className="px-3 py-2 text-center text-xs text-slate-600 dark:text-slate-400">
                     {cohort.cohortSize}
                   </td>
                   {cohort.retention.map((rate, i) => (
@@ -76,7 +76,7 @@ export function RetentionCohort({ data, isLoading }: RetentionCohortProps) {
                   ))}
                   {Array.from({ length: maxWeeks - cohort.retention.length }).map((_, i) => (
                     <td key={`empty-${i}`} className="px-1 py-1">
-                      <div className="flex h-8 items-center justify-center rounded-lg bg-slate-50 text-xs text-slate-300">
+                      <div className="flex h-8 items-center justify-center rounded-lg bg-slate-50 dark:bg-slate-800 text-xs text-slate-300">
                         -
                       </div>
                     </td>

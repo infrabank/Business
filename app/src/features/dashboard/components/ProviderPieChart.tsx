@@ -19,7 +19,7 @@ export function ProviderPieChart({ data }: ProviderPieChartProps) {
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-bold text-slate-900">프로바이더별</h3>
+        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">프로바이더별</h3>
       </CardHeader>
       <CardContent>
         <div className="h-64">
@@ -40,6 +40,7 @@ export function ProviderPieChart({ data }: ProviderPieChartProps) {
                   padding: '1rem',
                   boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)'
                 }}
+                wrapperClassName="dark:[&_.recharts-tooltip-wrapper]:!border-slate-700 dark:[&_.recharts-tooltip-wrapper]:!bg-slate-900/95"
               />
               <Legend />
             </PieChart>

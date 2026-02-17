@@ -13,7 +13,7 @@ export function FinalCta() {
         </p>
         <Link
           href="/signup"
-          className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-semibold text-slate-900 shadow-lg transition-all duration-200 hover:shadow-xl hover:brightness-95"
+          className="mt-8 inline-flex items-center gap-2 rounded-xl bg-white dark:bg-slate-900 px-8 py-4 text-base font-semibold text-slate-900 dark:text-slate-100 shadow-lg transition-all duration-200 hover:shadow-xl hover:brightness-95"
         >
           지금 절감 시작 <ArrowRight className="h-4 w-4" />
         </Link>

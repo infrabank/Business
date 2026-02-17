@@ -33,18 +33,18 @@ function BudgetMenu({ budget, onEdit, onToggle, onDelete }: {
 
   return (
     <div className="relative" ref={ref}>
-      <button onClick={() => setOpen(!open)} className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
+      <button onClick={() => setOpen(!open)} className="rounded p-1 text-gray-400 dark:text-slate-500 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-600 dark:hover:text-slate-300">
         <MoreVertical className="h-4 w-4" />
       </button>
       {open && (
-        <div className="absolute right-0 top-8 z-10 w-44 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
-          <button onClick={() => { onEdit(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+        <div className="absolute right-0 top-8 z-10 w-44 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-1 shadow-lg">
+          <button onClick={() => { onEdit(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800">
             <Pencil className="h-4 w-4" /> 금액 수정
           </button>
-          <button onClick={() => { onToggle(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50">
+          <button onClick={() => { onToggle(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800">
             <Power className="h-4 w-4" /> {budget.isActive ? '비활성화' : '활성화'}
           </button>
-          <hr className="my-1 border-gray-100" />
+          <hr className="my-1 border-gray-100 dark:border-slate-800" />
           <button onClick={() => { onDelete(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50">
             <Trash2 className="h-4 w-4" /> 삭제
           </button>
@@ -103,12 +103,12 @@ export default function BudgetPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">예산</h1>
-          <p className="text-gray-500">지출 한도를 설정하고 알림을 받으세요</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">예산</h1>
+          <p className="text-gray-500 dark:text-slate-400">지출 한도를 설정하고 알림을 받으세요</p>
         </div>
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-24 animate-pulse rounded-xl bg-gray-100" />
+            <div key={i} className="h-24 animate-pulse rounded-xl bg-gray-100 dark:bg-slate-800" />
           ))}
         </div>
       </div>
@@ -119,8 +119,8 @@ export default function BudgetPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">예산</h1>
-          <p className="text-gray-500">지출 한도를 설정하고 알림을 받으세요</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">예산</h1>
+          <p className="text-gray-500 dark:text-slate-400">지출 한도를 설정하고 알림을 받으세요</p>
         </div>
         <Button onClick={() => setShowForm(true)}><Plus className="mr-2 h-4 w-4" /> 예산 추가</Button>
       </div>
@@ -134,10 +134,10 @@ export default function BudgetPage() {
       )}
 
       {budgets.length === 0 && !showForm ? (
-        <Card className="cursor-pointer border-dashed transition-colors hover:border-blue-400 hover:bg-blue-50/50" onClick={() => setShowForm(true)}>
+        <Card className="cursor-pointer border-dashed transition-colors hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-950/20" onClick={() => setShowForm(true)}>
           <CardContent className="flex min-h-[120px] flex-col items-center justify-center py-8">
-            <Plus className="h-8 w-8 text-gray-400" />
-            <p className="mt-2 text-sm text-gray-500">설정된 예산이 없습니다. 클릭하여 생성하세요.</p>
+            <Plus className="h-8 w-8 text-gray-400 dark:text-slate-500" />
+            <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">설정된 예산이 없습니다. 클릭하여 생성하세요.</p>
           </CardContent>
         </Card>
       ) : (
@@ -150,7 +150,7 @@ export default function BudgetPage() {
                 <CardContent className="py-5">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h3 className="font-semibold text-gray-900">{b.period === 'monthly' ? '월간' : b.period === 'weekly' ? '주간' : '일간'} 예산</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-slate-100">{b.period === 'monthly' ? '월간' : b.period === 'weekly' ? '주간' : '일간'} 예산</h3>
                       {editingId === b.id ? (
                         <div className="mt-1 flex items-center gap-1">
                           <span className="text-sm text-gray-500">$</span>
@@ -172,14 +172,14 @@ export default function BudgetPage() {
                           </button>
                         </div>
                       ) : (
-                        <p className="mt-1 text-sm text-gray-500">한도 {formatCurrency(b.amount)}</p>
+                        <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">한도 {formatCurrency(b.amount)}</p>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
                       <Badge variant={b.isActive ? 'success' : 'default'}>
                         {b.isActive ? '활성' : '비활성'}
                       </Badge>
-                      <div className="flex items-center gap-1 text-sm text-gray-400">
+                      <div className="flex items-center gap-1 text-sm text-gray-400 dark:text-slate-500">
                         <Bell className="h-4 w-4" />
                         {b.alertThresholds.map((t) => `${t}%`).join(', ')}
                       </div>
@@ -193,9 +193,9 @@ export default function BudgetPage() {
                   </div>
 
                   {deleteConfirmId === b.id && (
-                    <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3">
-                      <p className="text-sm font-medium text-red-800">이 예산을 삭제하시겠습니까?</p>
-                      <p className="mt-1 text-xs text-red-600">예산과 알림 임계값이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
+                    <div className="mt-3 rounded-lg border border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/50 p-3">
+                      <p className="text-sm font-medium text-red-800 dark:text-red-400">이 예산을 삭제하시겠습니까?</p>
+                      <p className="mt-1 text-xs text-red-600 dark:text-red-400">예산과 알림 임계값이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
                       <div className="mt-2 flex gap-2">
                         <Button size="sm" variant="outline" onClick={() => handleDelete(b.id)}>
                           <Trash2 className="mr-1 h-3 w-3" /> 삭제
@@ -206,7 +206,7 @@ export default function BudgetPage() {
                   )}
 
                   {deleteConfirmId !== b.id && (
-                    <div className="mt-3 h-3 overflow-hidden rounded-full bg-gray-100">
+                    <div className="mt-3 h-3 overflow-hidden rounded-full bg-gray-100 dark:bg-slate-800">
                       <div className={`h-full rounded-full transition-all ${barColor}`} style={{ width: `${Math.min(pct, 100)}%` }} />
                     </div>
                   )}

@@ -100,13 +100,13 @@ export function ChannelManager({ orgId, plan }: ChannelManagerProps) {
   }
 
   if (isLoading) {
-    return <div className="space-y-3">{[...Array(2)].map((_, i) => <div key={i} className="h-20 animate-pulse rounded-lg bg-gray-100" />)}</div>
+    return <div className="space-y-3">{[...Array(2)].map((_, i) => <div key={i} className="h-20 animate-pulse rounded-lg bg-gray-100 dark:bg-slate-800" />)}</div>
   }
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-medium text-gray-700">알림 채널</h3>
+        <h3 className="text-sm font-medium text-gray-700 dark:text-slate-300">알림 채널</h3>
         {canAddMore && (
           <Button variant="outline" size="sm" onClick={() => setShowAdd(true)}>
             <Plus className="mr-1 h-4 w-4" /> 추가
@@ -133,7 +133,7 @@ export function ChannelManager({ orgId, plan }: ChannelManagerProps) {
                   onClick={() => !disabled && setAddType(t)}
                   disabled={disabled}
                   className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-                    addType === t ? 'bg-blue-600 text-white' : disabled ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-white text-gray-600 hover:bg-gray-100'
+                    addType === t ? 'bg-blue-600 text-white' : disabled ? 'bg-gray-100 dark:bg-slate-800 text-gray-400 cursor-not-allowed' : 'bg-white dark:bg-slate-900 text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:bg-slate-800'
                   }`}
                 >
                   {CHANNEL_LABELS[t]}
@@ -163,7 +163,7 @@ export function ChannelManager({ orgId, plan }: ChannelManagerProps) {
           />
 
           <div className="space-y-1">
-            <span className="text-xs font-medium text-gray-600">수신 알림 유형</span>
+            <span className="text-xs font-medium text-gray-600 dark:text-slate-400">수신 알림 유형</span>
             <div className="flex flex-wrap gap-2">
               {Object.entries(ALERT_TYPE_LABELS).map(([key, label]) => (
                 <button
@@ -174,7 +174,7 @@ export function ChannelManager({ orgId, plan }: ChannelManagerProps) {
                     )
                   }
                   className={`rounded-full px-3 py-1 text-xs font-medium transition ${
-                    addAlertTypes.includes(key) ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'
+                    addAlertTypes.includes(key) ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 dark:bg-slate-800 text-gray-500 dark:text-slate-400'
                   }`}
                 >
                   {label}
@@ -191,7 +191,7 @@ export function ChannelManager({ orgId, plan }: ChannelManagerProps) {
 
       {/* Channel List */}
       {channels.length === 0 && !showAdd && (
-        <div className="rounded-lg border border-dashed border-gray-300 p-6 text-center text-sm text-gray-400">
+        <div className="rounded-lg border border-dashed border-gray-300 dark:border-slate-600 p-6 text-center text-sm text-gray-400">
           등록된 알림 채널이 없습니다.
         </div>
       )}
@@ -207,29 +207,29 @@ export function ChannelManager({ orgId, plan }: ChannelManagerProps) {
         return (
           <div
             key={ch.id}
-            className={`flex items-start gap-3 rounded-lg border p-3 ${ch.enabled ? 'border-gray-200 bg-white' : 'border-gray-100 bg-gray-50 opacity-60'}`}
+            className={`flex items-start gap-3 rounded-lg border p-3 ${ch.enabled ? 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900' : 'border-gray-100 bg-gray-50 opacity-60'}`}
           >
             <Icon className="mt-0.5 h-5 w-5 text-gray-400 flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-900 truncate">{ch.name}</span>
+                <span className="text-sm font-medium text-gray-900 dark:text-slate-100 truncate">{ch.name}</span>
                 <Badge variant={ch.enabled ? 'success' : 'default'}>{ch.enabled ? '활성' : '비활성'}</Badge>
               </div>
-              <p className="mt-0.5 text-xs text-gray-500 truncate">{configSummary}</p>
+              <p className="mt-0.5 text-xs text-gray-500 dark:text-slate-400 truncate">{configSummary}</p>
               <div className="mt-1 flex flex-wrap gap-1">
                 {ch.alertTypes.map((t) => (
-                  <span key={t} className="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] text-gray-500">{ALERT_TYPE_LABELS[t] || t}</span>
+                  <span key={t} className="rounded bg-gray-100 dark:bg-slate-800 px-1.5 py-0.5 text-[10px] text-gray-500 dark:text-slate-400">{ALERT_TYPE_LABELS[t] || t}</span>
                 ))}
               </div>
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
               <button
                 onClick={() => handleToggle(ch.id, ch.type, ch.enabled)}
-                className="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                className="rounded p-1.5 text-gray-400 hover:bg-gray-100 dark:bg-slate-800 hover:text-gray-600 dark:text-slate-400"
                 title={ch.enabled ? '비활성화' : '활성화'}
               >
                 <div className={`h-4 w-7 rounded-full transition ${ch.enabled ? 'bg-emerald-500' : 'bg-gray-300'}`}>
-                  <div className={`h-3 w-3 rounded-full bg-white transition-transform mt-0.5 ${ch.enabled ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
+                  <div className={`h-3 w-3 rounded-full bg-white dark:bg-slate-900 transition-transform mt-0.5 ${ch.enabled ? 'translate-x-3.5' : 'translate-x-0.5'}`} />
                 </div>
               </button>
               <button
@@ -254,7 +254,7 @@ export function ChannelManager({ orgId, plan }: ChannelManagerProps) {
 
       {/* Free plan gate */}
       {!isFeatureAvailable(plan, 'notifications') && (
-        <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-sm text-amber-800">
+        <div className="rounded-lg bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-900/50 p-3 text-sm text-amber-800">
           Free 플랜: 이메일 1채널만 사용 가능합니다.{' '}
           <Link href="/pricing" className="font-medium text-amber-900 underline">Growth로 업그레이드</Link>
           하면 무제한 채널을 사용할 수 있습니다.

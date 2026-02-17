@@ -20,6 +20,7 @@
 | prompt-templates | 2026-02-17 | 97% | 0 | 4 |
 | onboarding-flow | 2026-02-17 | 96% | 0 | 4 |
 | usage-analytics | 2026-02-18 | 98% | 0 | 4 |
+| dark-mode | 2026-02-18 | 97% | 0 | 4 |
 
 ## business-setup
 
@@ -292,3 +293,20 @@
 | Design | [usage-analytics.design.md](./usage-analytics/usage-analytics.design.md) |
 | Analysis | [usage-analytics.analysis.md](./usage-analytics/usage-analytics.analysis.md) |
 | Report | [usage-analytics.report.md](./usage-analytics/usage-analytics.report.md) |
+
+## dark-mode
+
+**다크 모드 - Light/Dark/System 테마 전환, next-themes 기반 class 전략, 73개+ 파일 dark: variant 적용**
+
+- **Duration**: 2026-02-18 (single day, AI-native development)
+- **Match Rate**: 97% (first pass, no iterations needed)
+- **Scope**: 8 FRs, 3 new files, ~70 modified files
+
+### Documents
+
+| Document | Path |
+|----------|------|
+| Plan | [dark-mode.plan.md](./dark-mode/dark-mode.plan.md) |
+| Design | [dark-mode.design.md](./dark-mode/dark-mode.design.md) |
+| Analysis | [dark-mode.analysis.md](./dark-mode/dark-mode.analysis.md) |
+| Report | [dark-mode.report.md](./dark-mode/dark-mode.report.md) |

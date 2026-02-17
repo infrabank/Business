@@ -49,7 +49,7 @@ export function RoutingRulesEditor({ routingMode, rules, onChange }: Props) {
               type="button"
               onClick={() => onChange(mode, rules)}
               className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                routingMode === mode ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                routingMode === mode ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               {mode === 'auto' ? '자동' : mode === 'manual' ? '수동' : '끄기'}

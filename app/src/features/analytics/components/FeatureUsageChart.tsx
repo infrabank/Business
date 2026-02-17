@@ -25,14 +25,14 @@ interface FeatureUsageChartProps {
 
 export function FeatureUsageChart({ data, isLoading }: FeatureUsageChartProps) {
   if (isLoading) {
-    return <div className="h-80 animate-pulse rounded-2xl bg-slate-100" />
+    return <div className="h-80 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-800" />
   }
 
   if (data.length === 0) {
     return (
       <Card>
-        <CardHeader><h3 className="text-lg font-bold text-slate-900">기능별 사용률</h3></CardHeader>
-        <CardContent><p className="text-sm text-slate-500">데이터가 충분하지 않습니다.</p></CardContent>
+        <CardHeader><h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">기능별 사용률</h3></CardHeader>
+        <CardContent><p className="text-sm text-slate-500 dark:text-slate-400">데이터가 충분하지 않습니다.</p></CardContent>
       </Card>
     )
   }
@@ -45,7 +45,7 @@ export function FeatureUsageChart({ data, isLoading }: FeatureUsageChartProps) {
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-bold text-slate-900">기능별 사용률</h3>
+        <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">기능별 사용률</h3>
       </CardHeader>
       <CardContent>
         <div className="h-72">

@@ -58,7 +58,7 @@ export default function ProxyPage() {
       <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
         <button
           className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'keys' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            activeTab === 'keys' ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           }`}
           onClick={() => setActiveTab('keys')}
         >
@@ -66,7 +66,7 @@ export default function ProxyPage() {
         </button>
         <button
           className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'savings' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            activeTab === 'savings' ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           }`}
           onClick={() => setActiveTab('savings')}
         >
@@ -74,7 +74,7 @@ export default function ProxyPage() {
         </button>
         <button
           className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'analytics' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            activeTab === 'analytics' ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           }`}
           onClick={() => setActiveTab('analytics')}
         >
@@ -82,7 +82,7 @@ export default function ProxyPage() {
         </button>
         <button
           className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'logs' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            activeTab === 'logs' ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
           }`}
           onClick={() => setActiveTab('logs')}
         >
@@ -128,7 +128,7 @@ export default function ProxyPage() {
                   key={p}
                   onClick={() => setAnalyticsPeriod(p)}
                   className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                    analyticsPeriod === p ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                    analyticsPeriod === p ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   {p === '7d' ? '7일' : p === '30d' ? '30일' : '90일'}
@@ -141,7 +141,7 @@ export default function ProxyPage() {
                   key={val}
                   onClick={() => setBreakdownBy(val)}
                   className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                    breakdownBy === val ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                    breakdownBy === val ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   {label}

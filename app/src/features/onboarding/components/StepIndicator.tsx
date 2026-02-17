@@ -26,7 +26,7 @@ export function StepIndicator({ currentStep, totalSteps }: StepIndicatorProps) {
                   'flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all',
                   isCompleted ? 'bg-blue-600 text-white' : '',
                   isCurrent ? 'bg-blue-600 text-white ring-4 ring-blue-100' : '',
-                  !isCompleted && !isCurrent ? 'bg-slate-200 text-slate-500' : '',
+                  !isCompleted && !isCurrent ? 'bg-slate-200 text-slate-500 dark:text-slate-400 dark:text-slate-500' : '',
                 ].join(' ')}
               >
                 {isCompleted ? <Check className="h-4 w-4" /> : stepNum}
@@ -34,7 +34,7 @@ export function StepIndicator({ currentStep, totalSteps }: StepIndicatorProps) {
               <span
                 className={[
                   'text-xs font-medium',
-                  isCompleted || isCurrent ? 'text-blue-600' : 'text-slate-400',
+                  isCompleted || isCurrent ? 'text-blue-600' : 'text-slate-400 dark:text-slate-500',
                 ].join(' ')}
               >
                 {label}

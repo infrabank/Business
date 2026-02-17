@@ -35,25 +35,25 @@ function ProviderMenu({ provider, onEdit, onToggle, onDelete }: {
     <div className="relative" ref={ref}>
       <button
         onClick={() => setOpen(!open)}
-        className="rounded p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+        className="rounded p-1 text-gray-400 dark:text-slate-500 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-600 dark:hover:text-slate-300"
       >
         <MoreVertical className="h-4 w-4" />
       </button>
       {open && (
-        <div className="absolute right-0 top-8 z-10 w-44 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
+        <div className="absolute right-0 top-8 z-10 w-44 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-1 shadow-lg">
           <button
             onClick={() => { onEdit(); setOpen(false) }}
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800"
           >
             <Pencil className="h-4 w-4" /> 이름 수정
           </button>
           <button
             onClick={() => { onToggle(); setOpen(false) }}
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800"
           >
             <Power className="h-4 w-4" /> {provider.isActive ? '비활성화' : '활성화'}
           </button>
-          <hr className="my-1 border-gray-100" />
+          <hr className="my-1 border-gray-100 dark:border-slate-800" />
           <button
             onClick={() => { onDelete(); setOpen(false) }}
             className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
@@ -121,12 +121,12 @@ export default function ProvidersPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">프로바이더</h1>
-          <p className="text-gray-500">LLM API 프로바이더 관리</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">프로바이더</h1>
+          <p className="text-gray-500 dark:text-slate-400">LLM API 프로바이더 관리</p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-40 animate-pulse rounded-xl bg-gray-100" />
+            <div key={i} className="h-40 animate-pulse rounded-xl bg-gray-100 dark:bg-slate-800" />
           ))}
         </div>
       </div>
@@ -137,8 +137,8 @@ export default function ProvidersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">프로바이더</h1>
-          <p className="text-gray-500">LLM API 프로바이더 관리</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">프로바이더</h1>
+          <p className="text-gray-500 dark:text-slate-400">LLM API 프로바이더 관리</p>
         </div>
         <Button onClick={() => setShowForm(true)}><Plus className="mr-2 h-4 w-4" /> 프로바이더 추가</Button>
       </div>
@@ -179,9 +179,9 @@ export default function ProvidersPage() {
                         </button>
                       </div>
                     ) : (
-                      <h3 className="font-semibold text-gray-900">{p.name}</h3>
+                      <h3 className="font-semibold text-gray-900 dark:text-slate-100">{p.name}</h3>
                     )}
-                    <p className="text-sm text-gray-500">{PROVIDER_LABELS[p.type] ?? p.type}</p>
+                    <p className="text-sm text-gray-500 dark:text-slate-400">{PROVIDER_LABELS[p.type] ?? p.type}</p>
                   </div>
                 </div>
                 <ProviderMenu
@@ -193,9 +193,9 @@ export default function ProvidersPage() {
               </div>
 
               {deleteConfirmId === p.id && (
-                <div className="mt-3 rounded-lg border border-red-200 bg-red-50 p-3">
-                  <p className="text-sm font-medium text-red-800">&quot;{p.name}&quot;을(를) 삭제하시겠습니까?</p>
-                  <p className="mt-1 text-xs text-red-600">프로바이더와 연결된 모든 API 키가 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
+                <div className="mt-3 rounded-lg border border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/50 p-3">
+                  <p className="text-sm font-medium text-red-800 dark:text-red-400">&quot;{p.name}&quot;을(를) 삭제하시겠습니까?</p>
+                  <p className="mt-1 text-xs text-red-600 dark:text-red-400">프로바이더와 연결된 모든 API 키가 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
                   <div className="mt-2 flex gap-2">
                     <Button size="sm" variant="outline" onClick={() => handleDelete(p.id)}>
                       <Trash2 className="mr-1 h-3 w-3" /> 삭제
@@ -207,7 +207,7 @@ export default function ProvidersPage() {
 
               {deleteConfirmId !== p.id && (
                 <>
-                  <div className="mt-4 flex items-center gap-4 text-sm text-gray-600">
+                  <div className="mt-4 flex items-center gap-4 text-sm text-gray-600 dark:text-slate-400">
                     <div className="flex items-center gap-1">
                       <Key className="h-4 w-4" />
                       키
@@ -217,7 +217,7 @@ export default function ProvidersPage() {
                     </Badge>
                   </div>
 
-                  <p className="mt-3 text-xs text-gray-400">
+                  <p className="mt-3 text-xs text-gray-400 dark:text-slate-500">
                     마지막 동기화: {p.lastSyncAt ? new Date(p.lastSyncAt).toLocaleString('ko-KR') : '없음'}
                   </p>
                 </>
@@ -227,11 +227,11 @@ export default function ProvidersPage() {
         ))}
 
         {/* Add Provider Card */}
-        <Card className="cursor-pointer border-dashed transition-colors hover:border-blue-400 hover:bg-blue-50/50" onClick={() => setShowForm(true)}>
+        <Card className="cursor-pointer border-dashed transition-colors hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-950/20" onClick={() => setShowForm(true)}>
           <CardContent className="flex h-full min-h-[160px] flex-col items-center justify-center py-5">
-            <Plus className="h-8 w-8 text-gray-400" />
-            <p className="mt-2 text-sm font-medium text-gray-500">새 프로바이더 추가</p>
-            <p className="text-xs text-gray-400">OpenAI, Anthropic, Google 또는 커스텀</p>
+            <Plus className="h-8 w-8 text-gray-400 dark:text-slate-500" />
+            <p className="mt-2 text-sm font-medium text-gray-500 dark:text-slate-400">새 프로바이더 추가</p>
+            <p className="text-xs text-gray-400 dark:text-slate-500">OpenAI, Anthropic, Google 또는 커스텀</p>
           </CardContent>
         </Card>
       </div>

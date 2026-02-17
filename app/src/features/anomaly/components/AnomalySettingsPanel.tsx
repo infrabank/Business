@@ -24,7 +24,7 @@ export function AnomalySettingsPanel({ orgId, plan }: AnomalySettingsPanelProps)
   const canCustomize = isFeatureAvailable(plan, 'anomaly_detection')
 
   if (isLoading) {
-    return <div className="h-48 animate-pulse rounded-2xl bg-slate-100" />
+    return <div className="h-48 animate-pulse rounded-2xl bg-slate-100 dark:bg-slate-800" />
   }
 
   if (!settings) return null
@@ -34,7 +34,7 @@ export function AnomalySettingsPanel({ orgId, plan }: AnomalySettingsPanelProps)
       <CardHeader>
         <div className="flex items-center gap-2">
           <Shield className="h-5 w-5 text-indigo-500" />
-          <h3 className="text-lg font-bold text-slate-900">이상 감지 설정</h3>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">이상 감지 설정</h3>
           <Badge variant={settings.enabled ? 'info' : 'default'}>
             {settings.enabled ? '활성' : '비활성'}
           </Badge>
@@ -43,14 +43,14 @@ export function AnomalySettingsPanel({ orgId, plan }: AnomalySettingsPanelProps)
       <CardContent className="space-y-4">
         {/* Enable toggle */}
         <div className="flex items-center justify-between">
-          <span className="text-sm text-slate-700">이상 감지 활성화</span>
+          <span className="text-sm text-slate-700 dark:text-slate-300">이상 감지 활성화</span>
           <button
             onClick={() => updateSettings({ enabled: !settings.enabled })}
             className={`relative h-6 w-11 rounded-full transition-colors ${
               settings.enabled ? 'bg-indigo-500' : 'bg-slate-300'
             }`}
           >
-            <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
+            <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white dark:bg-slate-900 transition-transform ${
               settings.enabled ? 'translate-x-5' : ''
             }`} />
           </button>
@@ -58,7 +58,7 @@ export function AnomalySettingsPanel({ orgId, plan }: AnomalySettingsPanelProps)
 
         {/* Sensitivity selector */}
         <div>
-          <span className="text-sm font-medium text-slate-700">민감도</span>
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">민감도</span>
           {!canCustomize && (
             <Badge variant="warning" className="ml-2">Growth 플랜 필요</Badge>
           )}
@@ -71,11 +71,11 @@ export function AnomalySettingsPanel({ orgId, plan }: AnomalySettingsPanelProps)
                 className={`rounded-xl border p-3 text-left transition-all ${
                   settings.sensitivity === level
                     ? 'border-indigo-500 bg-indigo-50'
-                    : 'border-slate-200 hover:border-slate-300'
+                    : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
                 } ${!canCustomize ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
               >
-                <p className="text-sm font-medium text-slate-900">{SENSITIVITY_LABELS[level].label}</p>
-                <p className="mt-0.5 text-xs text-slate-500">{SENSITIVITY_LABELS[level].desc}</p>
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{SENSITIVITY_LABELS[level].label}</p>
+                <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{SENSITIVITY_LABELS[level].desc}</p>
               </button>
             ))}
           </div>
@@ -83,16 +83,16 @@ export function AnomalySettingsPanel({ orgId, plan }: AnomalySettingsPanelProps)
 
         {/* Detection type toggles */}
         <div className="space-y-3">
-          <span className="text-sm font-medium text-slate-700">감지 유형</span>
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">감지 유형</span>
           {[
             { key: 'dailyCostDetection' as const, label: '일별 비용 이상', desc: '14일 이동 평균 기반' },
             { key: 'hourlySpikeDetection' as const, label: '시간별 스파이크', desc: '24시간 대비 급증' },
             { key: 'modelAnomalyDetection' as const, label: '모델별 이상 사용', desc: '특정 모델 비용 급증' },
           ].map(({ key, label, desc }) => (
-            <div key={key} className="flex items-center justify-between rounded-xl border border-slate-100 p-3">
+            <div key={key} className="flex items-center justify-between rounded-xl border border-slate-100 dark:border-slate-800 p-3">
               <div>
-                <p className="text-sm font-medium text-slate-900">{label}</p>
-                <p className="text-xs text-slate-500">{desc}</p>
+                <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{label}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{desc}</p>
               </div>
               <button
                 disabled={!canCustomize}
@@ -101,7 +101,7 @@ export function AnomalySettingsPanel({ orgId, plan }: AnomalySettingsPanelProps)
                   settings[key] ? 'bg-indigo-500' : 'bg-slate-300'
                 } ${!canCustomize ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white transition-transform ${
+                <span className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white dark:bg-slate-900 transition-transform ${
                   settings[key] ? 'translate-x-5' : ''
                 }`} />
               </button>
