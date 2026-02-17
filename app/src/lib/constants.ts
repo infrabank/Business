@@ -15,8 +15,8 @@ export const PROVIDER_LABELS: Record<string, string> = {
 }
 
 export const PLAN_LIMITS = {
-  free: { providers: 1, historyDays: 7, members: 1, maxRequests: 1000 },
-  growth: { providers: -1, historyDays: 365, members: -1, maxRequests: -1 },
+  free: { providers: 1, historyDays: 7, members: 1, maxRequests: 1000, playgroundDaily: 10, maxTemplates: 10 },
+  growth: { providers: -1, historyDays: 365, members: -1, maxRequests: -1, playgroundDaily: -1, maxTemplates: -1 },
 } as const
 
 export const COMMISSION_RATE = 0.20
@@ -32,6 +32,8 @@ export const NAV_ITEMS = [
   { label: '리포트', href: '/reports', icon: 'FileText' },
   { label: '프록시', href: '/proxy', icon: 'ArrowLeftRight' },
   { label: '팀', href: '/team', icon: 'Users' },
+  { label: '플레이그라운드', href: '/playground', icon: 'Terminal' },
+  { label: '템플릿', href: '/templates', icon: 'BookTemplate' },
 ] as const
 
 export interface RateLimitConfig {

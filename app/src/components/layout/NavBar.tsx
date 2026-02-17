@@ -6,14 +6,14 @@ import { cn } from '@/lib/utils'
 import { NAV_ITEMS } from '@/lib/constants'
 import {
   LayoutDashboard, Plug, FolderOpen, Wallet, Bell, FileText,
-  Settings, Menu, X, Zap, LogOut,
+  Settings, Menu, X, Zap, LogOut, Terminal, BookTemplate,
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { getSupabaseBrowserClient } from '@/lib/supabase'
 import { useAppStore } from '@/lib/store'
 
 const iconMap: Record<string, React.ElementType> = {
-  LayoutDashboard, Plug, FolderOpen, Wallet, Bell, FileText,
+  LayoutDashboard, Plug, FolderOpen, Wallet, Bell, FileText, Terminal, BookTemplate,
 }
 
 export function NavBar() {

@@ -1,4 +1,4 @@
-import type { ProviderAdapter, FetchUsageResult, RateLimitConfig } from './base-adapter'
+import type { ProviderAdapter, FetchUsageResult, RateLimitConfig, PromptRequest, PromptResponse } from './base-adapter'
 import { ProviderApiError } from './base-adapter'
 
 const GOOGLE_MODELS: Record<string, { input: number; output: number }> = {
@@ -39,7 +39,59 @@ export class GoogleAdapter implements ProviderAdapter {
     return Object.keys(GOOGLE_MODELS)
   }
 
+  getModelPricing(model: string): { input: number; output: number } {
+    return GOOGLE_MODELS[model] ?? { input: 0.5, output: 1.5 }
+  }
+
   supportsUsageApi(): boolean {
     return false
   }
+
+  async executePrompt(apiKey: string, request: PromptRequest): Promise<PromptResponse> {
+    const contents: Array<{ role: string; parts: Array<{ text: string }> }> = []
+    if (request.systemPrompt) {
+      contents.push({ role: 'user', parts: [{ text: request.systemPrompt }] })
+      contents.push({ role: 'model', parts: [{ text: 'Understood.' }] })
+    }
+    contents.push({ role: 'user', parts: [{ text: request.userPrompt }] })
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${request.model}:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents,
+          generationConfig: {
+            temperature: request.temperature,
+            maxOutputTokens: request.maxTokens,
+          },
+        }),
+        signal: AbortSignal.timeout(60_000),
+      },
+    )
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      throw new ProviderApiError(
+        res.status,
+        (err as { error?: { message?: string } }).error?.message || `Google AI error: ${res.statusText}`,
+        'google',
+      )
+    }
+
+    const data = await res.json() as GoogleGenerateResponse
+    const content = data.candidates?.[0]?.content?.parts?.map(p => p.text).join('') || ''
+    return {
+      content,
+      inputTokens: data.usageMetadata?.promptTokenCount || 0,
+      outputTokens: data.usageMetadata?.candidatesTokenCount || 0,
+      model: request.model,
+    }
+  }
+}
+
+interface GoogleGenerateResponse {
+  candidates?: Array<{ content?: { parts?: Array<{ text: string }> } }>
+  usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number }
 }

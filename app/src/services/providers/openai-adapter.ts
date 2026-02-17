@@ -1,4 +1,4 @@
-import type { ProviderAdapter, UsageData, FetchUsageOptions, FetchUsageResult, RateLimitConfig } from './base-adapter'
+import type { ProviderAdapter, UsageData, FetchUsageOptions, FetchUsageResult, RateLimitConfig, PromptRequest, PromptResponse } from './base-adapter'
 import { ProviderApiError } from './base-adapter'
 
 const OPENAI_MODELS: Record<string, { input: number; output: number }> = {
@@ -74,8 +74,52 @@ export class OpenAIAdapter implements ProviderAdapter {
     return Object.keys(OPENAI_MODELS)
   }
 
+  getModelPricing(model: string): { input: number; output: number } {
+    return OPENAI_MODELS[model] ?? { input: 1, output: 2 }
+  }
+
   supportsUsageApi(): boolean {
     return true
+  }
+
+  async executePrompt(apiKey: string, request: PromptRequest): Promise<PromptResponse> {
+    const messages: Array<{ role: string; content: string }> = []
+    if (request.systemPrompt) {
+      messages.push({ role: 'system', content: request.systemPrompt })
+    }
+    messages.push({ role: 'user', content: request.userPrompt })
+
+    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: request.model,
+        messages,
+        temperature: request.temperature,
+        max_tokens: request.maxTokens,
+      }),
+      signal: AbortSignal.timeout(60_000),
+    })
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      throw new ProviderApiError(
+        res.status,
+        (err as { error?: { message?: string } }).error?.message || `OpenAI error: ${res.statusText}`,
+        'openai',
+      )
+    }
+
+    const data = await res.json() as OpenAIChatResponse
+    return {
+      content: data.choices?.[0]?.message?.content || '',
+      inputTokens: data.usage?.prompt_tokens || 0,
+      outputTokens: data.usage?.completion_tokens || 0,
+      model: data.model || request.model,
+    }
   }
 
   private parseUsageData(data: OpenAIUsageResponse): UsageData[] {
@@ -100,6 +144,12 @@ export class OpenAIAdapter implements ProviderAdapter {
     }
     return results
   }
+}
+
+interface OpenAIChatResponse {
+  choices?: Array<{ message?: { content?: string } }>
+  usage?: { prompt_tokens?: number; completion_tokens?: number }
+  model?: string
 }
 
 interface OpenAIUsageResponse {

@@ -16,6 +16,8 @@
 | notifications | 2026-02-17 | 97% | 0 | 4 |
 | reports-export | 2026-02-17 | 94% | 0 | 4 |
 | settings-preferences | 2026-02-17 | 99% | 0 | 4 |
+| api-playground | 2026-02-17 | 96% | 0 | 4 |
+| prompt-templates | 2026-02-17 | 97% | 0 | 4 |
 
 ## business-setup
 
@@ -220,3 +222,37 @@
 | Design | [settings-preferences.design.md](./settings-preferences/settings-preferences.design.md) |
 | Analysis | [settings-preferences.analysis.md](./settings-preferences/settings-preferences.analysis.md) |
 | Report | [settings-preferences.report.md](./settings-preferences/settings-preferences.report.md) |
+
+## api-playground
+
+**API Playground - 멀티 프로바이더 LLM 프롬프트 실행 & 비교 플레이그라운드**
+
+- **Duration**: 2026-02-17 (single day, AI-native development)
+- **Match Rate**: 96% (first pass, 2 minor gaps fixed inline)
+- **Scope**: 8 FRs, 12 new files, 7 modified files, ~1,396 LOC
+
+### Documents
+
+| Document | Path |
+|----------|------|
+| Plan | [api-playground.plan.md](./api-playground/api-playground.plan.md) |
+| Design | [api-playground.design.md](./api-playground/api-playground.design.md) |
+| Analysis | [api-playground.analysis.md](./api-playground/api-playground.analysis.md) |
+| Report | [api-playground.report.md](./api-playground/api-playground.report.md) |
+
+## prompt-templates
+
+**프롬프트 템플릿 라이브러리 - 저장, 카테고리 분류, 공유, Playground 연동 실행**
+
+- **Duration**: 2026-02-17 (single day, AI-native development)
+- **Match Rate**: 97% (first pass, no iterations needed)
+- **Scope**: 8 FRs, 11 new files, 5 modified files, ~1,607 LOC
+
+### Documents
+
+| Document | Path |
+|----------|------|
+| Plan | [prompt-templates.plan.md](./prompt-templates/prompt-templates.plan.md) |
+| Design | [prompt-templates.design.md](./prompt-templates/prompt-templates.design.md) |
+| Analysis | [prompt-templates.analysis.md](./prompt-templates/prompt-templates.analysis.md) |
+| Report | [prompt-templates.report.md](./prompt-templates/prompt-templates.report.md) |

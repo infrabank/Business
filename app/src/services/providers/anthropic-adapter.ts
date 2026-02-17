@@ -1,4 +1,4 @@
-import type { ProviderAdapter, UsageData, FetchUsageResult, RateLimitConfig } from './base-adapter'
+import type { ProviderAdapter, UsageData, FetchUsageResult, RateLimitConfig, PromptRequest, PromptResponse } from './base-adapter'
 import { ProviderApiError } from './base-adapter'
 
 const ANTHROPIC_MODELS: Record<string, { input: number; output: number }> = {
@@ -77,8 +77,53 @@ export class AnthropicAdapter implements ProviderAdapter {
     return Object.keys(ANTHROPIC_MODELS)
   }
 
+  getModelPricing(model: string): { input: number; output: number } {
+    return ANTHROPIC_MODELS[model] ?? { input: 3, output: 15 }
+  }
+
   supportsUsageApi(): boolean {
     return true
+  }
+
+  async executePrompt(apiKey: string, request: PromptRequest): Promise<PromptResponse> {
+    const body: Record<string, unknown> = {
+      model: request.model,
+      max_tokens: request.maxTokens,
+      temperature: request.temperature,
+      messages: [{ role: 'user', content: request.userPrompt }],
+    }
+    if (request.systemPrompt) {
+      body.system = request.systemPrompt
+    }
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(60_000),
+    })
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      throw new ProviderApiError(
+        res.status,
+        (err as { error?: { message?: string } }).error?.message || `Anthropic error: ${res.statusText}`,
+        'anthropic',
+      )
+    }
+
+    const data = await res.json() as AnthropicMessageResponse
+    const content = data.content?.map(b => b.text).join('') || ''
+    return {
+      content,
+      inputTokens: data.usage?.input_tokens || 0,
+      outputTokens: data.usage?.output_tokens || 0,
+      model: data.model || request.model,
+    }
   }
 
   private parseUsageData(data: AnthropicUsageResponse): UsageData[] {
@@ -100,6 +145,12 @@ export class AnthropicAdapter implements ProviderAdapter {
     }
     return results
   }
+}
+
+interface AnthropicMessageResponse {
+  content?: Array<{ type: string; text: string }>
+  usage?: { input_tokens?: number; output_tokens?: number }
+  model?: string
 }
 
 interface AnthropicUsageResponse {

@@ -49,6 +49,30 @@ export function checkRequestLimit(plan: UserPlan, currentCount: number): PlanLim
   }
 }
 
+export function checkPlaygroundLimit(plan: UserPlan, todayCount: number): PlanLimitCheck {
+  const limit = PLAN_LIMITS[plan].playgroundDaily as number
+  if (isUnlimited(limit)) return { allowed: true, current: todayCount, limit: -1 }
+  const allowed = todayCount < limit
+  return {
+    allowed,
+    current: todayCount,
+    limit,
+    planRequired: allowed ? undefined : 'growth',
+  }
+}
+
+export function checkTemplateLimit(plan: UserPlan, currentCount: number): PlanLimitCheck {
+  const limit = PLAN_LIMITS[plan].maxTemplates as number
+  if (isUnlimited(limit)) return { allowed: true, current: currentCount, limit: -1 }
+  const allowed = currentCount < limit
+  return {
+    allowed,
+    current: currentCount,
+    limit,
+    planRequired: allowed ? undefined : 'growth',
+  }
+}
+
 export function isFeatureAvailable(
   plan: UserPlan,
   feature: 'optimization' | 'analytics' | 'export' | 'team' | 'budget_alerts' | 'anomaly_detection' | 'notifications'
