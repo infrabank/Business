@@ -60,7 +60,7 @@ export function SetupInstructions() {
     <Card>
       <CardHeader>
         <h3 className="text-lg font-semibold">설치 안내</h3>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-slate-400">
           API 키와 base URL을 프록시 엔드포인트로 교체하세요.
           모든 요청이 자동으로 로깅되고 추적됩니다.
         </p>

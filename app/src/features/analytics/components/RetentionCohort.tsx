@@ -12,9 +12,9 @@ interface RetentionCohortProps {
 function getRetentionColor(rate: number): string {
   if (rate >= 75) return 'bg-indigo-600 text-white'
   if (rate >= 50) return 'bg-indigo-400 text-white'
-  if (rate >= 25) return 'bg-indigo-200 text-indigo-900'
-  if (rate > 0) return 'bg-indigo-100 text-indigo-700'
-  return 'bg-slate-50 text-slate-400'
+  if (rate >= 25) return 'bg-indigo-200 dark:bg-indigo-900/50 text-indigo-900 dark:text-indigo-200'
+  if (rate > 0) return 'bg-indigo-100 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300'
+  return 'bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500'
 }
 
 export function RetentionCohort({ data, isLoading }: RetentionCohortProps) {

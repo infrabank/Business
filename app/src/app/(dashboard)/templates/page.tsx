@@ -21,12 +21,12 @@ export default function TemplatesPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">프롬프트 템플릿</h1>
-          <p className="text-gray-500">자주 사용하는 프롬프트를 저장하고 관리하세요</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">프롬프트 템플릿</h1>
+          <p className="text-gray-500 dark:text-slate-400">자주 사용하는 프롬프트를 저장하고 관리하세요</p>
         </div>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-48 animate-pulse rounded-2xl bg-gray-100" />
+            <div key={i} className="h-48 animate-pulse rounded-2xl bg-gray-100 dark:bg-slate-800" />
           ))}
         </div>
       </div>
@@ -74,11 +74,11 @@ function TemplatesContent() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-900">
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-900 dark:text-slate-100">
             <BookTemplate className="h-6 w-6 text-indigo-500" />
             프롬프트 템플릿
           </h1>
-          <p className="text-gray-500">
+          <p className="text-gray-500 dark:text-slate-400">
             자주 사용하는 프롬프트를 저장하고 관리하세요
           </p>
         </div>
@@ -125,7 +125,7 @@ function TemplatesContent() {
         <select
           value={tmpl.category}
           onChange={(e) => tmpl.setCategory(e.target.value)}
-          className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+          className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
         >
           <option value="">전체 카테고리</option>
           {DEFAULT_CATEGORIES.map((c) => (
@@ -137,7 +137,7 @@ function TemplatesContent() {
         <select
           value={tmpl.sort}
           onChange={(e) => tmpl.setSort(e.target.value as TemplateSortOption)}
-          className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+          className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
         >
           {sortOptions.map((o) => (
             <option key={o.value} value={o.value}>
@@ -174,7 +174,7 @@ function TemplatesContent() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-2xl">
             <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">템플릿 삭제</h3>
-            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
               &quot;{deleteTarget.name}&quot; 템플릿을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
             </p>
             <div className="mt-4 flex justify-end gap-3">

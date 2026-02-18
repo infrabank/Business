@@ -72,7 +72,7 @@ export function MemberTable({ members, loading, onUpdate }: MemberTableProps) {
     return (
       <div className="space-y-3">
         {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-12 animate-pulse rounded bg-gray-100" />
+          <div key={i} className="h-12 animate-pulse rounded bg-gray-100 dark:bg-slate-800" />
         ))}
       </div>
     )
@@ -84,8 +84,8 @@ export function MemberTable({ members, loading, onUpdate }: MemberTableProps) {
       header: '이름',
       render: (m: MemberWithUser) => (
         <div>
-          <p className="font-medium text-gray-900">{m.user.name}</p>
-          <p className="text-xs text-gray-500">{m.user.email}</p>
+          <p className="font-medium text-gray-900 dark:text-slate-100">{m.user.name}</p>
+          <p className="text-xs text-gray-500 dark:text-slate-400">{m.user.email}</p>
         </div>
       ),
     },
@@ -100,7 +100,7 @@ export function MemberTable({ members, loading, onUpdate }: MemberTableProps) {
             value={m.role}
             onChange={(e) => handleRoleChange(m.id, e.target.value as MemberRole)}
             disabled={actionLoading === m.id}
-            className="rounded border border-gray-200 px-2 py-1 text-sm"
+            className="rounded border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 px-2 py-1 text-sm"
           >
             <option value="admin">관리자</option>
             <option value="viewer">뷰어</option>
@@ -111,7 +111,7 @@ export function MemberTable({ members, loading, onUpdate }: MemberTableProps) {
       key: 'joinedAt',
       header: '가입일',
       render: (m: MemberWithUser) => (
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-500 dark:text-slate-400">
           {new Date(m.joinedAt).toLocaleDateString('ko-KR')}
         </span>
       ),

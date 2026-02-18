@@ -100,10 +100,10 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
     return (
       <Card>
         <CardHeader>
-          <h3 className="text-lg font-semibold text-green-700">프록시 키 생성됨</h3>
+          <h3 className="text-lg font-semibold text-green-700 dark:text-green-400">프록시 키 생성됨</h3>
         </CardHeader>
         <CardContent>
-          <p className="mb-3 text-sm text-gray-600">
+          <p className="mb-3 text-sm text-gray-600 dark:text-slate-400">
             지금 이 키를 복사하세요. 다시 표시되지 않습니다.
           </p>
           <div className="flex items-center gap-2">

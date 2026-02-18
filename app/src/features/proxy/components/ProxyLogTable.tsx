@@ -36,7 +36,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
       key: 'createdAt',
       header: '시간',
       render: (log: ProxyLog) => (
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-gray-500 dark:text-slate-400">
           {new Date(log.createdAt).toLocaleString('ko-KR')}
         </span>
       ),
@@ -53,7 +53,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
         <div>
           <code className="text-xs">{log.model}</code>
           {log.originalModel && (
-            <div className="text-[10px] text-gray-400">
+            <div className="text-[10px] text-gray-400 dark:text-slate-500">
               원본: {log.originalModel}
             </div>
           )}
@@ -80,7 +80,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
           <div className="text-right">
             <span className="font-mono text-xs">${Number(log.cost).toFixed(4)}</span>
             {hasSavings && (
-              <div className="text-[10px] text-gray-400 line-through">
+              <div className="text-[10px] text-gray-400 dark:text-slate-500 line-through">
                 ${Number(log.originalCost).toFixed(4)}
               </div>
             )}
@@ -94,7 +94,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
       align: 'right' as const,
       render: (log: ProxyLog) => {
         if (log.savedAmount <= 0) {
-          return <span className="text-xs text-gray-300">-</span>
+          return <span className="text-xs text-gray-300 dark:text-slate-600">-</span>
         }
         const savingsPercent = log.originalCost > 0
           ? ((log.savedAmount / log.originalCost) * 100).toFixed(0)
@@ -139,7 +139,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
       header: '피드백',
       align: 'center' as const,
       render: (log: ProxyLog) => {
-        if (!log.originalModel) return <span className="text-xs text-gray-300">-</span>
+        if (!log.originalModel) return <span className="text-xs text-gray-300 dark:text-slate-600">-</span>
         const current = feedbackState[log.id] ?? log.userFeedback
         return (
           <div className="flex items-center gap-1">
@@ -174,7 +174,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
   ]
 
   if (loading) {
-    return <div className="py-8 text-center text-gray-400">로그 로딩 중...</div>
+    return <div className="py-8 text-center text-gray-400 dark:text-slate-500">로그 로딩 중...</div>
   }
 
   return (
@@ -195,7 +195,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
         >
           이전
         </Button>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-500 dark:text-slate-400">
           {offset + 1} - {offset + logs.length} 표시 중
         </span>
         <Button

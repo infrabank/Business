@@ -32,15 +32,15 @@ export default function ProxyPage() {
   })
 
   if (!isReady) {
-    return <div className="py-12 text-center text-gray-400">로딩 중...</div>
+    return <div className="py-12 text-center text-gray-400 dark:text-slate-500">로딩 중...</div>
   }
 
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">API 프록시 & 비용 절감</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">API 프록시 & 비용 절감</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">
             LLM 요청을 프록시를 통해 라우팅 — 스마트 캐싱과 모델 라우팅으로 비용 절감
           </p>
         </div>
@@ -55,10 +55,10 @@ export default function ProxyPage() {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+      <div className="flex gap-1 rounded-lg bg-gray-100 dark:bg-slate-800 p-1">
         <button
           className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'keys' ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            activeTab === 'keys' ? 'bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 shadow-sm' : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
           }`}
           onClick={() => setActiveTab('keys')}
         >
@@ -66,7 +66,7 @@ export default function ProxyPage() {
         </button>
         <button
           className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'savings' ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            activeTab === 'savings' ? 'bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 shadow-sm' : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
           }`}
           onClick={() => setActiveTab('savings')}
         >
@@ -74,7 +74,7 @@ export default function ProxyPage() {
         </button>
         <button
           className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'analytics' ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            activeTab === 'analytics' ? 'bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 shadow-sm' : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
           }`}
           onClick={() => setActiveTab('analytics')}
         >
@@ -82,7 +82,7 @@ export default function ProxyPage() {
         </button>
         <button
           className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-            activeTab === 'logs' ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+            activeTab === 'logs' ? 'bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 shadow-sm' : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
           }`}
           onClick={() => setActiveTab('logs')}
         >
@@ -97,14 +97,14 @@ export default function ProxyPage() {
           )}
 
           <section>
-            <h2 className="mb-4 text-lg font-semibold text-gray-900">프록시 키</h2>
+            <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">프록시 키</h2>
             {error && (
-              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <div className="mb-4 rounded-lg border border-red-200 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 px-4 py-3 text-sm text-red-700 dark:text-red-400">
                 {error}
               </div>
             )}
             {keysLoading ? (
-              <div className="py-8 text-center text-gray-400">키 로딩 중...</div>
+              <div className="py-8 text-center text-gray-400 dark:text-slate-500">키 로딩 중...</div>
             ) : (
               <ProxyKeyList keys={keys} onToggle={toggleKey} onDelete={removeKey} />
             )}
@@ -122,26 +122,26 @@ export default function ProxyPage() {
         <div className="space-y-6">
           {/* Controls */}
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+            <div className="flex gap-1 rounded-lg bg-gray-100 dark:bg-slate-800 p-1">
               {(['7d', '30d', '90d'] as AnalyticsPeriod[]).map((p) => (
                 <button
                   key={p}
                   onClick={() => setAnalyticsPeriod(p)}
                   className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                    analyticsPeriod === p ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                    analyticsPeriod === p ? 'bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 shadow-sm' : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
                   }`}
                 >
                   {p === '7d' ? '7일' : p === '30d' ? '30일' : '90일'}
                 </button>
               ))}
             </div>
-            <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+            <div className="flex gap-1 rounded-lg bg-gray-100 dark:bg-slate-800 p-1">
               {([['model', '모델'], ['provider', '프로바이더'], ['key', '키']] as [BreakdownType, string][]).map(([val, label]) => (
                 <button
                   key={val}
                   onClick={() => setBreakdownBy(val)}
                   className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-                    breakdownBy === val ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                    breakdownBy === val ? 'bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 shadow-sm' : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
                   }`}
                 >
                   {label}
@@ -151,7 +151,7 @@ export default function ProxyPage() {
           </div>
 
           {analyticsLoading ? (
-            <div className="py-12 text-center text-gray-400">분석 데이터 로딩 중...</div>
+            <div className="py-12 text-center text-gray-400 dark:text-slate-500">분석 데이터 로딩 중...</div>
           ) : (
             <>
               <ProxyCostTrendChart data={timeseries} />
@@ -169,7 +169,7 @@ export default function ProxyPage() {
 
       {activeTab === 'logs' && (
         <section>
-          <h2 className="mb-4 text-lg font-semibold text-gray-900">요청 로그</h2>
+          <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-slate-100">요청 로그</h2>
           <ProxyLogTable
             logs={logs}
             loading={logsLoading}

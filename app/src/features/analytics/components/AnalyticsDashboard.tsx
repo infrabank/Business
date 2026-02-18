@@ -20,7 +20,7 @@ export function AnalyticsDashboard() {
 
   if (error) {
     return (
-      <div className="rounded-2xl border border-rose-200 bg-rose-50 p-6 text-rose-700">
+      <div className="rounded-2xl border border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-950/30 p-6 text-rose-700 dark:text-rose-400">
         {error}
       </div>
     )
@@ -31,8 +31,8 @@ export function AnalyticsDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">사용자 분석</h1>
-          <p className="text-sm text-slate-500">서비스 사용 현황 및 Growth 지표</p>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">사용자 분석</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">서비스 사용 현황 및 Growth 지표</p>
         </div>
         <PeriodSelector value={period} onChange={setPeriod} />
       </div>

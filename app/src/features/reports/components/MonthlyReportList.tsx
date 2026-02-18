@@ -27,9 +27,9 @@ export function MonthlyReportList({ reports, isLoading, isGrowth, onSelectMonth 
           <Card key={i}>
             <CardContent className="py-5">
               <div className="animate-pulse space-y-3">
-                <div className="h-4 w-24 rounded bg-gray-200" />
-                <div className="h-6 w-32 rounded bg-gray-200" />
-                <div className="h-4 w-20 rounded bg-gray-200" />
+                <div className="h-4 w-24 rounded bg-gray-200 dark:bg-slate-700" />
+                <div className="h-6 w-32 rounded bg-gray-200 dark:bg-slate-700" />
+                <div className="h-4 w-20 rounded bg-gray-200 dark:bg-slate-700" />
               </div>
             </CardContent>
           </Card>
@@ -42,8 +42,8 @@ export function MonthlyReportList({ reports, isLoading, isGrowth, onSelectMonth 
     return (
       <Card>
         <CardContent className="py-12 text-center">
-          <Calendar className="mx-auto h-8 w-8 text-gray-300" />
-          <p className="mt-2 text-sm text-gray-500">사용 데이터가 없습니다</p>
+          <Calendar className="mx-auto h-8 w-8 text-gray-300 dark:text-slate-600" />
+          <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">사용 데이터가 없습니다</p>
         </CardContent>
       </Card>
     )
@@ -51,21 +51,21 @@ export function MonthlyReportList({ reports, isLoading, isGrowth, onSelectMonth 
 
   return (
     <div className="space-y-4">
-      <h2 className="text-lg font-semibold text-gray-900">월별 리포트</h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">월별 리포트</h2>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {reports.map((r) => (
           <Card key={r.month} className="group cursor-pointer transition-shadow hover:shadow-md" onClick={() => onSelectMonth(r.month)}>
             <CardContent className="py-5">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-400">
+                <div className="flex items-center gap-2 text-gray-400 dark:text-slate-500">
                   <Calendar className="h-4 w-4" />
                   <span className="text-xs">{r.month}</span>
                 </div>
                 {r.isCurrentMonth && <Badge variant="info">진행 중</Badge>}
               </div>
-              <h3 className="mt-2 font-semibold text-gray-900">{r.label}</h3>
-              <p className="mt-1 text-2xl font-bold text-gray-900">${r.totalCost.toFixed(2)}</p>
-              <div className="mt-2 flex items-center gap-3 text-xs text-gray-500">
+              <h3 className="mt-2 font-semibold text-gray-900 dark:text-slate-100">{r.label}</h3>
+              <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-slate-100">${r.totalCost.toFixed(2)}</p>
+              <div className="mt-2 flex items-center gap-3 text-xs text-gray-500 dark:text-slate-400">
                 <span>{formatTokens(r.totalTokens)} tokens</span>
                 <span>{r.totalRequests.toLocaleString()} req</span>
                 <span>{r.providerCount} providers</span>
@@ -79,7 +79,7 @@ export function MonthlyReportList({ reports, isLoading, isGrowth, onSelectMonth 
       </div>
 
       {!isGrowth && reports.length === 1 && (
-        <div className="rounded-lg border border-indigo-100 bg-indigo-50 p-4 text-sm text-indigo-700">
+        <div className="rounded-lg border border-indigo-100 dark:border-indigo-900/50 bg-indigo-50 dark:bg-indigo-950/30 p-4 text-sm text-indigo-700 dark:text-indigo-400">
           Free 플랜에서는 이번 달만 조회 가능합니다. Growth로 업그레이드하면 최근 12개월 리포트를 확인할 수 있습니다.
         </div>
       )}

@@ -59,21 +59,21 @@ export default function ReportsPage() {
     <div className="space-y-6">
       {/* Page header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">리포트</h1>
-        <p className="text-gray-500">비용 분석 리포트 및 데이터 내보내기</p>
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">리포트</h1>
+        <p className="text-gray-500 dark:text-slate-400">비용 분석 리포트 및 데이터 내보내기</p>
       </div>
 
       {/* Period selector */}
       <Card>
         <CardContent className="py-4">
-          <p className="mb-2 text-sm font-medium text-gray-700">기간 선택</p>
+          <p className="mb-2 text-sm font-medium text-gray-700 dark:text-slate-300">기간 선택</p>
           <PeriodSelector onPeriodChange={handlePeriodChange} isGrowth={isGrowth} />
         </CardContent>
       </Card>
 
       {/* Error state */}
       {error && (
-        <div className="rounded-lg border border-red-100 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-lg border border-red-100 dark:border-red-900/50 bg-red-50 dark:bg-red-950/30 p-4 text-sm text-red-700 dark:text-red-400">
           {error}
         </div>
       )}
@@ -91,7 +91,7 @@ export default function ReportsPage() {
         <Card>
           <CardContent className="flex items-center justify-center py-12">
             <div className="h-8 w-8 animate-spin rounded-full border-4 border-indigo-500 border-t-transparent" />
-            <span className="ml-3 text-sm text-gray-500">리포트 생성 중...</span>
+            <span className="ml-3 text-sm text-gray-500 dark:text-slate-400">리포트 생성 중...</span>
           </CardContent>
         </Card>
       )}
@@ -109,8 +109,8 @@ export default function ReportsPage() {
       {!summary && !isSummaryLoading && !isLoading && (
         <Card>
           <CardContent className="py-12 text-center">
-            <FileText className="mx-auto h-8 w-8 text-gray-300" />
-            <p className="mt-2 text-sm text-gray-500">기간을 선택하거나 월별 카드를 클릭하여 상세 리포트를 확인하세요</p>
+            <FileText className="mx-auto h-8 w-8 text-gray-300 dark:text-slate-600" />
+            <p className="mt-2 text-sm text-gray-500 dark:text-slate-400">기간을 선택하거나 월별 카드를 클릭하여 상세 리포트를 확인하세요</p>
           </CardContent>
         </Card>
       )}

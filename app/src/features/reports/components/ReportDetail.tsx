@@ -21,9 +21,9 @@ function formatTokens(n: number): string {
 }
 
 function ChangeIndicator({ value }: { value: number }) {
-  if (value > 0) return <span className="flex items-center text-xs text-red-500"><TrendingUp className="mr-0.5 h-3 w-3" />+{value.toFixed(1)}%</span>
-  if (value < 0) return <span className="flex items-center text-xs text-green-500"><TrendingDown className="mr-0.5 h-3 w-3" />{value.toFixed(1)}%</span>
-  return <span className="flex items-center text-xs text-gray-400"><Minus className="mr-0.5 h-3 w-3" />0%</span>
+  if (value > 0) return <span className="flex items-center text-xs text-red-500 dark:text-red-400"><TrendingUp className="mr-0.5 h-3 w-3" />+{value.toFixed(1)}%</span>
+  if (value < 0) return <span className="flex items-center text-xs text-green-500 dark:text-green-400"><TrendingDown className="mr-0.5 h-3 w-3" />{value.toFixed(1)}%</span>
+  return <span className="flex items-center text-xs text-gray-400 dark:text-slate-500"><Minus className="mr-0.5 h-3 w-3" />0%</span>
 }
 
 export function ReportDetail({ summary, planGated, isGrowth, onExport }: ReportDetailProps) {
@@ -43,7 +43,7 @@ export function ReportDetail({ summary, planGated, isGrowth, onExport }: ReportD
     <div className="space-y-6">
       {/* Header with export buttons */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">
           {summary.period.from} ~ {summary.period.to}
         </h2>
         <div className="flex items-center gap-2">
@@ -72,27 +72,27 @@ export function ReportDetail({ summary, planGated, isGrowth, onExport }: ReportD
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Card>
           <CardContent className="py-4 text-center">
-            <p className="text-xs text-gray-500">총 비용</p>
-            <p className="mt-1 text-2xl font-bold text-gray-900">${overview.totalCost.toFixed(2)}</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400">총 비용</p>
+            <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-slate-100">${overview.totalCost.toFixed(2)}</p>
             <ChangeIndicator value={overview.changePercent} />
           </CardContent>
         </Card>
         <Card>
           <CardContent className="py-4 text-center">
-            <p className="text-xs text-gray-500">총 토큰</p>
-            <p className="mt-1 text-2xl font-bold text-gray-900">{formatTokens(overview.totalTokens)}</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400">총 토큰</p>
+            <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-slate-100">{formatTokens(overview.totalTokens)}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="py-4 text-center">
-            <p className="text-xs text-gray-500">총 요청</p>
-            <p className="mt-1 text-2xl font-bold text-gray-900">{overview.totalRequests.toLocaleString()}</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400">총 요청</p>
+            <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-slate-100">{overview.totalRequests.toLocaleString()}</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="py-4 text-center">
-            <p className="text-xs text-gray-500">일 평균</p>
-            <p className="mt-1 text-2xl font-bold text-gray-900">${overview.dailyAverage.toFixed(2)}</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400">일 평균</p>
+            <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-slate-100">${overview.dailyAverage.toFixed(2)}</p>
           </CardContent>
         </Card>
       </div>
@@ -101,9 +101,9 @@ export function ReportDetail({ summary, planGated, isGrowth, onExport }: ReportD
       {planGated ? (
         <Card>
           <CardContent className="py-12 text-center">
-            <Lock className="mx-auto h-8 w-8 text-gray-300" />
-            <p className="mt-3 text-sm font-medium text-gray-700">상세 분석은 Growth 플랜 전용입니다</p>
-            <p className="mt-1 text-xs text-gray-500">프로바이더별, 모델별, 프로젝트별 비용 분석을 확인하세요</p>
+            <Lock className="mx-auto h-8 w-8 text-gray-300 dark:text-slate-600" />
+            <p className="mt-3 text-sm font-medium text-gray-700 dark:text-slate-300">상세 분석은 Growth 플랜 전용입니다</p>
+            <p className="mt-1 text-xs text-gray-500 dark:text-slate-400">프로바이더별, 모델별, 프로젝트별 비용 분석을 확인하세요</p>
             <Button variant="primary" size="sm" className="mt-4" onClick={() => window.location.href = '/settings'}>
               Growth 업그레이드
             </Button>
@@ -115,21 +115,21 @@ export function ReportDetail({ summary, planGated, isGrowth, onExport }: ReportD
           {summary.byProvider.length > 0 && (
             <Card>
               <CardContent className="py-5">
-                <h3 className="mb-4 text-sm font-semibold text-gray-900">프로바이더별 비용</h3>
+                <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-slate-100">프로바이더별 비용</h3>
                 <div className="space-y-3">
                   {summary.byProvider.map((p) => (
                     <div key={p.type} className="flex items-center gap-3">
-                      <span className="w-24 text-sm font-medium text-gray-700">{p.type}</span>
+                      <span className="w-24 text-sm font-medium text-gray-700 dark:text-slate-300">{p.type}</span>
                       <div className="flex-1">
-                        <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+                        <div className="h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-slate-700">
                           <div
                             className="h-2 rounded-full bg-indigo-500"
                             style={{ width: `${Math.min(p.percentage, 100)}%` }}
                           />
                         </div>
                       </div>
-                      <span className="w-20 text-right text-sm font-semibold text-gray-900">${p.cost.toFixed(2)}</span>
-                      <span className="w-12 text-right text-xs text-gray-500">{p.percentage.toFixed(1)}%</span>
+                      <span className="w-20 text-right text-sm font-semibold text-gray-900 dark:text-slate-100">${p.cost.toFixed(2)}</span>
+                      <span className="w-12 text-right text-xs text-gray-500 dark:text-slate-400">{p.percentage.toFixed(1)}%</span>
                     </div>
                   ))}
                 </div>
@@ -141,11 +141,11 @@ export function ReportDetail({ summary, planGated, isGrowth, onExport }: ReportD
           {summary.byModel.length > 0 && (
             <Card>
               <CardContent className="py-5">
-                <h3 className="mb-4 text-sm font-semibold text-gray-900">모델별 비용 (Top 10)</h3>
+                <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-slate-100">모델별 비용 (Top 10)</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="border-b border-gray-100 text-left text-xs text-gray-500">
+                      <tr className="border-b border-gray-100 dark:border-slate-700 text-left text-xs text-gray-500 dark:text-slate-400">
                         <th className="pb-2 font-medium">#</th>
                         <th className="pb-2 font-medium">모델</th>
                         <th className="pb-2 font-medium">프로바이더</th>
@@ -156,13 +156,13 @@ export function ReportDetail({ summary, planGated, isGrowth, onExport }: ReportD
                     </thead>
                     <tbody>
                       {summary.byModel.map((m, i) => (
-                        <tr key={m.model} className="border-b border-gray-50">
-                          <td className="py-2 text-gray-400">{i + 1}</td>
-                          <td className="py-2 font-medium text-gray-900">{m.model}</td>
-                          <td className="py-2 text-gray-500">{m.provider}</td>
-                          <td className="py-2 text-right font-semibold text-gray-900">${m.cost.toFixed(2)}</td>
-                          <td className="py-2 text-right text-gray-600">{formatTokens(m.tokenCount)}</td>
-                          <td className="py-2 text-right text-gray-600">{m.requestCount.toLocaleString()}</td>
+                        <tr key={m.model} className="border-b border-gray-50 dark:border-slate-800">
+                          <td className="py-2 text-gray-400 dark:text-slate-500">{i + 1}</td>
+                          <td className="py-2 font-medium text-gray-900 dark:text-slate-100">{m.model}</td>
+                          <td className="py-2 text-gray-500 dark:text-slate-400">{m.provider}</td>
+                          <td className="py-2 text-right font-semibold text-gray-900 dark:text-slate-100">${m.cost.toFixed(2)}</td>
+                          <td className="py-2 text-right text-gray-600 dark:text-slate-400">{formatTokens(m.tokenCount)}</td>
+                          <td className="py-2 text-right text-gray-600 dark:text-slate-400">{m.requestCount.toLocaleString()}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -176,21 +176,21 @@ export function ReportDetail({ summary, planGated, isGrowth, onExport }: ReportD
           {summary.byProject.length > 0 && (
             <Card>
               <CardContent className="py-5">
-                <h3 className="mb-4 text-sm font-semibold text-gray-900">프로젝트별 비용</h3>
+                <h3 className="mb-4 text-sm font-semibold text-gray-900 dark:text-slate-100">프로젝트별 비용</h3>
                 <div className="space-y-3">
                   {summary.byProject.map((p) => (
                     <div key={p.projectId} className="flex items-center gap-3">
-                      <span className="w-32 truncate text-sm font-medium text-gray-700">{p.name}</span>
+                      <span className="w-32 truncate text-sm font-medium text-gray-700 dark:text-slate-300">{p.name}</span>
                       <div className="flex-1">
-                        <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+                        <div className="h-2 overflow-hidden rounded-full bg-gray-100 dark:bg-slate-700">
                           <div
                             className="h-2 rounded-full bg-emerald-500"
                             style={{ width: `${Math.min(p.percentage, 100)}%` }}
                           />
                         </div>
                       </div>
-                      <span className="w-20 text-right text-sm font-semibold text-gray-900">${p.cost.toFixed(2)}</span>
-                      <span className="w-12 text-right text-xs text-gray-500">{p.percentage.toFixed(1)}%</span>
+                      <span className="w-20 text-right text-sm font-semibold text-gray-900 dark:text-slate-100">${p.cost.toFixed(2)}</span>
+                      <span className="w-12 text-right text-xs text-gray-500 dark:text-slate-400">{p.percentage.toFixed(1)}%</span>
                     </div>
                   ))}
                 </div>

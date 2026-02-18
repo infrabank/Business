@@ -22,8 +22,8 @@ export default function PlaygroundPage() {
     return (
       <div className="space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">API Playground</h1>
-          <p className="text-gray-500">프로바이더 API를 테스트하고 비교하세요</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">API Playground</h1>
+          <p className="text-gray-500 dark:text-slate-400">프로바이더 API를 테스트하고 비교하세요</p>
         </div>
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
@@ -46,11 +46,11 @@ function PlaygroundContent() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100 flex items-center gap-2">
             <Terminal className="h-6 w-6 text-indigo-500" />
             API Playground
           </h1>
-          <p className="text-gray-500">프로바이더 API를 테스트하고 비교하세요</p>
+          <p className="text-gray-500 dark:text-slate-400">프로바이더 API를 테스트하고 비교하세요</p>
         </div>
 
         <div className="flex items-center gap-2">

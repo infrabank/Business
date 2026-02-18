@@ -38,8 +38,8 @@ export function TeamPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">팀</h1>
-          <p className="text-gray-500">멤버 초대 및 역할 관리</p>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">팀</h1>
+          <p className="text-gray-500 dark:text-slate-400">멤버 초대 및 역할 관리</p>
         </div>
         <Button onClick={() => setShowInviteModal(true)}>
           <UserPlus className="mr-2 h-4 w-4" /> 멤버 초대
@@ -48,7 +48,7 @@ export function TeamPage() {
 
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-semibold text-gray-900">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">
             멤버 ({members.length})
           </h2>
         </CardHeader>
@@ -60,7 +60,7 @@ export function TeamPage() {
       {invitations.length > 0 && (
         <Card>
           <CardHeader>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">
               대기 중인 초대 ({invitations.length})
             </h2>
           </CardHeader>

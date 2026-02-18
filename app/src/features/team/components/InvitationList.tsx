@@ -40,9 +40,9 @@ export function InvitationList({ invitations, onUpdate }: InvitationListProps) {
       {invitations.map((inv) => (
         <div key={inv.id} className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <span className="text-sm font-medium text-gray-900">{inv.email}</span>
+            <span className="text-sm font-medium text-gray-900 dark:text-slate-100">{inv.email}</span>
             <Badge variant="default">{ROLE_LABELS[inv.role]}</Badge>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-400 dark:text-slate-500">
               {new Date(inv.createdAt).toLocaleDateString('ko-KR')}
             </span>
           </div>

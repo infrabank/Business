@@ -49,8 +49,8 @@ export function InviteMemberModal({ onClose, onInvited }: InviteMemberModalProps
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="w-full max-w-md rounded-2xl bg-white dark:bg-slate-900 p-6 shadow-xl">
-        <h2 className="text-lg font-semibold text-gray-900">멤버 초대</h2>
-        <p className="mt-1 text-sm text-gray-500">이메일로 팀 멤버를 초대하세요.</p>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-slate-100">멤버 초대</h2>
+        <p className="mt-1 text-sm text-gray-500 dark:text-slate-400">이메일로 팀 멤버를 초대하세요.</p>
         <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
           <Input
             id="invite-email"
@@ -62,13 +62,13 @@ export function InviteMemberModal({ onClose, onInvited }: InviteMemberModalProps
             required
           />
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">
               역할
             </label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value as MemberRole)}
-              className="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 px-3 py-2 text-sm"
             >
               <option value="admin">
                 관리자 - 프로바이더, 프로젝트, 예산, 멤버 관리
