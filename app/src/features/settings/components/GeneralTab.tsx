@@ -12,14 +12,16 @@ import { useApiKeys } from '../hooks/useApiKeys'
 import { bkend } from '@/lib/bkend'
 import { PROVIDER_COLORS, PROVIDER_LABELS } from '@/lib/constants'
 import Link from 'next/link'
-import { ExternalLink, RotateCcw } from 'lucide-react'
+import { ExternalLink, RotateCcw, Sun, Moon, Monitor } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import { useTheme } from 'next-themes'
 
 export function GeneralTab() {
   const { currentUser } = useSession()
   const orgId = useAppStore((s) => s.currentOrgId)
   const router = useRouter()
   const { preferences, isSaving, updatePreference } = usePreferences()
+  const { theme, setTheme } = useTheme()
   const { keys, isLoading: keysLoading } = useApiKeys(orgId)
 
   const [profileName, setProfileName] = useState('')
@@ -96,6 +98,31 @@ export function GeneralTab() {
         </CardHeader>
         <CardContent>
           <div className="max-w-md space-y-4">
+            <div>
+              <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-slate-300">테마</label>
+              <div className="flex gap-3">
+                {([
+                  { value: 'light', icon: Sun, label: '라이트' },
+                  { value: 'dark', icon: Moon, label: '다크' },
+                  { value: 'system', icon: Monitor, label: '시스템' },
+                ] as const).map(({ value, icon: Icon, label }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setTheme(value)}
+                    className={`flex flex-1 items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition-all ${
+                      theme === value
+                        ? 'border-blue-500 dark:border-indigo-400 bg-blue-50 dark:bg-indigo-950 text-blue-700 dark:text-indigo-300'
+                        : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-gray-600 dark:text-slate-400 hover:border-gray-300 dark:hover:border-slate-600 hover:text-gray-800 dark:hover:text-slate-200'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <div>
               <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">통화 표시</label>
               <select
