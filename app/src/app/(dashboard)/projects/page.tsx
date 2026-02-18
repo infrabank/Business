@@ -1,14 +1,16 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Plus, FolderOpen, MoreVertical, Pencil, Trash2, Check, X } from 'lucide-react'
+import { Plus, FolderOpen, MoreVertical, Pencil, Trash2, Check, X, DollarSign } from 'lucide-react'
 import { useProjects } from '@/features/projects/hooks/useProjects'
 import { ProjectForm } from '@/features/projects/components/ProjectForm'
 import { useAppStore } from '@/lib/store'
 import { useSession } from '@/hooks/useSession'
 import { toast } from '@/components/ui/Toast'
+import { formatCurrency } from '@/lib/utils'
 import type { Project } from '@/types'
 
 function ProjectMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) {
@@ -25,16 +27,19 @@ function ProjectMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: () =>
 
   return (
     <div className="relative" ref={ref}>
-      <button onClick={() => setOpen(!open)} className="rounded p-1 text-gray-400 dark:text-slate-500 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-600 dark:hover:text-slate-300">
+      <button
+        onClick={(e) => { e.stopPropagation(); setOpen(!open) }}
+        className="rounded p-1 text-gray-400 dark:text-slate-500 hover:bg-gray-100 dark:hover:bg-slate-800 hover:text-gray-600 dark:hover:text-slate-300"
+      >
         <MoreVertical className="h-4 w-4" />
       </button>
       {open && (
         <div className="absolute right-0 top-8 z-10 w-40 rounded-lg border border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 py-1 shadow-lg">
-          <button onClick={() => { onEdit(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800">
+          <button onClick={(e) => { e.stopPropagation(); onEdit(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800">
             <Pencil className="h-4 w-4" /> 수정
           </button>
           <hr className="my-1 border-gray-100 dark:border-slate-800" />
-          <button onClick={() => { onDelete(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50">
+          <button onClick={(e) => { e.stopPropagation(); onDelete(); setOpen(false) }} className="flex w-full items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50">
             <Trash2 className="h-4 w-4" /> 삭제
           </button>
         </div>
@@ -44,6 +49,7 @@ function ProjectMenu({ onEdit, onDelete }: { onEdit: () => void; onDelete: () =>
 }
 
 export default function ProjectsPage() {
+  const router = useRouter()
   const { isReady } = useSession()
   const orgId = useAppStore((s) => s.currentOrgId)
   const { projects, isLoading, createProject, updateProject, deleteProject } = useProjects(orgId)
@@ -117,7 +123,15 @@ export default function ProjectsPage() {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((p) => (
-          <Card key={p.id}>
+          <Card
+            key={p.id}
+            className="cursor-pointer transition-all hover:shadow-md hover:border-gray-300 dark:hover:border-slate-600"
+            onClick={() => {
+              if (editingId !== p.id && deleteConfirmId !== p.id) {
+                router.push(`/projects/${p.id}`)
+              }
+            }}
+          >
             <CardContent className="py-5">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
@@ -126,7 +140,7 @@ export default function ProjectsPage() {
                   </div>
                   <div>
                     {editingId === p.id ? (
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
                         <input
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
@@ -134,10 +148,10 @@ export default function ProjectsPage() {
                           autoFocus
                           className="w-40 rounded border border-blue-400 px-2 py-0.5 text-sm font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
-                        <button onClick={() => handleSaveEdit(p.id)} className="rounded p-1 text-green-600 hover:bg-green-50">
+                        <button onClick={(e) => { e.stopPropagation(); handleSaveEdit(p.id) }} className="rounded p-1 text-green-600 hover:bg-green-50">
                           <Check className="h-4 w-4" />
                         </button>
-                        <button onClick={() => setEditingId(null)} className="rounded p-1 text-gray-400 hover:bg-gray-100">
+                        <button onClick={(e) => { e.stopPropagation(); setEditingId(null) }} className="rounded p-1 text-gray-400 hover:bg-gray-100">
                           <X className="h-4 w-4" />
                         </button>
                       </div>
@@ -153,15 +167,23 @@ export default function ProjectsPage() {
                 />
               </div>
 
+              {/* Cost summary */}
+              <div className="mt-3 flex items-center gap-2 border-t border-gray-100 dark:border-slate-800 pt-3">
+                <DollarSign className="h-4 w-4 text-gray-400 dark:text-slate-500" />
+                <span className="text-sm font-medium text-gray-700 dark:text-slate-300">
+                  이번 달: {formatCurrency(p.cost ?? 0)}
+                </span>
+              </div>
+
               {deleteConfirmId === p.id && (
-                <div className="mt-3 rounded-lg border border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/50 p-3">
+                <div className="mt-3 rounded-lg border border-red-200 dark:border-red-800/60 bg-red-50 dark:bg-red-950/50 p-3" onClick={(e) => e.stopPropagation()}>
                   <p className="text-sm font-medium text-red-800 dark:text-red-400">&quot;{p.name}&quot;을(를) 삭제하시겠습니까?</p>
                   <p className="mt-1 text-xs text-red-600 dark:text-red-400">프로젝트가 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
                   <div className="mt-2 flex gap-2">
-                    <Button size="sm" variant="outline" onClick={() => handleDelete(p.id)}>
+                    <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); handleDelete(p.id) }}>
                       <Trash2 className="mr-1 h-3 w-3" /> 삭제
                     </Button>
-                    <Button size="sm" variant="ghost" onClick={() => setDeleteConfirmId(null)}>취소</Button>
+                    <Button size="sm" variant="ghost" onClick={(e) => { e.stopPropagation(); setDeleteConfirmId(null) }}>취소</Button>
                   </div>
                 </div>
               )}
