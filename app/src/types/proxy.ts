@@ -1,5 +1,21 @@
 import type { ProviderType } from './provider'
 
+export interface GuardrailSettings {
+  enablePiiMasking: boolean
+  enableKeywordBlock: boolean
+  blockedKeywords: string[]
+  maxInputLength: number | null
+}
+
+export interface ObservabilitySettings {
+  provider: 'langfuse' | 'webhook' | 'logflare'
+  enabled: boolean
+  endpoint: string
+  apiKey: string
+  secretKey: string
+  events: string[]
+}
+
 export interface ProxyKey {
   id: string
   orgId: string
@@ -23,6 +39,10 @@ export interface ProxyKey {
   budgetAlertsEnabled: boolean
   routingMode: 'auto' | 'manual' | 'off'
   routingRules: RoutingRule[]
+  enableFallback: boolean
+  enableGuardrails: boolean
+  guardrailSettings: GuardrailSettings | null
+  observabilitySettings: ObservabilitySettings | null
 }
 
 export interface RoutingRule {
@@ -78,6 +98,10 @@ export interface ResolvedProxyKey {
   budgetAlertsEnabled: boolean
   routingMode: 'auto' | 'manual' | 'off'
   routingRules: RoutingRule[]
+  enableFallback: boolean
+  enableGuardrails: boolean
+  guardrailSettings: GuardrailSettings | null
+  observabilitySettings: ObservabilitySettings | null
 }
 
 export interface CreateProxyKeyRequest {
@@ -94,6 +118,10 @@ export interface CreateProxyKeyRequest {
   budgetAlertsEnabled?: boolean
   routingMode?: 'auto' | 'manual' | 'off'
   routingRules?: RoutingRule[]
+  enableFallback?: boolean
+  enableGuardrails?: boolean
+  guardrailSettings?: GuardrailSettings
+  observabilitySettings?: ObservabilitySettings
 }
 
 export interface ProxyKeyDisplay {
@@ -114,6 +142,10 @@ export interface ProxyKeyDisplay {
   budgetAlertsEnabled: boolean
   routingMode: 'auto' | 'manual' | 'off'
   routingRules: RoutingRule[]
+  enableFallback: boolean
+  enableGuardrails: boolean
+  guardrailSettings: GuardrailSettings | null
+  observabilitySettings: ObservabilitySettings | null
 }
 
 export interface ProxyLogQuery {

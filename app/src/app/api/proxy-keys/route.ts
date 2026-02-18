@@ -36,7 +36,12 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json()
-    const { orgId, name, providerType, apiKey, budgetLimit, rateLimit, enableCache, cacheTtl, enableModelRouting } = body
+    const {
+      orgId, name, providerType, apiKey, providerApiKeys,
+      budgetLimit, rateLimit, enableCache, cacheTtl, enableModelRouting,
+      budgetAlertsEnabled, budgetAlertThresholds, routingMode, routingRules,
+      enableFallback, enableGuardrails, guardrailSettings, observabilitySettings,
+    } = body
 
     if (!orgId || !name || !providerType || !apiKey) {
       return NextResponse.json({ error: 'orgId, name, providerType, and apiKey are required' }, { status: 400 })
@@ -47,11 +52,20 @@ export async function POST(req: NextRequest) {
       name,
       providerType,
       apiKey,
+      providerApiKeys: providerApiKeys || undefined,
       budgetLimit: budgetLimit || undefined,
       rateLimit: rateLimit || undefined,
       enableCache: enableCache ?? undefined,
       cacheTtl: cacheTtl || undefined,
       enableModelRouting: enableModelRouting ?? undefined,
+      budgetAlertsEnabled: budgetAlertsEnabled ?? undefined,
+      budgetAlertThresholds: budgetAlertThresholds || undefined,
+      routingMode: routingMode || undefined,
+      routingRules: routingRules || undefined,
+      enableFallback: enableFallback ?? undefined,
+      enableGuardrails: enableGuardrails ?? undefined,
+      guardrailSettings: guardrailSettings || undefined,
+      observabilitySettings: observabilitySettings || undefined,
     })
 
     return NextResponse.json(result, { status: 201 })

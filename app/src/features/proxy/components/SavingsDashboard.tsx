@@ -28,6 +28,9 @@ interface SavingsData {
     totalSaved: number
     entries: number
     hitRate: number
+    semanticHits: number
+    semanticSaved: number
+    semanticHitRate: number
   }
 }
 
@@ -198,6 +201,47 @@ export function SavingsDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Semantic Cache Stats */}
+      {(cacheStats.semanticHits > 0 || cacheStats.totalHits > 0) && (
+        <Card>
+          <CardContent className="py-5">
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-slate-100 mb-3">캐시 레벨별 성능</h3>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {/* Exact Match */}
+              <div className="rounded-lg bg-blue-50 dark:bg-blue-950/30 p-3 text-center">
+                <div className="text-xs font-medium text-blue-600 dark:text-blue-400">정확 매치</div>
+                <div className="mt-1 text-xl font-bold text-blue-700 dark:text-blue-300">
+                  {(cacheStats.totalHits - cacheStats.semanticHits).toLocaleString()}
+                </div>
+                <div className="mt-0.5 text-[10px] text-blue-500 dark:text-blue-400">
+                  ${(cacheStats.totalSaved - cacheStats.semanticSaved).toFixed(2)} 절감
+                </div>
+              </div>
+              {/* Semantic Match */}
+              <div className="rounded-lg bg-violet-50 dark:bg-violet-950/30 p-3 text-center">
+                <div className="text-xs font-medium text-violet-600 dark:text-violet-400">시맨틱 매치</div>
+                <div className="mt-1 text-xl font-bold text-violet-700 dark:text-violet-300">
+                  {cacheStats.semanticHits.toLocaleString()}
+                </div>
+                <div className="mt-0.5 text-[10px] text-violet-500 dark:text-violet-400">
+                  ${cacheStats.semanticSaved.toFixed(2)} 절감
+                </div>
+              </div>
+              {/* Combined Hit Rate */}
+              <div className="rounded-lg bg-emerald-50 dark:bg-emerald-950/30 p-3 text-center">
+                <div className="text-xs font-medium text-emerald-600 dark:text-emerald-400">통합 적중률</div>
+                <div className="mt-1 text-xl font-bold text-emerald-700 dark:text-emerald-300">
+                  {cacheStats.hitRate.toFixed(1)}%
+                </div>
+                <div className="mt-0.5 text-[10px] text-emerald-500 dark:text-emerald-400">
+                  시맨틱 {cacheStats.semanticHitRate?.toFixed(1) ?? '0.0'}%
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Period Selector */}
       <div className="flex items-center justify-center gap-2">

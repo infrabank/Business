@@ -35,6 +35,10 @@ export async function createProxyKey(params: {
   budgetAlertThresholds?: number[]
   routingMode?: 'auto' | 'manual' | 'off'
   routingRules?: Array<{ fromModel: string; toModel: string; condition: 'always' | 'simple-only' | 'short-only' }>
+  enableFallback?: boolean
+  enableGuardrails?: boolean
+  guardrailSettings?: Record<string, unknown>
+  observabilitySettings?: Record<string, unknown>
 }): Promise<{ proxyKey: string; display: ProxyKeyDisplay }> {
   const rawKey = generateProxyKey()
   const keyHash = hashKey(rawKey)
@@ -69,6 +73,10 @@ export async function createProxyKey(params: {
     budgetAlertThresholds: params.budgetAlertThresholds ?? [0.8, 0.9, 1.0],
     routingMode: params.routingMode ?? 'auto',
     routingRules: params.routingRules ?? [],
+    enableFallback: params.enableFallback ?? false,
+    enableGuardrails: params.enableGuardrails ?? false,
+    guardrailSettings: params.guardrailSettings ?? null,
+    observabilitySettings: params.observabilitySettings ?? null,
   })
 
   return {
@@ -91,6 +99,10 @@ export async function createProxyKey(params: {
       budgetAlertsEnabled: record.budgetAlertsEnabled ?? false,
       routingMode: record.routingMode ?? 'auto',
       routingRules: record.routingRules ?? [],
+      enableFallback: record.enableFallback ?? false,
+      enableGuardrails: record.enableGuardrails ?? false,
+      guardrailSettings: record.guardrailSettings ?? null,
+      observabilitySettings: record.observabilitySettings ?? null,
     },
   }
 }
@@ -138,6 +150,10 @@ export async function resolveProxyKey(rawKey: string): Promise<ResolvedProxyKey 
       budgetAlertThresholds: record.budgetAlertThresholds ?? [0.8, 0.9, 1.0],
       routingMode: record.routingMode ?? 'auto',
       routingRules: record.routingRules ?? [],
+      enableFallback: record.enableFallback ?? false,
+      enableGuardrails: record.enableGuardrails ?? false,
+      guardrailSettings: record.guardrailSettings ?? null,
+      observabilitySettings: record.observabilitySettings ?? null,
     }
   } catch {
     return null
@@ -178,6 +194,10 @@ export async function listProxyKeys(orgId: string): Promise<ProxyKeyDisplay[]> {
     budgetAlertsEnabled: r.budgetAlertsEnabled ?? false,
     routingMode: r.routingMode ?? 'auto',
     routingRules: r.routingRules ?? [],
+    enableFallback: r.enableFallback ?? false,
+    enableGuardrails: r.enableGuardrails ?? false,
+    guardrailSettings: r.guardrailSettings ?? null,
+    observabilitySettings: r.observabilitySettings ?? null,
   }))
 }
 
@@ -204,6 +224,10 @@ export async function updateProxyKey(
     budgetAlertsEnabled: record.budgetAlertsEnabled ?? false,
     routingMode: record.routingMode ?? 'auto',
     routingRules: record.routingRules ?? [],
+    enableFallback: record.enableFallback ?? false,
+    enableGuardrails: record.enableGuardrails ?? false,
+    guardrailSettings: record.guardrailSettings ?? null,
+    observabilitySettings: record.observabilitySettings ?? null,
   }
 }
 
