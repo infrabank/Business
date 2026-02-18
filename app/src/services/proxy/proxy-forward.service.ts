@@ -47,6 +47,18 @@ const PROVIDER_CONFIGS: Record<string, ProviderConfig> = {
     }),
     isStreaming: (_body, url) => url.searchParams.get('alt') === 'sse',
   },
+  azure: {
+    baseUrl: '', // Dynamic: parsed from apiKey (endpoint|key format)
+    buildHeaders: (apiKey) => ({
+      'api-key': apiKey,
+      'Content-Type': 'application/json',
+    }),
+    isStreaming: (body) => body.stream === true,
+    injectStreamUsage: (body) => ({
+      ...body,
+      stream_options: { ...(body.stream_options as Record<string, unknown> || {}), include_usage: true },
+    }),
+  },
 }
 
 export function getProviderConfig(providerType: ProviderType): ProviderConfig | null {
