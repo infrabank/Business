@@ -88,10 +88,6 @@ export function NavBar() {
             <ThemeToggle />
           </div>
 
-          <Link href="/settings" className="hidden rounded-xl p-2.5 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 lg:block">
-            <Settings className="h-5 w-5" />
-          </Link>
-
           {/* User menu (desktop) */}
           <div className="relative hidden lg:block" ref={userMenuRef}>
             <button
