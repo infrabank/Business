@@ -54,17 +54,17 @@ function SavingsCalculator() {
           <p className="text-xs font-medium text-slate-500 dark:text-slate-400">LCM 사용 전</p>
           <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">${monthlySpend.toLocaleString()}</p>
         </div>
-        <div className="rounded-2xl bg-emerald-50 p-4 text-center">
-          <p className="text-xs font-medium text-emerald-600">예상 절감액</p>
-          <p className="mt-1 text-2xl font-bold text-emerald-600">${Math.round(estimatedSavings).toLocaleString()}</p>
+        <div className="rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 p-4 text-center">
+          <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">예상 절감액</p>
+          <p className="mt-1 text-2xl font-bold text-emerald-600 dark:text-emerald-400">${Math.round(estimatedSavings).toLocaleString()}</p>
         </div>
-        <div className="rounded-2xl bg-indigo-50 p-4 text-center">
-          <p className="text-xs font-medium text-indigo-600">수수료 (20%)</p>
-          <p className="mt-1 text-2xl font-bold text-indigo-600">${Math.round(commission).toLocaleString()}</p>
+        <div className="rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 p-4 text-center">
+          <p className="text-xs font-medium text-indigo-600 dark:text-indigo-400">수수료 (20%)</p>
+          <p className="mt-1 text-2xl font-bold text-indigo-600 dark:text-indigo-400">${Math.round(commission).toLocaleString()}</p>
         </div>
-        <div className="rounded-2xl bg-emerald-100 p-4 text-center">
-          <p className="text-xs font-medium text-emerald-700">순 절감액</p>
-          <p className="mt-1 text-2xl font-bold text-emerald-700">${Math.round(netSavings).toLocaleString()}</p>
+        <div className="rounded-2xl bg-emerald-100 dark:bg-emerald-950/50 p-4 text-center">
+          <p className="text-xs font-medium text-emerald-700 dark:text-emerald-400">순 절감액</p>
+          <p className="mt-1 text-2xl font-bold text-emerald-700 dark:text-emerald-400">${Math.round(netSavings).toLocaleString()}</p>
         </div>
       </div>
 

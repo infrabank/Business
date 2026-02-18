@@ -20,7 +20,7 @@ export function FeaturesShowcase() {
               className="rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1"
             >
               <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/50">
-                <feature.icon className="h-7 w-7 text-indigo-600" />
+                <feature.icon className="h-7 w-7 text-indigo-600 dark:text-indigo-400" />
               </div>
               <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
                 {feature.title}

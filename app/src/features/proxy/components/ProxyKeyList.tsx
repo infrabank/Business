@@ -17,7 +17,7 @@ export function ProxyKeyList({ keys, onToggle, onDelete }: ProxyKeyListProps) {
     return (
       <Card>
         <CardContent>
-          <p className="py-8 text-center text-gray-400">
+          <p className="py-8 text-center text-gray-400 dark:text-slate-500">
             프록시 키가 없습니다. 키를 생성하여 시작하세요.
           </p>
         </CardContent>
@@ -43,7 +43,7 @@ export function ProxyKeyList({ keys, onToggle, onDelete }: ProxyKeyListProps) {
                       {key.isActive ? '활성' : '비활성'}
                     </Badge>
                   </div>
-                  <div className="mt-1 flex items-center gap-3 text-sm text-gray-500">
+                  <div className="mt-1 flex items-center gap-3 text-sm text-gray-500 dark:text-slate-400">
                     <code className="font-mono">{key.keyPrefix}</code>
                     <span>{PROVIDER_LABELS[key.providerType] || key.providerType}</span>
                     <span>{key.requestCount.toLocaleString()} 요청</span>

@@ -54,11 +54,11 @@ export function SyncButton({ providerId, orgId, lastSyncAt, supportsUsageApi = t
 
   if (!supportsUsageApi) {
     return (
-      <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
-        <p className="text-sm text-amber-800">
+      <div className="rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/50 p-3">
+        <p className="text-sm text-amber-800 dark:text-amber-300">
           이 프로바이더는 자동 사용량 동기화를 지원하지 않습니다.
         </p>
-        <p className="mt-1 text-xs text-amber-600">
+        <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
           사용량 데이터는 CSV 가져오기 또는 수동 입력이 필요합니다.
         </p>
       </div>
@@ -69,8 +69,8 @@ export function SyncButton({ providerId, orgId, lastSyncAt, supportsUsageApi = t
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-600">마지막 동기화</p>
-          <p className="font-medium text-gray-900">
+          <p className="text-sm text-gray-600 dark:text-slate-400">마지막 동기화</p>
+          <p className="font-medium text-gray-900 dark:text-slate-100">
             {lastSyncAt ? new Date(lastSyncAt).toLocaleString() : '없음'}
           </p>
         </div>
@@ -103,9 +103,9 @@ export function SyncButton({ providerId, orgId, lastSyncAt, supportsUsageApi = t
         </div>
       </div>
       {state === 'error' && errorMessage && (
-        <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+        <div className="flex items-start gap-2 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/50 p-3">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
-          <p className="text-sm text-red-700">{errorMessage}</p>
+          <p className="text-sm text-red-700 dark:text-red-400">{errorMessage}</p>
         </div>
       )}
     </div>

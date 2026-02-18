@@ -66,14 +66,14 @@ export function SetupInstructions() {
         </p>
       </CardHeader>
       <CardContent>
-        <div className="mb-4 flex gap-1 rounded-lg bg-gray-100 p-1">
+        <div className="mb-4 flex gap-1 rounded-lg bg-gray-100 dark:bg-slate-700 p-1">
           {TABS.map((tab) => (
             <button
               key={tab}
               className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                 activeTab === tab
-                  ? 'bg-white dark:bg-slate-900 text-gray-900 shadow-sm'
-                  : 'text-gray-500 hover:text-gray-700'
+                  ? 'bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 shadow-sm'
+                  : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200'
               }`}
               onClick={() => setActiveTab(tab)}
             >
@@ -84,8 +84,8 @@ export function SetupInstructions() {
         <pre className="overflow-x-auto rounded-lg bg-gray-900 p-4 text-sm text-green-400">
           <code>{CODE_SNIPPETS[activeTab]}</code>
         </pre>
-        <div className="mt-4 rounded-lg border border-blue-100 bg-blue-50 p-3">
-          <p className="text-sm text-blue-800">
+        <div className="mt-4 rounded-lg border border-blue-100 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 p-3">
+          <p className="text-sm text-blue-800 dark:text-blue-300">
             <strong>작동 방식:</strong> API 호출이 프록시를 통과하며, 토큰 수, 비용, 지연시간을 자동으로
             로깅합니다. 프록시는 암호화된 API 키를 사용하여 실제 프로바이더로 요청을 전달합니다.
           </p>

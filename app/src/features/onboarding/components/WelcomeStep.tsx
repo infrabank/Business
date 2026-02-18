@@ -15,14 +15,14 @@ export function WelcomeStep() {
         <Zap className="h-8 w-8 text-blue-600" />
       </div>
       <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100">LLM 비용, 이제 똑똑하게 관리하세요</h2>
-      <p className="mt-2 text-slate-500 dark:text-slate-400 dark:text-slate-500">API 비용을 통합 관리하고 최적화할 준비를 해볼까요?</p>
+      <p className="mt-2 text-slate-500 dark:text-slate-400">API 비용을 통합 관리하고 최적화할 준비를 해볼까요?</p>
 
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
         {FEATURES.map((f) => (
           <div key={f.title} className="rounded-xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-4 shadow-sm">
             <f.icon className="mx-auto h-6 w-6 text-blue-500" />
             <h3 className="mt-2 text-sm font-semibold text-slate-800 dark:text-slate-200">{f.title}</h3>
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500">{f.desc}</p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">{f.desc}</p>
           </div>
         ))}
       </div>

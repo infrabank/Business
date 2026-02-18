@@ -18,7 +18,7 @@ export function ProviderStep({ selectedProvider, onSelect }: ProviderStepProps) 
   return (
     <div>
       <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">사용 중인 LLM 프로바이더를 선택하세요</h2>
-      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">가장 많이 사용하는 프로바이더 하나를 선택하세요</p>
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">가장 많이 사용하는 프로바이더 하나를 선택하세요</p>
 
       <div className="mt-6 space-y-3">
         {PROVIDERS.map((p) => (
@@ -28,7 +28,7 @@ export function ProviderStep({ selectedProvider, onSelect }: ProviderStepProps) 
             className={[
               'flex w-full items-center gap-4 rounded-xl border-2 p-4 text-left transition-all',
               selectedProvider === p.type
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50/50 shadow-sm'
+                ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/50 shadow-sm'
                 : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 hover:bg-slate-50 dark:bg-slate-800/50',
             ].join(' ')}
           >
@@ -40,7 +40,7 @@ export function ProviderStep({ selectedProvider, onSelect }: ProviderStepProps) 
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-slate-900 dark:text-slate-100">{p.name}</h3>
-              <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">{p.desc}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{p.desc}</p>
             </div>
             {selectedProvider === p.type && (
               <Check className="h-5 w-5 text-blue-600" />

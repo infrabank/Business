@@ -16,7 +16,7 @@ export function Testimonials() {
             >
               <p className="text-slate-700 dark:text-slate-300 italic leading-relaxed">&ldquo;{t.quote}&rdquo;</p>
               <div className="mt-6 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-sm font-semibold text-indigo-700">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 dark:bg-indigo-900/60 text-sm font-semibold text-indigo-700 dark:text-indigo-300">
                   {t.initials}
                 </div>
                 <div>

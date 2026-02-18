@@ -79,16 +79,16 @@ export function ProviderForm({ onSubmit, onCancel, isLoading, error }: ProviderF
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-semibold text-gray-900">프로바이더 추가</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">프로바이더 추가</h3>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">프로바이더</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">프로바이더</label>
             <select
               value={type}
               onChange={(e) => handleTypeChange(e.target.value as ProviderType)}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               {PROVIDER_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -99,7 +99,7 @@ export function ProviderForm({ onSubmit, onCancel, isLoading, error }: ProviderF
           <Input label="표시 이름" value={name} onChange={(e) => setName(e.target.value)} placeholder={`예: Production ${currentProvider.label}`} />
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">API 키</label>
+            <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-slate-300">API 키</label>
             <div className="flex gap-2">
               <div className="relative flex-1">
                 <input
@@ -108,16 +108,16 @@ export function ProviderForm({ onSubmit, onCancel, isLoading, error }: ProviderF
                   onChange={(e) => handleKeyChange(e.target.value)}
                   onFocus={() => setShowKey(true)}
                   placeholder={currentProvider.placeholder}
-                  className={`w-full rounded-lg border px-3 py-2 pr-10 text-sm font-mono focus:outline-none focus:ring-1 ${
+                  className={`w-full rounded-lg border px-3 py-2 pr-10 text-sm font-mono bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-1 ${
                     keyStatus === 'valid' ? 'border-green-400 focus:border-green-500 focus:ring-green-500' :
                     keyStatus === 'invalid' ? 'border-red-400 focus:border-red-500 focus:ring-red-500' :
-                    'border-gray-300 focus:border-blue-500 focus:ring-blue-500'
+                    'border-gray-300 dark:border-slate-600 focus:border-blue-500 focus:ring-blue-500'
                   }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowKey(!showKey)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-slate-500 dark:hover:text-slate-300"
                 >
                   {showKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -139,12 +139,12 @@ export function ProviderForm({ onSubmit, onCancel, isLoading, error }: ProviderF
             </div>
 
             {keyStatus === 'valid' && (
-              <div className="mt-2 rounded-lg border border-green-200 bg-green-50 p-2">
-                <p className="flex items-center gap-1 text-sm font-medium text-green-700">
+              <div className="mt-2 rounded-lg border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/50 p-2">
+                <p className="flex items-center gap-1 text-sm font-medium text-green-700 dark:text-green-400">
                   <Check className="h-4 w-4" /> API 키가 유효합니다
                 </p>
                 {keyModels.length > 0 && (
-                  <p className="mt-1 text-xs text-green-600">
+                  <p className="mt-1 text-xs text-green-600 dark:text-green-500">
                     사용 가능한 모델: {keyModels.slice(0, 5).join(', ')}{keyModels.length > 5 ? ` 외 ${keyModels.length - 5}개` : ''}
                   </p>
                 )}
@@ -152,17 +152,17 @@ export function ProviderForm({ onSubmit, onCancel, isLoading, error }: ProviderF
             )}
 
             {keyStatus === 'invalid' && (
-              <div className="mt-2 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-2">
+              <div className="mt-2 flex items-start gap-2 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/50 p-2">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
-                <p className="text-sm text-red-700">{keyError}</p>
+                <p className="text-sm text-red-700 dark:text-red-400">{keyError}</p>
               </div>
             )}
           </div>
 
           {error && (
-            <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
+            <div className="flex items-start gap-2 rounded-lg border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/50 p-3">
               <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-red-500" />
-              <p className="text-sm text-red-700">{error}</p>
+              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
             </div>
           )}
 

@@ -55,10 +55,10 @@ export function ApiKeyStep({
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-slate-900">
+      <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
         {providerName} API 키를 입력하세요
       </h2>
-      <p className="mt-1 text-sm text-slate-500">
+      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
         API 키를 입력하면 자동으로 유효성을 확인하고 등록합니다
       </p>
 
@@ -72,10 +72,10 @@ export function ApiKeyStep({
               onFocus={() => setShowKey(true)}
               placeholder={guide.placeholder}
               className={[
-                'w-full rounded-xl border px-4 py-3 pr-10 font-mono text-sm focus:outline-none focus:ring-2',
+                'w-full rounded-xl border px-4 py-3 pr-10 font-mono text-sm bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 focus:outline-none focus:ring-2',
                 keyStatus === 'valid' ? 'border-green-400 focus:ring-green-200' : '',
                 keyStatus === 'invalid' ? 'border-red-400 focus:ring-red-200' : '',
-                keyStatus !== 'valid' && keyStatus !== 'invalid' ? 'border-slate-300 focus:ring-blue-200' : '',
+                keyStatus !== 'valid' && keyStatus !== 'invalid' ? 'border-slate-300 dark:border-slate-600 focus:ring-blue-200' : '',
               ].join(' ')}
               disabled={providerRegistered}
             />
@@ -114,12 +114,12 @@ export function ApiKeyStep({
         )}
 
         {keyStatus === 'valid' && (
-          <div className="mt-4 rounded-xl border border-green-200 bg-green-50 p-4">
-            <p className="flex items-center gap-2 font-medium text-green-700">
+          <div className="mt-4 rounded-xl border border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/50 p-4">
+            <p className="flex items-center gap-2 font-medium text-green-700 dark:text-green-400">
               <Check className="h-5 w-5" /> API 키가 유효합니다
             </p>
             {keyModels.length > 0 && (
-              <p className="mt-1 text-sm text-green-600">
+              <p className="mt-1 text-sm text-green-600 dark:text-green-500">
                 사용 가능한 모델: {keyModels.slice(0, 5).join(', ')}
                 {keyModels.length > 5 && ` 외 ${keyModels.length - 5}개`}
               </p>
@@ -128,11 +128,11 @@ export function ApiKeyStep({
         )}
 
         {keyStatus === 'invalid' && keyError && (
-          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 p-4">
-            <p className="flex items-center gap-2 text-sm text-red-700">
+          <div className="mt-4 rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/50 p-4">
+            <p className="flex items-center gap-2 text-sm text-red-700 dark:text-red-400">
               <AlertTriangle className="h-4 w-4 shrink-0" /> {keyError}
             </p>
-            <p className="mt-1 text-xs text-red-500">
+            <p className="mt-1 text-xs text-red-500 dark:text-red-400">
               키를 다시 확인하거나 새 키를 발급받아 주세요
             </p>
           </div>

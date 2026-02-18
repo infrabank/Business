@@ -128,6 +128,32 @@ body {
 .dark ::-webkit-scrollbar-thumb { background: #334155; }
 .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
+/* Recharts Dark Mode */
+.dark .recharts-cartesian-grid line,
+.dark .recharts-cartesian-grid-horizontal line,
+.dark .recharts-cartesian-grid-vertical line {
+  stroke: #1e293b !important;
+}
+
+.dark .recharts-default-tooltip {
+  background-color: rgba(15, 23, 42, 0.95) !important;
+  border-color: rgba(51, 65, 85, 0.6) !important;
+  color: #e2e8f0 !important;
+  backdrop-filter: blur(8px);
+}
+
+.dark .recharts-tooltip-item {
+  color: #cbd5e1 !important;
+}
+
+.dark .recharts-legend-item-text {
+  color: #94a3b8 !important;
+}
+
+.dark .recharts-text.recharts-label {
+  fill: #94a3b8;
+}
+
 /* Custom Utilities */
 @utility text-gradient {
   background: linear-gradient(135deg, #4F46E5, #7C3AED);
@@ -152,6 +178,11 @@ body {
   background: linear-gradient(90deg, #F1F5F9 25%, #E2E8F0 50%, #F1F5F9 75%);
   background-size: 200% 100%;
   animation: shimmer 2s infinite linear;
+}
+
+.dark .loading-skeleton {
+  background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
+  background-size: 200% 100%;
 }
 
 @utility loading-skeleton-dark {

@@ -67,10 +67,10 @@ export function SyncHistory({ orgId, providerId, refreshKey }: SyncHistoryProps)
     return (
       <Card>
         <CardHeader>
-          <h3 className="text-lg font-semibold text-gray-900">동기화 기록</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">동기화 기록</h3>
         </CardHeader>
         <CardContent>
-          <div className="h-24 animate-pulse rounded bg-gray-100" />
+          <div className="h-24 animate-pulse rounded bg-gray-100 dark:bg-slate-700" />
         </CardContent>
       </Card>
     )
@@ -79,11 +79,11 @@ export function SyncHistory({ orgId, providerId, refreshKey }: SyncHistoryProps)
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-semibold text-gray-900">동기화 기록</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">동기화 기록</h3>
       </CardHeader>
       <CardContent>
         {history.length === 0 ? (
-          <p className="text-sm text-gray-500">동기화 기록이 없습니다.</p>
+          <p className="text-sm text-gray-500 dark:text-slate-400">동기화 기록이 없습니다.</p>
         ) : (
           <div className="space-y-3">
             {history.map((entry) => {
@@ -91,25 +91,25 @@ export function SyncHistory({ orgId, providerId, refreshKey }: SyncHistoryProps)
               return (
                 <div key={entry.id} className="flex items-center gap-3 text-sm">
                   <span className={`h-2 w-2 shrink-0 rounded-full ${statusStyle.dot}`} />
-                  <span className="w-36 shrink-0 text-gray-600">
+                  <span className="w-36 shrink-0 text-gray-600 dark:text-slate-400">
                     {formatDate(entry.startedAt)}
                   </span>
                   <span className={`w-16 shrink-0 font-medium ${
-                    entry.status === 'success' ? 'text-green-700' :
-                    entry.status === 'failed' ? 'text-red-700' :
-                    entry.status === 'partial' ? 'text-yellow-700' :
-                    'text-blue-700'
+                    entry.status === 'success' ? 'text-green-700 dark:text-green-400' :
+                    entry.status === 'failed' ? 'text-red-700 dark:text-red-400' :
+                    entry.status === 'partial' ? 'text-yellow-700 dark:text-yellow-400' :
+                    'text-blue-700 dark:text-blue-400'
                   }`}>
                     {statusStyle.label}
                   </span>
-                  <span className="text-gray-500">
+                  <span className="text-gray-500 dark:text-slate-400">
                     {entry.status === 'failed' ? (
-                      <span className="text-red-600">{entry.errorMessage || '오류'}</span>
+                      <span className="text-red-600 dark:text-red-400">{entry.errorMessage || '오류'}</span>
                     ) : (
                       <>+{entry.recordsCreated}건 / ~{entry.recordsUpdated}건</>
                     )}
                   </span>
-                  <span className="ml-auto text-gray-400">
+                  <span className="ml-auto text-gray-400 dark:text-slate-500">
                     {formatDuration(entry.durationMs)}
                   </span>
                 </div>

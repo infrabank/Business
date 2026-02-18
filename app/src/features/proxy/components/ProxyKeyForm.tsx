@@ -107,7 +107,7 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
             지금 이 키를 복사하세요. 다시 표시되지 않습니다.
           </p>
           <div className="flex items-center gap-2">
-            <code className="flex-1 rounded-lg border bg-gray-50 px-3 py-2 text-sm font-mono break-all">
+            <code className="flex-1 rounded-lg border dark:border-slate-700 bg-gray-50 dark:bg-slate-800 text-gray-900 dark:text-slate-100 px-3 py-2 text-sm font-mono break-all">
               {createdKey}
             </code>
             <Button size="sm" onClick={handleCopy}>
@@ -141,9 +141,9 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
             required
           />
           <div className="space-y-1">
-            <label className="block text-sm font-medium text-gray-700">프로바이더</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">프로바이더</label>
             <select
-              className="block w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="block w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-gray-900 dark:text-slate-100 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               value={providerType}
               onChange={(e) => setProviderType(e.target.value as ProviderType | 'auto')}
             >
@@ -154,9 +154,9 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
             </select>
           </div>
           {providerType === 'auto' ? (
-            <div className="space-y-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
-              <p className="text-sm font-medium text-blue-800">프로바이더별 API 키</p>
-              <p className="text-xs text-blue-600">사용할 프로바이더의 API 키를 입력하세요. 요청 형식에 따라 자동 감지됩니다.</p>
+            <div className="space-y-3 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/30 p-4">
+              <p className="text-sm font-medium text-blue-800 dark:text-blue-300">프로바이더별 API 키</p>
+              <p className="text-xs text-blue-600 dark:text-blue-400">사용할 프로바이더의 API 키를 입력하세요. 요청 형식에 따라 자동 감지됩니다.</p>
               <Input
                 label="OpenAI API 키"
                 type="password"
@@ -208,8 +208,8 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
               min="0"
             />
           </div>
-          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3">
-            <p className="text-sm font-medium text-gray-700">비용 절감 옵션</p>
+          <div className="rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 p-4 space-y-3">
+            <p className="text-sm font-medium text-gray-700 dark:text-slate-300">비용 절감 옵션</p>
             <label className="flex items-center gap-3 cursor-pointer">
               <input
                 type="checkbox"
@@ -218,8 +218,8 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <div>
-                <span className="text-sm font-medium text-gray-900">응답 캐싱</span>
-                <p className="text-xs text-gray-500">동일한 요청을 캐싱하여 중복 API 호출 방지</p>
+                <span className="text-sm font-medium text-gray-900 dark:text-slate-100">응답 캐싱</span>
+                <p className="text-xs text-gray-500 dark:text-slate-400">동일한 요청을 캐싱하여 중복 API 호출 방지</p>
               </div>
             </label>
             <label className="flex items-center gap-3 cursor-pointer">
@@ -230,8 +230,8 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
                 className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
               />
               <div>
-                <span className="text-sm font-medium text-gray-900">스마트 모델 라우팅</span>
-                <p className="text-xs text-gray-500">간단한 요청을 저렴한 모델로 자동 라우팅 (최대 90%+ 절감)</p>
+                <span className="text-sm font-medium text-gray-900 dark:text-slate-100">스마트 모델 라우팅</span>
+                <p className="text-xs text-gray-500 dark:text-slate-400">간단한 요청을 저렴한 모델로 자동 라우팅 (최대 90%+ 절감)</p>
               </div>
             </label>
           </div>
@@ -247,7 +247,7 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
           )}
           {/* Budget Alert Settings */}
           {budgetLimit && (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 space-y-3">
+            <div className="rounded-lg border border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800/50 p-4 space-y-3">
               <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
@@ -256,13 +256,13 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
                   className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                 />
                 <div>
-                  <span className="text-sm font-medium text-gray-900">예산 알림</span>
-                  <p className="text-xs text-gray-500">예산 임계값 도달 시 알림 발송</p>
+                  <span className="text-sm font-medium text-gray-900 dark:text-slate-100">예산 알림</span>
+                  <p className="text-xs text-gray-500 dark:text-slate-400">예산 임계값 도달 시 알림 발송</p>
                 </div>
               </label>
               {budgetAlertsEnabled && (
                 <div className="ml-7 space-y-2">
-                  <p className="text-xs font-medium text-gray-600">알림 임계값</p>
+                  <p className="text-xs font-medium text-gray-600 dark:text-slate-400">알림 임계값</p>
                   {[
                     { key: '0.8', label: '80%' },
                     { key: '0.9', label: '90%' },
@@ -277,7 +277,7 @@ export function ProxyKeyForm({ onSubmit }: ProxyKeyFormProps) {
                         }
                         className="h-3.5 w-3.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                       />
-                      <span className="text-sm text-gray-700">예산의 {label} 도달 시</span>
+                      <span className="text-sm text-gray-700 dark:text-slate-300">예산의 {label} 도달 시</span>
                     </label>
                   ))}
                 </div>

@@ -35,7 +35,7 @@ export function KeyBreakdownTable({ data }: Props) {
   if (data.length === 0) {
     return (
       <Card>
-        <CardContent className="py-12 text-center text-gray-400">
+        <CardContent className="py-12 text-center text-gray-400 dark:text-slate-500">
           데이터가 없습니다
         </CardContent>
       </Card>
@@ -45,12 +45,12 @@ export function KeyBreakdownTable({ data }: Props) {
   return (
     <Card>
       <CardHeader>
-        <h3 className="text-lg font-semibold text-gray-900">상세 분석</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-slate-100">상세 분석</h3>
       </CardHeader>
       <CardContent className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
-            <tr className="border-b border-gray-200 text-left text-xs font-medium uppercase text-gray-500">
+            <tr className="border-b border-gray-200 dark:border-slate-700 text-left text-xs font-medium uppercase text-gray-500 dark:text-slate-400">
               <th className="px-3 py-3">이름</th>
               <th className="cursor-pointer px-3 py-3" onClick={() => handleSort('totalCost')}>
                 비용{sortIcon('totalCost')}
@@ -69,21 +69,21 @@ export function KeyBreakdownTable({ data }: Props) {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-gray-100 dark:divide-slate-700">
             {sorted.map((item) => (
-              <tr key={item.name} className="hover:bg-gray-50">
-                <td className="px-3 py-3 font-medium text-gray-900">{item.name}</td>
-                <td className="px-3 py-3 text-gray-700">${item.totalCost.toFixed(4)}</td>
-                <td className="px-3 py-3 text-emerald-600">${item.totalSaved.toFixed(4)}</td>
-                <td className="px-3 py-3 text-gray-700">{item.requestCount.toLocaleString()}</td>
-                <td className="px-3 py-3 text-gray-700">{item.avgLatencyMs}ms</td>
+              <tr key={item.name} className="hover:bg-gray-50 dark:hover:bg-slate-800/50">
+                <td className="px-3 py-3 font-medium text-gray-900 dark:text-slate-100">{item.name}</td>
+                <td className="px-3 py-3 text-gray-700 dark:text-slate-300">${item.totalCost.toFixed(4)}</td>
+                <td className="px-3 py-3 text-emerald-600 dark:text-emerald-400">${item.totalSaved.toFixed(4)}</td>
+                <td className="px-3 py-3 text-gray-700 dark:text-slate-300">{item.requestCount.toLocaleString()}</td>
+                <td className="px-3 py-3 text-gray-700 dark:text-slate-300">{item.avgLatencyMs}ms</td>
                 <td className="px-3 py-3">
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                     item.cacheHitRate >= 50
-                      ? 'bg-emerald-100 text-emerald-800'
+                      ? 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300'
                       : item.cacheHitRate >= 20
-                        ? 'bg-yellow-100 text-yellow-800'
-                        : 'bg-gray-100 text-gray-700'
+                        ? 'bg-yellow-100 dark:bg-yellow-950/50 text-yellow-800 dark:text-yellow-300'
+                        : 'bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-300'
                   }`}>
                     {item.cacheHitRate.toFixed(1)}%
                   </span>

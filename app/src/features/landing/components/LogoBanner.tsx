@@ -2,7 +2,7 @@ import { companyLogos } from '../data/landing-data'
 
 export function LogoBanner() {
   return (
-    <section className="border-y border-slate-100 bg-white dark:bg-slate-900 py-12">
+    <section className="border-y border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 py-12">
       <div className="mx-auto max-w-6xl px-4 text-center">
         <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
           전 세계 <span className="font-semibold text-slate-700 dark:text-slate-300">1,000+</span> 팀의 비용을 절감하고 있습니다
@@ -11,7 +11,7 @@ export function LogoBanner() {
           {companyLogos.map((logo) => (
             <span
               key={logo.name}
-              className="text-lg font-semibold text-slate-300"
+              className="text-lg font-semibold text-slate-300 dark:text-slate-500"
             >
               {logo.name}
             </span>

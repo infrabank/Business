@@ -127,7 +127,7 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
             {log.statusCode}
           </Badge>
           {log.cacheHit && (
-            <span className="rounded bg-blue-100 px-1 py-0.5 text-[10px] font-medium text-blue-700">
+            <span className="rounded bg-blue-100 dark:bg-blue-950/50 px-1 py-0.5 text-[10px] font-medium text-blue-700 dark:text-blue-400">
               CACHE
             </span>
           )}
@@ -148,8 +148,8 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
               onClick={() => submitFeedback(log.id, 'positive')}
               className={`rounded px-1.5 py-0.5 text-xs transition-colors ${
                 current === 'positive'
-                  ? 'bg-emerald-100 text-emerald-700'
-                  : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+                  ? 'bg-emerald-100 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-400'
+                  : 'text-gray-400 dark:text-slate-500 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-gray-600 dark:hover:text-slate-300'
               }`}
               title="라우팅 결과 만족"
             >
@@ -160,8 +160,8 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
               onClick={() => submitFeedback(log.id, 'negative')}
               className={`rounded px-1.5 py-0.5 text-xs transition-colors ${
                 current === 'negative'
-                  ? 'bg-red-100 text-red-700'
-                  : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+                  ? 'bg-red-100 dark:bg-red-950/50 text-red-700 dark:text-red-400'
+                  : 'text-gray-400 dark:text-slate-500 hover:bg-gray-100 dark:hover:bg-slate-700 hover:text-gray-600 dark:hover:text-slate-300'
               }`}
               title="라우팅 결과 불만족"
             >
