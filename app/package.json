@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.992.0",
     "@hookform/resolvers": "^5.2.2",
     "@stripe/stripe-js": "^8.7.0",
     "@supabase/ssr": "^0.8.0",

@@ -1,3 +1,7 @@
+import {
+  BedrockRuntimeClient,
+  InvokeModelCommand,
+} from '@aws-sdk/client-bedrock-runtime'
 import type { ProviderAdapter, FetchUsageOptions, FetchUsageResult, RateLimitConfig, PromptRequest, PromptResponse } from './base-adapter'
 import { ProviderApiError } from './base-adapter'
 
@@ -19,19 +23,11 @@ const BEDROCK_MODELS: Record<string, { input: number; output: number }> = {
 /**
  * AWS Bedrock adapter
  *
- * API key format expected: "region|access-key-id|secret-access-key"
+ * API key format: "region|access-key-id|secret-access-key"
  * e.g. "us-east-1|AKIA...|wJal..."
- *
- * Uses the Bedrock runtime InvokeModel API with AWS Signature V4.
- * For simplicity, this adapter uses a pre-signed approach via the
- * standard AWS credential chain. In production, use IAM roles.
- *
- * NOTE: Full AWS SigV4 signing is complex. This adapter provides
- * the structure and interface. For production, integrate the
- * @aws-sdk/client-bedrock-runtime package.
  */
 export class BedrockAdapter implements ProviderAdapter {
-  type = 'custom' as const // Uses 'custom' since ProviderType doesn't have 'bedrock' yet
+  type = 'custom' as const
 
   rateLimitConfig: RateLimitConfig = {
     maxRequestsPerMinute: 30,
@@ -50,11 +46,21 @@ export class BedrockAdapter implements ProviderAdapter {
     return { region: parts[0], accessKeyId: parts[1], secretKey: parts[2] }
   }
 
+  private createClient(apiKey: string): BedrockRuntimeClient {
+    const { region, accessKeyId, secretKey } = this.parseKey(apiKey)
+    return new BedrockRuntimeClient({
+      region,
+      credentials: {
+        accessKeyId,
+        secretAccessKey: secretKey,
+      },
+    })
+  }
+
   async validateKey(apiKey: string): Promise<boolean> {
     try {
       const { region, accessKeyId } = this.parseKey(apiKey)
-      // Basic format validation - full validation requires SigV4 signed request
-      return !!(region && accessKeyId && region.match(/^[a-z]{2}-[a-z]+-\d$/))
+      return !!(region && accessKeyId && /^[a-z]{2}-[a-z]+-\d$/.test(region))
     } catch {
       return false
     }
@@ -70,7 +76,6 @@ export class BedrockAdapter implements ProviderAdapter {
   }
 
   getModelPricing(model: string): { input: number; output: number } {
-    // Also try partial match for model ID variations
     if (BEDROCK_MODELS[model]) return BEDROCK_MODELS[model]
     for (const [key, pricing] of Object.entries(BEDROCK_MODELS)) {
       if (model.includes(key) || key.includes(model)) return pricing
@@ -79,17 +84,16 @@ export class BedrockAdapter implements ProviderAdapter {
   }
 
   supportsUsageApi(): boolean {
-    return false // Usage tracked via proxy logs / CloudWatch
+    return false
   }
 
   async executePrompt(apiKey: string, request: PromptRequest): Promise<PromptResponse> {
-    const { region } = this.parseKey(apiKey)
+    const client = this.createClient(apiKey)
     const modelId = request.model
 
-    // Determine the request format based on model provider
     const isAnthropic = modelId.startsWith('anthropic.')
     const isMeta = modelId.startsWith('meta.')
-    const isMistral = modelId.startsWith('mistral.')
+    const isTitan = modelId.startsWith('amazon.titan')
 
     let body: Record<string, unknown>
 
@@ -101,17 +105,16 @@ export class BedrockAdapter implements ProviderAdapter {
         ...(request.systemPrompt ? { system: request.systemPrompt } : {}),
         messages: [{ role: 'user', content: request.userPrompt }],
       }
-    } else if (isMeta || isMistral) {
+    } else if (isMeta) {
       const prompt = request.systemPrompt
-        ? `<s>[INST] <<SYS>>\n${request.systemPrompt}\n<</SYS>>\n\n${request.userPrompt} [/INST]`
-        : `<s>[INST] ${request.userPrompt} [/INST]`
+        ? `<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n${request.systemPrompt}<|eot_id|><|start_header_id|>user<|end_header_id|>\n${request.userPrompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>`
+        : `<|begin_of_text|><|start_header_id|>user<|end_header_id|>\n${request.userPrompt}<|eot_id|><|start_header_id|>assistant<|end_header_id|>`
       body = {
         prompt,
         max_gen_len: request.maxTokens,
         temperature: request.temperature,
       }
-    } else {
-      // Amazon Titan / default
+    } else if (isTitan) {
       body = {
         inputText: request.systemPrompt
           ? `${request.systemPrompt}\n\nUser: ${request.userPrompt}`
@@ -121,19 +124,67 @@ export class BedrockAdapter implements ProviderAdapter {
           temperature: request.temperature,
         },
       }
+    } else {
+      // Mistral / Cohere / default - use messages format
+      body = {
+        prompt: request.systemPrompt
+          ? `<s>[INST] ${request.systemPrompt}\n\n${request.userPrompt} [/INST]`
+          : `<s>[INST] ${request.userPrompt} [/INST]`,
+        max_tokens: request.maxTokens,
+        temperature: request.temperature,
+      }
     }
 
-    // NOTE: In production, this requires AWS SigV4 signing.
-    // For now, this provides the correct API shape.
-    // Install @aws-sdk/client-bedrock-runtime for full support.
-    const endpoint = `https://bedrock-runtime.${region}.amazonaws.com/model/${encodeURIComponent(modelId)}/invoke`
+    try {
+      const command = new InvokeModelCommand({
+        modelId,
+        contentType: 'application/json',
+        accept: 'application/json',
+        body: new TextEncoder().encode(JSON.stringify(body)),
+      })
 
-    throw new ProviderApiError(
-      501,
-      `Bedrock adapter requires @aws-sdk/client-bedrock-runtime for AWS SigV4 signing. ` +
-      `Endpoint: ${endpoint}, Body shape: ${JSON.stringify(Object.keys(body))}. ` +
-      `Install the AWS SDK and update this adapter for production use.`,
-      'bedrock'
-    )
+      const response = await client.send(command)
+      const responseBody = JSON.parse(new TextDecoder().decode(response.body))
+
+      // Parse response based on model type
+      if (isAnthropic) {
+        return {
+          content: responseBody.content?.[0]?.text ?? '',
+          inputTokens: responseBody.usage?.input_tokens ?? 0,
+          outputTokens: responseBody.usage?.output_tokens ?? 0,
+          model: modelId,
+        }
+      } else if (isMeta) {
+        return {
+          content: responseBody.generation ?? '',
+          inputTokens: responseBody.prompt_token_count ?? 0,
+          outputTokens: responseBody.generation_token_count ?? 0,
+          model: modelId,
+        }
+      } else if (isTitan) {
+        const result = responseBody.results?.[0]
+        return {
+          content: result?.outputText ?? '',
+          inputTokens: responseBody.inputTextTokenCount ?? 0,
+          outputTokens: result?.tokenCount ?? 0,
+          model: modelId,
+        }
+      } else {
+        // Mistral/Cohere
+        return {
+          content: responseBody.outputs?.[0]?.text ?? responseBody.generations?.[0]?.text ?? '',
+          inputTokens: 0,
+          outputTokens: 0,
+          model: modelId,
+        }
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Bedrock API error'
+      throw new ProviderApiError(
+        500,
+        message,
+        'bedrock'
+      )
+    }
   }
 }

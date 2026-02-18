@@ -133,6 +133,29 @@ export async function forwardRequest(params: {
     }
     const guardrailResult = await runGuardrails(finalBody, guardrailConfig)
     if (!guardrailResult.allowed) {
+      // Log the blocked request
+      logProxyRequest({
+        orgId: resolvedKey.orgId,
+        proxyKeyId: resolvedKey.id,
+        providerType,
+        model: (finalBody.model as string) || 'unknown',
+        path,
+        statusCode: 400,
+        inputTokens: 0,
+        outputTokens: 0,
+        totalTokens: 0,
+        cost: 0,
+        latencyMs: 0,
+        isStreaming: false,
+        errorMessage: `[GUARDRAIL] ${guardrailResult.reason}`,
+        cacheHit: false,
+        savedAmount: 0,
+        originalModel: null,
+        originalCost: 0,
+        routingDecision: null,
+        fallbackProvider: null,
+        fallbackModel: null,
+      })
       return buildGuardrailBlockedResponse(guardrailResult.reason || 'Request blocked by guardrails')
     }
     if (guardrailResult.modified && guardrailResult.maskedBody) {
@@ -374,6 +397,8 @@ export async function forwardRequest(params: {
     originalModel: wasRouted ? originalModel : null,
     originalCost,
     routingDecision: routingDecisionData,
+    fallbackProvider: fallbackUsed?.provider ?? null,
+    fallbackModel: fallbackUsed?.model ?? null,
   })
 
   // Increment request count + budget spend
@@ -522,6 +547,8 @@ function logProxyRequest(data: {
   originalModel: string | null
   originalCost: number
   routingDecision: { intent: string; confidence: number; reason: string; wasRouted: boolean } | null
+  fallbackProvider?: string | null
+  fallbackModel?: string | null
 }): void {
   // Separate originalCost to avoid insert failure if column doesn't exist yet
   const { originalCost, ...coreData } = data

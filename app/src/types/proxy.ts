@@ -80,6 +80,8 @@ export interface ProxyLog {
   originalModel: string | null
   routingDecision: RoutingDecision | null
   userFeedback: 'positive' | 'negative' | null
+  fallbackProvider: string | null
+  fallbackModel: string | null
 }
 
 export interface ResolvedProxyKey {

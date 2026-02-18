@@ -131,6 +131,16 @@ export function ProxyLogTable({ logs, loading, offset, onNextPage, onPrevPage }:
               CACHE
             </span>
           )}
+          {log.fallbackProvider && (
+            <span className="rounded bg-amber-100 dark:bg-amber-950/50 px-1 py-0.5 text-[10px] font-medium text-amber-700 dark:text-amber-400" title={`Fallback: ${log.fallbackProvider}/${log.fallbackModel}`}>
+              FB
+            </span>
+          )}
+          {log.errorMessage?.startsWith('[GUARDRAIL]') && (
+            <span className="rounded bg-violet-100 dark:bg-violet-950/50 px-1 py-0.5 text-[10px] font-medium text-violet-700 dark:text-violet-400">
+              BLOCK
+            </span>
+          )}
         </div>
       ),
     },
