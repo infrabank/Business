@@ -2,10 +2,12 @@
 
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
-import { faqItems } from '../data/landing-data'
+import { useT, useLandingData } from '@/lib/i18n'
 
 export function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const t = useT()
+  const data = useLandingData()
 
   function toggle(index: number) {
     setOpenIndex(openIndex === index ? null : index)
@@ -15,11 +17,11 @@ export function FaqSection() {
     <section id="faq" className="py-24 bg-white dark:bg-slate-900">
       <div className="mx-auto max-w-3xl px-4">
         <h2 className="text-center text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-          자주 묻는 질문
+          {t('faqSection.title')}
         </h2>
 
         <div className="mt-12 space-y-3">
-          {faqItems.map((item, index) => {
+          {data.faqItems.map((item, index) => {
             const isOpen = openIndex === index
             return (
               <details

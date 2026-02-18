@@ -3,11 +3,14 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { Zap, Menu, X } from 'lucide-react'
+import { useT, useLocale } from '@/lib/i18n'
 import { Footer } from '@/components/layout/Footer'
 import { HeroSection } from '@/features/landing/components/HeroSection'
 import { LogoBanner } from '@/features/landing/components/LogoBanner'
 import { FeaturesShowcase } from '@/features/landing/components/FeaturesShowcase'
 import { CostSavingsDemo } from '@/features/landing/components/CostSavingsDemo'
+import { CodeSnippet } from '@/features/landing/components/CodeSnippet'
+import { CompetitorComparison } from '@/features/landing/components/CompetitorComparison'
 import { HowItWorks } from '@/features/landing/components/HowItWorks'
 import { StatsSection } from '@/features/landing/components/StatsSection'
 import { Testimonials } from '@/features/landing/components/Testimonials'
@@ -16,6 +19,8 @@ import { FinalCta } from '@/features/landing/components/FinalCta'
 
 export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const t = useT()
+  const { locale, setLocale } = useLocale()
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-900">
@@ -27,27 +32,36 @@ export default function LandingPage() {
           </div>
           <div className="hidden items-center gap-6 sm:flex">
             <a href="#features" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
-              기능
+              {t('nav.features')}
+            </a>
+            <a href="#compare" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
+              {t('nav.compare')}
             </a>
             <Link href="/pricing" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
-              요금제
+              {t('nav.pricing')}
             </Link>
             <a href="#faq" className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors">
-              FAQ
+              {t('nav.faq')}
             </a>
           </div>
           <div className="hidden items-center gap-3 sm:flex">
+            <button
+              onClick={() => setLocale(locale === 'ko' ? 'en' : 'ko')}
+              className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            >
+              {locale === 'ko' ? 'EN' : '한국어'}
+            </button>
             <Link
               href="/login"
               className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
             >
-              로그인
+              {t('nav.login')}
             </Link>
             <Link
               href="/signup"
               className="rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:shadow-lg hover:brightness-110"
             >
-              무료로 시작
+              {t('nav.getStarted')}
             </Link>
           </div>
           <button
@@ -66,35 +80,48 @@ export default function LandingPage() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               >
-                기능
+                {t('nav.features')}
+              </a>
+              <a
+                href="#compare"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+              >
+                {t('nav.compare')}
               </a>
               <Link
                 href="/pricing"
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               >
-                요금제
+                {t('nav.pricing')}
               </Link>
               <a
                 href="#faq"
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               >
-                FAQ
+                {t('nav.faq')}
               </a>
+              <button
+                onClick={() => { setLocale(locale === 'ko' ? 'en' : 'ko'); setMobileMenuOpen(false) }}
+                className="mt-4 py-3 text-left text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+              >
+                {locale === 'ko' ? 'EN' : '한국어'}
+              </button>
               <Link
                 href="/login"
                 onClick={() => setMobileMenuOpen(false)}
-                className="mt-4 py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+                className="py-3 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
               >
-                로그인
+                {t('nav.login')}
               </Link>
               <Link
                 href="/signup"
                 onClick={() => setMobileMenuOpen(false)}
                 className="mt-2 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 px-5 py-3 text-center text-sm font-semibold text-white shadow-md transition-all duration-200 hover:shadow-lg hover:brightness-110"
               >
-                무료로 시작
+                {t('nav.getStarted')}
               </Link>
             </div>
           </div>
@@ -105,7 +132,9 @@ export default function LandingPage() {
         <HeroSection />
         <LogoBanner />
         <FeaturesShowcase />
+        <CodeSnippet />
         <CostSavingsDemo />
+        <CompetitorComparison />
         <HowItWorks />
         <StatsSection />
         <Testimonials />

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useT } from '@/lib/i18n'
 
 const MODELS = [
   { name: 'GPT-4o', pricePerReq: 0.03, routedTo: 'GPT-4o-mini', routedPrice: 0.002 },
@@ -12,6 +13,7 @@ export function CostSavingsDemo() {
   const [monthlyRequests, setMonthlyRequests] = useState(50000)
   const [selectedModel, setSelectedModel] = useState(0)
   const [cacheHitRate, setCacheHitRate] = useState(35)
+  const t = useT()
 
   const model = MODELS[selectedModel]
   const withoutLCM = monthlyRequests * model.pricePerReq
@@ -32,10 +34,10 @@ export function CostSavingsDemo() {
       <div className="mx-auto max-w-6xl px-4">
         <div className="text-center">
           <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-100">
-            얼마나 절감할 수 있는지 확인하세요
+            {t('costSavings.title')}
           </h2>
           <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">
-            사용량에 맞게 슬라이더를 조정하세요. 절감액은 실시간으로 계산됩니다.
+            {t('costSavings.subtitle')}
           </p>
         </div>
 
@@ -44,7 +46,7 @@ export function CostSavingsDemo() {
           <div className="space-y-8 rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-8 shadow-sm">
             <div>
               <label className="flex items-center justify-between text-sm font-medium text-slate-700 dark:text-slate-300">
-                <span>월간 API 요청 수</span>
+                <span>{t('costSavings.inputLabel')}</span>
                 <span className="rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-1 font-mono text-sm font-bold text-slate-900 dark:text-slate-100">
                   {monthlyRequests.toLocaleString()}
                 </span>
@@ -114,14 +116,14 @@ export function CostSavingsDemo() {
             {/* Before vs After */}
             <div className="grid grid-cols-3 gap-3 rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-6 shadow-sm">
               <div className="rounded-lg bg-red-50 dark:bg-red-950/40 p-4 text-center">
-                <p className="text-xs font-medium text-red-500 dark:text-red-400">LCM 없이</p>
+                <p className="text-xs font-medium text-red-500 dark:text-red-400">{t('costSavings.currentCost')}</p>
                 <p className="mt-2 text-2xl font-bold text-slate-900 dark:text-slate-100">
                   ${withoutLCM.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </p>
                 <p className="mt-1 text-[10px] text-slate-400">/월</p>
               </div>
               <div className="flex flex-col items-center justify-center rounded-lg bg-emerald-50 dark:bg-emerald-950/40 p-4">
-                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">절감액</p>
+                <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">{t('costSavings.monthlySavings')}</p>
                 <p className="mt-2 text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                   ${totalSaved.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </p>
@@ -130,7 +132,7 @@ export function CostSavingsDemo() {
                 </span>
               </div>
               <div className="rounded-lg bg-indigo-50 dark:bg-indigo-950/50 p-4 text-center">
-                <p className="text-xs font-medium text-indigo-500 dark:text-indigo-400">LCM 사용</p>
+                <p className="text-xs font-medium text-indigo-500 dark:text-indigo-400">{t('costSavings.withLcm')}</p>
                 <p className="mt-2 text-2xl font-bold text-indigo-700 dark:text-indigo-300">
                   ${withLCM.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </p>
@@ -144,7 +146,7 @@ export function CostSavingsDemo() {
               <div className="mt-4 space-y-4">
                 <div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">응답 캐싱</span>
+                    <span className="text-slate-600 dark:text-slate-400">{t('costSavings.cacheSavings')}</span>
                     <span className="font-semibold text-emerald-600">
                       -${cacheSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     </span>
@@ -161,7 +163,7 @@ export function CostSavingsDemo() {
                 </div>
                 <div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-600 dark:text-slate-400">스마트 모델 라우팅</span>
+                    <span className="text-slate-600 dark:text-slate-400">{t('costSavings.routingSavings')}</span>
                     <span className="font-semibold text-emerald-600">
                       -${routingSavings.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                     </span>
@@ -181,7 +183,7 @@ export function CostSavingsDemo() {
 
             {/* Annual projection */}
             <div className="rounded-2xl border-2 border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-950/40 p-6 text-center shadow-sm">
-              <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">연간 절감 예상액</p>
+              <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">{t('costSavings.yearlyProjection')}</p>
               <p className="mt-2 text-4xl font-bold text-emerald-600 dark:text-emerald-400">
                 ${(totalSaved * 12).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </p>

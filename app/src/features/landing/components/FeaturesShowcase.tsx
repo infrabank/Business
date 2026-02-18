@@ -1,6 +1,14 @@
-import { features } from '../data/landing-data'
+'use client'
+
+import { useLandingData } from '@/lib/i18n'
+import { TrendingDown, Activity, BarChart3, Repeat, Lightbulb, Shield } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+
+const icons: LucideIcon[] = [TrendingDown, Activity, BarChart3, Repeat, Lightbulb, Shield]
 
 export function FeaturesShowcase() {
+  const data = useLandingData()
+
   return (
     <section id="features" className="bg-white dark:bg-slate-900 py-24">
       <div className="mx-auto max-w-6xl px-4">
@@ -14,20 +22,23 @@ export function FeaturesShowcase() {
         </div>
 
         <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1"
-            >
-              <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/50">
-                <feature.icon className="h-7 w-7 text-indigo-600 dark:text-indigo-400" />
+          {data.features.map((feature, i) => {
+            const Icon = icons[i]
+            return (
+              <div
+                key={feature.title}
+                className="rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-8 shadow-sm transition-all duration-300 hover:shadow-md hover:-translate-y-1"
+              >
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/50">
+                  <Icon className="h-7 w-7 text-indigo-600 dark:text-indigo-400" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 text-slate-600 dark:text-slate-400">{feature.description}</p>
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">
-                {feature.title}
-              </h3>
-              <p className="mt-2 text-slate-600 dark:text-slate-400">{feature.description}</p>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>
