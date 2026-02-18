@@ -17,10 +17,13 @@ export interface CacheStats {
   totalSaved: number // total $ saved from cache hits
   entries: number
   hitRate: number // percentage 0-100
+  semanticHits: number
+  semanticSaved: number
 }
 
 // Cache key prefix to avoid collisions
 const PREFIX = 'lcm:cache:'
+const NORM_PREFIX = 'lcm:normcache:'
 const STATS_KEY = 'lcm:cache:stats'
 const DEFAULT_TTL_SECONDS = 3600
 
@@ -63,6 +66,67 @@ export function buildCacheKey(
 
   const keyString = JSON.stringify(keyData)
   return createHash('sha256').update(keyString).digest('hex')
+}
+
+/**
+ * Get cached response by normalized key (Level 2 - catches formatting-only differences)
+ */
+export async function getNormalizedCachedResponse(normalizedKey: string): Promise<CacheEntry | null> {
+  const r = getRedis()
+
+  if (r) {
+    try {
+      // Normalized key maps to an exact cache key
+      const exactKey = await r.get<string>(`${NORM_PREFIX}${normalizedKey}`)
+      if (exactKey) {
+        const entry = await r.get<CacheEntry>(`${PREFIX}${exactKey}`)
+        if (entry) {
+          r.hincrby(STATS_KEY, 'totalHits', 1).catch(() => {})
+          r.hincrbyfloat(STATS_KEY, 'totalSaved', entry.cost).catch(() => {})
+          return entry
+        }
+      }
+      return null
+    } catch {
+      return null
+    }
+  }
+
+  // In-memory: normalized key stored in same map
+  const entry = memoryCache.get(`norm:${normalizedKey}`)
+  if (!entry) return null
+  const age = (Date.now() - entry.timestamp) / 1000
+  if (age > entry.ttlSeconds) {
+    memoryCache.delete(`norm:${normalizedKey}`)
+    return null
+  }
+  memStats.totalHits++
+  memStats.totalSaved += entry.cost
+  return entry
+}
+
+/**
+ * Store normalized key → exact cache key mapping
+ */
+export async function setNormalizedMapping(
+  normalizedKey: string,
+  exactKey: string,
+  entry: CacheEntry,
+  ttlSeconds = DEFAULT_TTL_SECONDS
+): Promise<void> {
+  const r = getRedis()
+
+  if (r) {
+    try {
+      await r.set(`${NORM_PREFIX}${normalizedKey}`, exactKey, { ex: ttlSeconds })
+      return
+    } catch {
+      // Fall through to memory
+    }
+  }
+
+  // In-memory fallback: store full entry under normalized key
+  memoryCache.set(`norm:${normalizedKey}`, entry)
 }
 
 /**
@@ -160,12 +224,20 @@ export async function getCacheStats(): Promise<CacheStats> {
       const total = totalHits + totalMisses
       const dbSize = await r.dbsize()
 
+      // Get semantic stats
+      const semStatsKey = 'lcm:semcache:stats'
+      const semStats = await r.hgetall(semStatsKey) as Record<string, string> | null
+      const semanticHits = Number(semStats?.hits || 0)
+      const semanticSaved = Number(semStats?.saved || 0)
+
       return {
         totalHits,
         totalMisses,
         totalSaved,
         entries: dbSize,
         hitRate: total > 0 ? Math.round((totalHits / total) * 10000) / 100 : 0,
+        semanticHits,
+        semanticSaved,
       }
     } catch {
       // Fall through to memory stats
@@ -180,6 +252,8 @@ export async function getCacheStats(): Promise<CacheStats> {
     totalSaved: memStats.totalSaved,
     entries: memoryCache.size,
     hitRate: total > 0 ? Math.round((memStats.totalHits / total) * 10000) / 100 : 0,
+    semanticHits: 0,
+    semanticSaved: 0,
   }
 }
 

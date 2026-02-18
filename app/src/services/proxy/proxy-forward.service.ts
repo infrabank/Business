@@ -4,7 +4,8 @@ import { incrementRequestCount } from './proxy-key.service'
 import { incrementBudgetSpend } from './budget-check.service'
 import { checkBudgetAlerts } from './budget-alert.service'
 import { routeModel, calculateRoutingSavings } from './model-router.service'
-import { buildCacheKey, getCachedResponse, setCachedResponse } from './cache.service'
+import { buildCacheKey, getCachedResponse, setCachedResponse, getNormalizedCachedResponse, setNormalizedMapping } from './cache.service'
+import { buildNormalizedCacheKey, findSemanticMatch, storeSemanticEntry } from './semantic-cache.service'
 import { computeCost } from '@/services/pricing.service'
 import type { ProviderType } from '@/types/provider'
 import type { ResolvedProxyKey } from '@/types/proxy'
@@ -109,14 +110,35 @@ export async function forwardRequest(params: {
   // Determine if streaming
   const isStream = finalBody ? config.isStreaming(finalBody, targetUrl) : false
 
-  // Step 2: Cache Check (only for non-streaming)
+  // Step 2: Multi-level Cache Check (only for non-streaming)
   if (resolvedKey.enableCache && !isStream && finalBody) {
     const currentModel = (finalBody.model as string) || 'unknown'
+
+    // Level 1: Exact match
     const cacheKey = buildCacheKey(providerType, currentModel, finalBody)
-    const cachedEntry = await getCachedResponse(cacheKey)
+    let cachedEntry = await getCachedResponse(cacheKey)
+    let cacheLevel: 'exact' | 'normalized' | 'semantic' = 'exact'
+
+    // Level 2: Normalized match (catches formatting differences)
+    if (!cachedEntry) {
+      const normalizedKey = buildNormalizedCacheKey(providerType, currentModel, finalBody)
+      cachedEntry = await getNormalizedCachedResponse(normalizedKey)
+      if (cachedEntry) cacheLevel = 'normalized'
+    }
+
+    // Level 3: Semantic similarity match
+    let semanticSimilarity = 0
+    if (!cachedEntry) {
+      const semanticResult = await findSemanticMatch(providerType, currentModel, finalBody)
+      if (semanticResult) {
+        cachedEntry = semanticResult.entry
+        semanticSimilarity = semanticResult.similarity
+        cacheLevel = 'semantic'
+      }
+    }
 
     if (cachedEntry) {
-      // Cache HIT - return immediately
+      // Cache HIT (any level) - return immediately
       const totalTokens = cachedEntry.inputTokens + cachedEntry.outputTokens
       logProxyRequest({
         orgId: resolvedKey.orgId,
@@ -150,6 +172,8 @@ export async function forwardRequest(params: {
         headers: {
           'Content-Type': 'application/json',
           'x-cache': 'HIT',
+          'x-cache-level': cacheLevel,
+          ...(cacheLevel === 'semantic' ? { 'x-cache-similarity': String(semanticSimilarity.toFixed(3)) } : {}),
           'x-proxy-latency-ms': '0',
         },
       })
@@ -200,22 +224,33 @@ export async function forwardRequest(params: {
   const model = tokens.model !== 'unknown' ? tokens.model : (finalBody?.model as string) || 'unknown'
   const cost = computeCost(model, tokens.inputTokens, tokens.outputTokens)
 
-  // Step 3: Store in cache (only if enabled and response OK)
+  // Step 3: Store in cache (exact + normalized + semantic index)
   if (resolvedKey.enableCache && upstreamResponse.ok && finalBody) {
     const cacheKey = buildCacheKey(providerType, model, finalBody)
     const ttlSeconds = resolvedKey.cacheTtl ?? undefined
-    setCachedResponse(
-      cacheKey,
-      {
-        responseBody: JSON.stringify(responseBody),
-        model,
-        inputTokens: tokens.inputTokens,
-        outputTokens: tokens.outputTokens,
-        cost,
-        ttlSeconds: ttlSeconds ?? 3600,
-      },
-      ttlSeconds
-    )
+    const cacheEntry = {
+      responseBody: JSON.stringify(responseBody),
+      model,
+      inputTokens: tokens.inputTokens,
+      outputTokens: tokens.outputTokens,
+      cost,
+      ttlSeconds: ttlSeconds ?? 3600,
+    }
+
+    // Level 1: Store exact cache
+    setCachedResponse(cacheKey, cacheEntry, ttlSeconds)
+
+    // Level 2: Store normalized mapping → exact key
+    const normalizedKey = buildNormalizedCacheKey(providerType, model, finalBody)
+    if (normalizedKey !== cacheKey) {
+      setNormalizedMapping(normalizedKey, cacheKey, {
+        ...cacheEntry,
+        timestamp: Date.now(),
+      }, ttlSeconds).catch(() => {})
+    }
+
+    // Level 3: Store semantic index entry
+    storeSemanticEntry(providerType, model, finalBody, cacheKey).catch(() => {})
   }
 
   // Step 4: Calculate savings

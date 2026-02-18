@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getMeServer } from '@/lib/auth'
 import { bkendService } from '@/lib/bkend'
 import { getCacheStats } from '@/services/proxy/cache.service'
+import { getSemanticCacheStats } from '@/services/proxy/semantic-cache.service'
 import type { SavingsSummary, OptimizationRecommendation } from '@/types/proxy'
 
 // GET /api/proxy/savings?orgId=xxx&period=30d - get savings summary and recommendations
@@ -85,8 +86,9 @@ export async function GET(req: NextRequest) {
       periodEnd: now.toISOString(),
     }
 
-    // Get live cache stats
+    // Get live cache stats (exact + semantic)
     const cacheStats = await getCacheStats()
+    const semanticStats = await getSemanticCacheStats()
 
     // Generate optimization recommendations
     const recommendations: OptimizationRecommendation[] = []
@@ -138,10 +140,27 @@ export async function GET(req: NextRequest) {
       })
     }
 
+    // Add semantic cache recommendation
+    if (cacheStats.semanticHits === 0 && cacheHitRate > 0 && cacheHitRate < 40 && totalRequests > 20) {
+      recommendations.push({
+        type: 'cache',
+        title: 'Semantic Caching Active',
+        description:
+          'Semantic caching is enabled and will match similar (not just identical) prompts. As more requests flow through, hit rates will improve.',
+        potentialSavings: Math.round(cacheSavings * 0.5 * 100) / 100,
+        confidence: 'medium',
+      })
+    }
+
     return NextResponse.json({
       summary,
       recommendations,
-      cacheStats,
+      cacheStats: {
+        ...cacheStats,
+        semanticHits: semanticStats.hits,
+        semanticSaved: semanticStats.saved,
+        semanticHitRate: semanticStats.hitRate,
+      },
     })
   } catch (err) {
     return NextResponse.json(
