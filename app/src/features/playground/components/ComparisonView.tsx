@@ -27,7 +27,7 @@ export function ComparisonView({ comparison }: ComparisonViewProps) {
 
       {/* Comparison table */}
       {left && right && (
-        <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-sm overflow-hidden">
+        <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-800 shadow-sm overflow-hidden">
           <table className="w-full text-xs">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/50">
@@ -82,7 +82,7 @@ function ResponseCard({
   loading: boolean
 }) {
   return (
-    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-sm">
+    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-800 shadow-sm">
       <div className="flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 px-4 py-2.5">
         <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{model}</span>
       </div>

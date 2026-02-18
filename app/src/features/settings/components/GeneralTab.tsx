@@ -113,7 +113,7 @@ export function GeneralTab() {
                     className={`flex flex-1 items-center justify-center gap-2 rounded-lg border px-3 py-2.5 text-sm font-medium transition-all ${
                       theme === value
                         ? 'border-blue-500 dark:border-indigo-400 bg-blue-50 dark:bg-indigo-950 text-blue-700 dark:text-indigo-300'
-                        : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-gray-600 dark:text-slate-400 hover:border-gray-300 dark:hover:border-slate-600 hover:text-gray-800 dark:hover:text-slate-200'
+                        : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-400 hover:border-gray-300 dark:hover:border-slate-600 hover:text-gray-800 dark:hover:text-slate-200'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -128,7 +128,7 @@ export function GeneralTab() {
               <select
                 value={preferences.currency}
                 onChange={(e) => updatePreference('currency', e.target.value)}
-                className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="USD">USD ($)</option>
                 <option value="KRW">KRW (&#8361;)</option>
@@ -142,7 +142,7 @@ export function GeneralTab() {
               <select
                 value={preferences.dateFormat}
                 onChange={(e) => updatePreference('dateFormat', e.target.value)}
-                className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="YYYY-MM-DD">YYYY-MM-DD</option>
                 <option value="MM/DD/YYYY">MM/DD/YYYY</option>
@@ -155,7 +155,7 @@ export function GeneralTab() {
               <select
                 value={preferences.numberFormat}
                 onChange={(e) => updatePreference('numberFormat', e.target.value)}
-                className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value="1,000.00">1,000.00</option>
                 <option value="1.000,00">1.000,00</option>
@@ -167,7 +167,7 @@ export function GeneralTab() {
               <select
                 value={preferences.dashboardPeriod}
                 onChange={(e) => updatePreference('dashboardPeriod', Number(e.target.value))}
-                className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               >
                 <option value={7}>최근 7일</option>
                 <option value={30}>최근 30일</option>

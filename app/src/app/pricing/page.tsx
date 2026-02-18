@@ -22,7 +22,7 @@ function SavingsCalculator() {
   const actualCost = monthlySpend - estimatedSavings
 
   return (
-    <div className="rounded-3xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-8 shadow-xl lg:p-10">
+    <div className="rounded-3xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-800 p-8 shadow-xl lg:p-10">
       <div className="mb-6 flex items-center gap-2">
         <div className="rounded-xl bg-emerald-50 dark:bg-emerald-950/50 p-2">
           <Calculator className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
@@ -111,7 +111,7 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-hero">
-      <header className="border-b border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl">
+      <header className="border-b border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4">
           <Link href="/" className="text-xl font-bold text-gradient">LLM Cost Manager</Link>
           <div className="flex items-center gap-4">
@@ -143,7 +143,7 @@ export default function PricingPage() {
         {/* Two-tier cards */}
         <div className="mx-auto mb-16 grid max-w-3xl grid-cols-1 gap-6 md:grid-cols-2">
           {/* Free */}
-          <Card className="rounded-3xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-sm transition-all duration-300 hover:shadow-md">
+          <Card className="rounded-3xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-800 shadow-sm transition-all duration-300 hover:shadow-md">
             <CardHeader>
               <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">무료</h3>
               <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">부담 없이 시작하기</p>
@@ -177,7 +177,7 @@ export default function PricingPage() {
           </Card>
 
           {/* Growth */}
-          <Card className="rounded-3xl border-2 border-indigo-500 bg-white dark:bg-slate-900 shadow-xl ring-1 ring-indigo-500/20">
+          <Card className="rounded-3xl border-2 border-indigo-500 bg-white dark:bg-slate-800 shadow-xl ring-1 ring-indigo-500/20">
             <CardHeader>
               <div className="flex items-center gap-2">
                 <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100">성장</h3>
@@ -242,7 +242,7 @@ export default function PricingPage() {
               { icon: BarChart3, title: '요청별 절감액 추적', desc: '모든 프록시 요청은 원래 비용 대비 실제 비용을 기록합니다. 대시보드에서 실시간 절감액을 확인하세요.' },
               { icon: Shield, title: '월간 수수료 청구', desc: '매월 1일, Stripe가 전월 총 절감액의 20%를 청구합니다. 절감액이 없으면 청구도 없습니다.' },
             ].map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-8 text-center shadow-sm transition-all duration-300 hover:shadow-md">
+              <div key={title} className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-800 p-8 text-center shadow-sm transition-all duration-300 hover:shadow-md">
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 dark:bg-emerald-950/50">
                   <Icon className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
                 </div>
@@ -258,7 +258,7 @@ export default function PricingPage() {
           <h2 className="mb-8 text-center text-2xl font-bold text-slate-900 dark:text-slate-100">자주 묻는 질문</h2>
           <div className="mx-auto max-w-3xl space-y-4">
             {faqItems.map(({ question, answer }) => (
-              <details key={question} className="group rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-sm">
+              <details key={question} className="group rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-800 shadow-sm">
                 <summary className="cursor-pointer px-6 py-5 font-semibold text-slate-900 dark:text-slate-100">
                   {question}
                 </summary>

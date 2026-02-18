@@ -39,7 +39,7 @@ export function PlaygroundEditor({
   )
 
   return (
-    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-sm" onKeyDown={handleKeyDown}>
+    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-800 shadow-sm" onKeyDown={handleKeyDown}>
       {/* System Prompt Toggle */}
       <button
         type="button"

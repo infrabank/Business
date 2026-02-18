@@ -45,8 +45,8 @@
 }
 
 .dark {
-  --background: #0B1120;
-  --foreground: #E2E8F0;
+  --background: #0F172A;
+  --foreground: #F1F5F9;
 }
 
 /* Keyframes */
@@ -128,11 +128,19 @@ body {
 .dark ::-webkit-scrollbar-thumb { background: #334155; }
 .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
 
+/* Dark Mode Card Enhancement */
+.dark .shadow-sm {
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+}
+.dark .hover\:shadow-md:hover {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+}
+
 /* Recharts Dark Mode */
 .dark .recharts-cartesian-grid line,
 .dark .recharts-cartesian-grid-horizontal line,
 .dark .recharts-cartesian-grid-vertical line {
-  stroke: #1e293b !important;
+  stroke: #334155 !important;
 }
 
 .dark .recharts-default-tooltip {

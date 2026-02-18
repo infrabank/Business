@@ -15,7 +15,7 @@ export function Button({ className, variant = 'primary', size = 'md', loading, c
         {
           'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md hover:shadow-lg hover:brightness-110 active:scale-[0.98] focus-visible:ring-indigo-500/30': variant === 'primary',
           'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200/80 dark:hover:bg-slate-700/80 focus-visible:ring-2 focus-visible:ring-indigo-500/20': variant === 'secondary',
-          'border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-600 focus-visible:ring-2 focus-visible:ring-indigo-500/20': variant === 'outline',
+          'border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-500 focus-visible:ring-2 focus-visible:ring-indigo-500/20': variant === 'outline',
           'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 focus-visible:ring-2 focus-visible:ring-indigo-500/20': variant === 'ghost',
           'bg-gradient-to-r from-rose-500 to-red-600 text-white shadow-md hover:shadow-lg focus-visible:ring-rose-500/20': variant === 'danger',
         },

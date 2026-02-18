@@ -40,7 +40,7 @@ function CustomTooltip({
   const previous = payload.find((p) => p.dataKey === 'previousCost')
 
   return (
-    <div className="rounded-xl border border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm p-4 shadow-xl">
+    <div className="rounded-xl border border-slate-200/60 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm p-4 shadow-xl">
       <p className="mb-1 text-sm font-medium text-slate-500 dark:text-slate-400">날짜: {label}</p>
       <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400">
         현재: ${Number(current?.value ?? 0).toFixed(2)}
@@ -78,7 +78,7 @@ export function CostTrendChart({ data, title = '비용 추이', showComparison =
                   <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+              <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" className="dark:[&_line]:!stroke-slate-700" />
               <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#94A3B8' }} tickFormatter={(v) => v.slice(5)} />
               <YAxis tick={{ fontSize: 12, fill: '#94A3B8' }} tickFormatter={(v) => `$${v}`} />
               <Tooltip content={<CustomTooltip showComparison={hasComparison} />} />

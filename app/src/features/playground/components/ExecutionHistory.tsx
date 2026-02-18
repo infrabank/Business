@@ -33,7 +33,7 @@ export function ExecutionHistory({ history, onSelect, onLoadMore, hasMore, loadi
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-sm">
+    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-800 shadow-sm">
       <div className="border-b border-slate-100 dark:border-slate-800 px-5 py-3">
         <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">실행 기록</h3>
       </div>

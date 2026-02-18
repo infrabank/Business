@@ -54,7 +54,7 @@ export default function LoginPage() {
         <div className="absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-violet-400/10 blur-3xl" />
       </div>
       <div className="relative w-full max-w-sm">
-        <div className="rounded-3xl border border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm p-10 shadow-2xl">
+        <div className="rounded-3xl border border-slate-200/60 dark:border-slate-700 bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm p-10 shadow-2xl">
           <div className="mb-8 text-center">
             <Link href="/" className="inline-flex items-center gap-2 font-bold">
               <Zap className="h-10 w-10 text-indigo-600" />

@@ -39,7 +39,7 @@ export function VariableForm({
                 onChange({ ...values, [v.name]: e.target.value })
               }
               placeholder={v.defaultValue || '값을 입력하세요'}
-              className={`w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 ${
+              className={`w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 ${
                 compact ? 'py-1.5 text-xs' : 'py-2'
               }`}
             />

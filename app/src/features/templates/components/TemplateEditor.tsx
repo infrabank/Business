@@ -99,7 +99,7 @@ export function TemplateEditor({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white dark:bg-slate-900 shadow-2xl">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white dark:bg-slate-800 shadow-2xl">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 px-6 py-4">
           <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">
@@ -136,7 +136,7 @@ export function TemplateEditor({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="템플릿 설명 (선택사항)"
               rows={2}
-              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
 
@@ -148,7 +148,7 @@ export function TemplateEditor({
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             >
               {DEFAULT_CATEGORIES.map((c) => (
                 <option key={c.value} value={c.value}>
@@ -178,7 +178,7 @@ export function TemplateEditor({
                 onChange={(e) => setSystemPrompt(e.target.value)}
                 placeholder="시스템 프롬프트 (선택사항)"
                 rows={4}
-                className="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                className="mt-1.5 w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
               />
             )}
           </div>
@@ -193,7 +193,7 @@ export function TemplateEditor({
               onChange={(e) => setUserPrompt(e.target.value)}
               placeholder={'유저 프롬프트 — {{변수명}} 형식으로 변수를 사용할 수 있습니다'}
               rows={6}
-              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:text-slate-500 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             />
           </div>
 
@@ -219,7 +219,7 @@ export function TemplateEditor({
                         }))
                       }
                       placeholder="기본값"
-                      className="flex-1 rounded-lg border border-indigo-200 bg-white dark:bg-slate-900 px-2 py-1 text-xs text-slate-700 dark:text-slate-300 dark:text-slate-500 placeholder:text-slate-400 dark:text-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-400"
+                      className="flex-1 rounded-lg border border-indigo-200 bg-white dark:bg-slate-800 px-2 py-1 text-xs text-slate-700 dark:text-slate-300 dark:text-slate-500 placeholder:text-slate-400 dark:text-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-400"
                     />
                   </div>
                 ))}
@@ -305,7 +305,7 @@ export function TemplateEditor({
                       )
                     }
                     placeholder="1024"
-                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-2 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
                   />
                 </div>
               </div>

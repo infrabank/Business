@@ -22,7 +22,7 @@ export function ResponsePanel({ result, error, loading }: ResponsePanelProps) {
 
   if (loading) {
     return (
-      <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-6 shadow-sm">
+      <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-800 p-6 shadow-sm">
         <div className="flex items-center gap-3">
           <span className="h-5 w-5 animate-spin rounded-full border-2 border-indigo-500 border-t-transparent" />
           <span className="text-sm text-slate-500 dark:text-slate-400">AI 응답을 기다리는 중...</span>
@@ -54,7 +54,7 @@ export function ResponsePanel({ result, error, loading }: ResponsePanelProps) {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-sm">
+    <div className="rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white dark:bg-slate-800 shadow-sm">
       {/* Response Content */}
       <div className="relative px-5 py-4">
         <button

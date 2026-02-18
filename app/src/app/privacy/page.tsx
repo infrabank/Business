@@ -7,7 +7,7 @@ export default function PrivacyPage() {
       <NavBar />
       <main className="flex-1 bg-gray-50 dark:bg-slate-950 py-16">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-          <div className="rounded-2xl bg-white dark:bg-slate-900 p-8 shadow-sm">
+          <div className="rounded-2xl bg-white dark:bg-slate-800 p-8 shadow-sm">
             <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-slate-100">개인정보 처리방침</h1>
             <p className="mb-8 text-lg text-gray-600 dark:text-slate-400">최종 업데이트: 2026년 2월</p>
 

@@ -57,7 +57,7 @@ export function NavBar() {
 
   return (
     <>
-      <nav className="fixed top-0 z-50 flex h-16 w-full items-center border-b border-slate-200/60 dark:border-slate-700/60 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl px-4 lg:px-6">
+      <nav className="fixed top-0 z-50 flex h-16 w-full items-center border-b border-slate-200/60 dark:border-slate-700 bg-white/80 dark:bg-slate-800/90 backdrop-blur-xl px-4 lg:px-6">
         <Link href="/dashboard" className="flex items-center gap-2 font-bold text-indigo-600">
           <Zap className="h-6 w-6" />
           <span className="text-lg text-gradient">LLM Cost Manager</span>
@@ -103,7 +103,7 @@ export function NavBar() {
               {userInitial}
             </button>
             {userMenuOpen && (
-              <div className="absolute right-0 top-12 z-10 w-52 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl py-2 shadow-xl" role="menu">
+              <div className="absolute right-0 top-12 z-10 w-52 rounded-2xl border border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl py-2 shadow-xl" role="menu">
                 <div className="border-b border-slate-100 dark:border-slate-800 px-3 py-2">
                   <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{currentUser?.name || 'User'}</p>
                   <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{currentUser?.email || ''}</p>
@@ -139,7 +139,7 @@ export function NavBar() {
       </nav>
 
       {mobileOpen && (
-        <div className="fixed inset-0 top-16 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl p-6 lg:hidden">
+        <div className="fixed inset-0 top-16 z-40 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl p-6 lg:hidden">
           <div className="flex flex-col gap-1">
             <div className="mb-3 flex justify-center">
               <ThemeToggle />

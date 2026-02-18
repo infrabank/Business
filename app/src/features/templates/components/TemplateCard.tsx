@@ -29,7 +29,7 @@ export function TemplateCard({
   return (
     <div
       onClick={onSelect}
-      className="group cursor-pointer rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 p-4 shadow-sm transition-all hover:shadow-md"
+      className="group cursor-pointer rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-800 p-4 shadow-sm transition-all hover:shadow-md"
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">

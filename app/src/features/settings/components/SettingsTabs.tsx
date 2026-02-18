@@ -49,7 +49,7 @@ export function SettingsTabs({ activeTab, onTabChange }: SettingsTabsProps) {
         <select
           value={activeTab}
           onChange={(e) => onTabChange(e.target.value as SettingsTab)}
-          className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-3 py-2 text-sm font-medium text-gray-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          className="w-full rounded-lg border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-3 py-2 text-sm font-medium text-gray-900 dark:text-slate-100 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
         >
           {SETTINGS_TABS.map((tab) => (
             <option key={tab.id} value={tab.id}>

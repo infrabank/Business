@@ -86,7 +86,7 @@ export function TemplateSidebar({
 
   return (
     <div
-      className={`fixed bottom-0 right-0 top-16 z-30 w-80 border-l border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-900 shadow-xl transition-transform duration-300 ${
+      className={`fixed bottom-0 right-0 top-16 z-30 w-80 border-l border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-800 shadow-xl transition-transform duration-300 ${
         isOpen ? 'translate-x-0' : 'translate-x-full'
       }`}
     >
@@ -196,7 +196,7 @@ export function TemplateSidebar({
       </div>
 
       {/* Footer */}
-      <div className="absolute bottom-0 left-0 right-0 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 py-3">
+      <div className="absolute bottom-0 left-0 right-0 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-800 px-4 py-3">
         <Link
           href="/templates"
           className="text-xs font-medium text-indigo-600 hover:text-indigo-800"
