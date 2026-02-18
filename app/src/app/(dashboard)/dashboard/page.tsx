@@ -52,8 +52,12 @@ export default function DashboardPage() {
   const [period, setPeriod] = useState<DashboardPeriod>('30d')
   const [selectedProviders, setSelectedProviders] = useState<ProviderType[]>([])
 
-  // Check onboarding status
+  // Check onboarding status (localStorage fallback for when DB column is missing)
   useEffect(() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('onboarding_completed') === 'true') {
+      setShowOnboarding(false)
+      return
+    }
     fetch('/api/onboarding')
       .then((res) => res.json())
       .then((data) => setShowOnboarding(!data.onboardingCompleted))
@@ -61,6 +65,7 @@ export default function DashboardPage() {
   }, [])
 
   const handleOnboardingComplete = useCallback(() => {
+    if (typeof localStorage !== 'undefined') localStorage.setItem('onboarding_completed', 'true')
     setShowOnboarding(false)
   }, [])
 

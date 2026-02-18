@@ -184,11 +184,13 @@ export function useOnboarding(): UseOnboardingReturn {
 
   const skipOnboarding = useCallback(async () => {
     await updateOnboardingServer({ onboardingCompleted: true })
+    if (typeof localStorage !== 'undefined') localStorage.setItem('onboarding_completed', 'true')
     setIsCompleted(true)
   }, [])
 
   const completeOnboarding = useCallback(async () => {
     await updateOnboardingServer({ onboardingCompleted: true, onboardingStep: 5 })
+    if (typeof localStorage !== 'undefined') localStorage.setItem('onboarding_completed', 'true')
     setIsCompleted(true)
   }, [])
 
