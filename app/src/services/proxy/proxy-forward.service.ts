@@ -6,6 +6,7 @@ import { checkBudgetAlerts } from './budget-alert.service'
 import { routeModel, calculateRoutingSavings } from './model-router.service'
 import { buildCacheKey, getCachedResponse, setCachedResponse, getNormalizedCachedResponse, setNormalizedMapping } from './cache.service'
 import { buildNormalizedCacheKey, findSemanticMatch, storeSemanticEntry } from './semantic-cache.service'
+import { isRetryableError, getFallbackProviders, getEquivalentModel, transformRequestBody, getRetryDelay, sleep } from './fallback.service'
 import { computeCost } from '@/services/pricing.service'
 import type { ProviderType } from '@/types/provider'
 import type { ResolvedProxyKey } from '@/types/proxy'
@@ -192,25 +193,80 @@ export async function forwardRequest(params: {
   const startTime = Date.now()
 
   // Forward request
-  const upstreamResponse = await fetch(targetUrl.toString(), {
+  let upstreamResponse = await fetch(targetUrl.toString(), {
     method,
     headers,
     body: finalBody ? JSON.stringify(finalBody) : undefined,
   })
 
-  const latencyMs = Date.now() - startTime
+  let latencyMs = Date.now() - startTime
+  let fallbackUsed: { provider: ProviderType; model: string } | null = null
+
+  // Fallback: if upstream fails with retryable error, try other providers
+  if (!upstreamResponse.ok && isRetryableError(upstreamResponse.status) && finalBody) {
+    const fallbackProviders = getFallbackProviders(providerType, resolvedKey)
+    const originalRequestModel = (finalBody.model as string) || 'unknown'
+
+    for (let i = 0; i < fallbackProviders.length; i++) {
+      const fbProvider = fallbackProviders[i]
+      const fbModel = getEquivalentModel(originalRequestModel, fbProvider)
+      if (!fbModel) continue
+
+      const fbConfig = getProviderConfig(fbProvider)
+      if (!fbConfig) continue
+
+      // Get the API key for the fallback provider
+      const fbApiKey = resolvedKey.providerApiKeys?.[fbProvider]
+      if (!fbApiKey) continue
+
+      await sleep(getRetryDelay(i))
+
+      // Transform request body for the fallback provider
+      const fbBody = transformRequestBody(finalBody, providerType, fbProvider, fbModel)
+
+      // Build fallback URL and headers
+      let fbUrl: URL
+      if (fbProvider === 'google') {
+        // Google uses a different path structure
+        fbUrl = new URL(`${fbConfig.baseUrl}/v1beta/models/${fbModel}:generateContent`)
+        fbUrl.searchParams.set('key', fbApiKey)
+      } else if (fbProvider === 'openai') {
+        fbUrl = new URL(`${fbConfig.baseUrl}/v1/chat/completions`)
+      } else {
+        fbUrl = new URL(`${fbConfig.baseUrl}/v1/messages`)
+      }
+      const fbHeaders = fbConfig.buildHeaders(fbApiKey)
+
+      try {
+        const fbResponse = await fetch(fbUrl.toString(), {
+          method: 'POST',
+          headers: fbHeaders,
+          body: JSON.stringify(fbBody),
+        })
+
+        if (fbResponse.ok) {
+          upstreamResponse = fbResponse
+          latencyMs = Date.now() - startTime
+          fallbackUsed = { provider: fbProvider, model: fbModel }
+          break
+        }
+      } catch {
+        // Continue to next fallback
+      }
+    }
+  }
 
   if (isStream && upstreamResponse.ok && upstreamResponse.body) {
     return handleStreamingResponse({
       upstreamResponse,
       resolvedKey,
-      providerType,
+      providerType: fallbackUsed?.provider || providerType,
       path,
       startTime,
       latencyMs,
-      requestModel: (finalBody?.model as string) || 'unknown',
-      wasRouted,
-      originalModel,
+      requestModel: fallbackUsed?.model || (finalBody?.model as string) || 'unknown',
+      wasRouted: wasRouted || !!fallbackUsed,
+      originalModel: fallbackUsed ? (finalBody?.model as string) || originalModel : originalModel,
       routingDecision: routingDecisionData,
     })
   }
@@ -304,6 +360,10 @@ export async function forwardRequest(params: {
       'Content-Type': 'application/json',
       'x-cache': 'MISS',
       'x-proxy-latency-ms': String(totalLatency),
+      ...(fallbackUsed ? {
+        'x-fallback-provider': fallbackUsed.provider,
+        'x-fallback-model': fallbackUsed.model,
+      } : {}),
     },
   })
 }
