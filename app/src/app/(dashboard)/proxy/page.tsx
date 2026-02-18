@@ -8,6 +8,7 @@ import { ProxyKeyList } from '@/features/proxy/components/ProxyKeyList'
 import { ProxyLogTable } from '@/features/proxy/components/ProxyLogTable'
 import { SetupInstructions } from '@/features/proxy/components/SetupInstructions'
 import { SavingsDashboard } from '@/features/proxy/components/SavingsDashboard'
+import { ObservabilitySettings } from '@/features/proxy/components/ObservabilitySettings'
 import { ProxyCostTrendChart } from '@/features/proxy/components/ProxyCostTrendChart'
 import { ModelBreakdownChart } from '@/features/proxy/components/ModelBreakdownChart'
 import { KeyBreakdownTable } from '@/features/proxy/components/KeyBreakdownTable'
@@ -22,7 +23,7 @@ export default function ProxyPage() {
   const { keys, loading: keysLoading, error, createKey, toggleKey, removeKey } = useProxyKeys(orgId)
   const { logs, loading: logsLoading, offset, nextPage, prevPage } = useProxyLogs({ orgId })
   const [showForm, setShowForm] = useState(false)
-  const [activeTab, setActiveTab] = useState<'keys' | 'savings' | 'analytics' | 'logs'>('keys')
+  const [activeTab, setActiveTab] = useState<'keys' | 'savings' | 'analytics' | 'logs' | 'settings'>('keys')
   const [analyticsPeriod, setAnalyticsPeriod] = useState<AnalyticsPeriod>('30d')
   const [breakdownBy, setBreakdownBy] = useState<BreakdownType>('model')
   const { timeseries, breakdown, isLoading: analyticsLoading } = useProxyAnalytics({
@@ -87,6 +88,14 @@ export default function ProxyPage() {
           onClick={() => setActiveTab('logs')}
         >
           요청 로그
+        </button>
+        <button
+          className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            activeTab === 'settings' ? 'bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100 shadow-sm' : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-200'
+          }`}
+          onClick={() => setActiveTab('settings')}
+        >
+          설정
         </button>
       </div>
 
@@ -178,6 +187,10 @@ export default function ProxyPage() {
             onPrevPage={prevPage}
           />
         </section>
+      )}
+
+      {activeTab === 'settings' && (
+        <ObservabilitySettings orgId={orgId} />
       )}
     </div>
   )

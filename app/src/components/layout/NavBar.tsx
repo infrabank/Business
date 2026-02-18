@@ -7,6 +7,7 @@ import { NAV_ITEMS } from '@/lib/constants'
 import {
   LayoutDashboard, Plug, FolderOpen, Wallet, Bell, FileText,
   Settings, Menu, X, Zap, LogOut, Terminal, BookTemplate, BarChart3,
+  Book, ArrowLeftRight, Users,
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
 import { getSupabaseBrowserClient } from '@/lib/supabase'
@@ -15,6 +16,7 @@ import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 const iconMap: Record<string, React.ElementType> = {
   LayoutDashboard, Plug, FolderOpen, Wallet, Bell, FileText, Terminal, BookTemplate, BarChart3,
+  Book, ArrowLeftRight, Users,
 }
 
 export function NavBar() {
