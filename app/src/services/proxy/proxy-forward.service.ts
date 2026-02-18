@@ -7,6 +7,8 @@ import { routeModel, calculateRoutingSavings } from './model-router.service'
 import { buildCacheKey, getCachedResponse, setCachedResponse, getNormalizedCachedResponse, setNormalizedMapping } from './cache.service'
 import { buildNormalizedCacheKey, findSemanticMatch, storeSemanticEntry } from './semantic-cache.service'
 import { isRetryableError, getFallbackProviders, getEquivalentModel, transformRequestBody, getRetryDelay, sleep } from './fallback.service'
+import { runGuardrails, buildGuardrailBlockedResponse } from './guardrails.service'
+import type { GuardrailConfig } from './guardrails.service'
 import { computeCost } from '@/services/pricing.service'
 import type { ProviderType } from '@/types/provider'
 import type { ResolvedProxyKey } from '@/types/proxy'
@@ -122,6 +124,21 @@ export async function forwardRequest(params: {
 
   // Determine if streaming
   const isStream = finalBody ? config.isStreaming(finalBody, targetUrl) : false
+
+  // Step 1.5: Guardrails check (before cache to catch blocked content)
+  if (finalBody) {
+    const guardrailConfig: GuardrailConfig = {
+      enablePiiMasking: resolvedKey.enableCache, // PII masking when cache is on (prevents PII in cache)
+      enableKeywordBlock: true, // Always check for prompt injection
+    }
+    const guardrailResult = await runGuardrails(finalBody, guardrailConfig)
+    if (!guardrailResult.allowed) {
+      return buildGuardrailBlockedResponse(guardrailResult.reason || 'Request blocked by guardrails')
+    }
+    if (guardrailResult.modified && guardrailResult.maskedBody) {
+      finalBody = guardrailResult.maskedBody
+    }
+  }
 
   // Step 2: Multi-level Cache Check (only for non-streaming)
   if (resolvedKey.enableCache && !isStream && finalBody) {
