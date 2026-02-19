@@ -3,8 +3,6 @@ import { getMeServer } from '@/lib/auth'
 import { bkend } from '@/lib/bkend'
 import { detectVariables } from '@/features/templates/utils/variables'
 import type { PromptTemplate, UpdateTemplateRequest } from '@/types/template'
-interface DbUser { orgId?: string }
-
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
@@ -22,8 +20,8 @@ export async function GET(
     }
 
     // Verify access
-    const users = await bkend.get<DbUser[]>('users', { params: { id: me.id } })
-    if (template.userId !== me.id && !(template.orgId === users?.[0]?.orgId && template.visibility === 'shared')) {
+    const orgs = await bkend.get<Array<{ id: string }>>('/organizations', { params: { ownerId: me.id } })
+    if (template.userId !== me.id && !(template.orgId === orgs[0]?.id && template.visibility === 'shared')) {
       return NextResponse.json({ error: '이 템플릿에 접근 권한이 없습니다.' }, { status: 403 })
     }
 

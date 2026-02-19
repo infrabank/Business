@@ -4,8 +4,6 @@ import { bkend } from '@/lib/bkend'
 import { checkTemplateLimit } from '@/lib/plan-limits'
 import { detectVariables } from '@/features/templates/utils/variables'
 import type { PromptTemplate, CreateTemplateRequest } from '@/types/template'
-interface DbUser { plan?: string; orgId?: string }
-
 export async function GET(request: NextRequest) {
   try {
     const me = await getMeServer()
@@ -13,8 +11,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 })
     }
 
-    const users = await bkend.get<DbUser[]>('users', { params: { id: me.id } })
-    const orgId = users?.[0]?.orgId
+    const orgs = await bkend.get<Array<{ id: string }>>('/organizations', { params: { ownerId: me.id } })
+    const orgId = orgs[0]?.id
     if (!orgId) {
       return NextResponse.json({ data: [], total: 0 })
     }
@@ -68,8 +66,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 })
     }
 
-    const users = await bkend.get<DbUser[]>('users', { params: { id: me.id } })
-    const orgId = users?.[0]?.orgId
+    const [usersForPlan, orgs] = await Promise.all([
+      bkend.get<Array<{ plan?: string }>>('/users', { params: { id: me.id } }),
+      bkend.get<Array<{ id: string }>>('/organizations', { params: { ownerId: me.id } }),
+    ])
+    const orgId = orgs[0]?.id
     if (!orgId) {
       return NextResponse.json({ error: '조직 정보를 찾을 수 없습니다.' }, { status: 400 })
     }
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check plan limit
-    const plan = (users[0]?.plan || 'free') as import('@/types').UserPlan
+    const plan = (usersForPlan[0]?.plan || 'free') as import('@/types').UserPlan
     const existing = await bkend.get<PromptTemplate[]>('prompt_templates', {
       params: { userId: me.id, _limit: '0' },
     })
