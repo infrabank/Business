@@ -3,36 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useAppStore } from '@/lib/store'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
-
-interface SavingsData {
-  summary: {
-    totalSaved: number
-    cacheHits: number
-    cacheHitRate: number
-    modelRoutings: number
-    cacheSavings: number
-    routingSavings: number
-    totalOriginalCost: number
-    totalActualCost: number
-  }
-  recommendations: Array<{
-    type: string
-    title: string
-    description: string
-    potentialSavings: number
-    confidence: string
-  }>
-  cacheStats: {
-    totalHits: number
-    totalMisses: number
-    totalSaved: number
-    entries: number
-    hitRate: number
-    semanticHits: number
-    semanticSaved: number
-    semanticHitRate: number
-  }
-}
+import type { SavingsResponse } from '@/types/proxy'
 
 const RECOMMENDATION_COLORS = {
   cache: 'border-blue-500',
@@ -47,7 +18,7 @@ const CONFIDENCE_STYLES = {
 } as const
 
 export function SavingsDashboard() {
-  const [data, setData] = useState<SavingsData | null>(null)
+  const [data, setData] = useState<SavingsResponse | null>(null)
   const [period, setPeriod] = useState('30d')
   const [loading, setLoading] = useState(true)
   const orgId = useAppStore((s) => s.currentOrgId)

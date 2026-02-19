@@ -173,10 +173,27 @@ export interface SavingsSummary {
   periodEnd: string
 }
 
+export interface CacheStats {
+  totalHits: number
+  totalMisses: number
+  totalSaved: number
+  entries: number
+  hitRate: number
+  semanticHits: number
+  semanticSaved: number
+  semanticHitRate: number
+}
+
 export interface OptimizationRecommendation {
   type: 'cache' | 'routing' | 'budget'
   title: string
   description: string
   potentialSavings: number
   confidence: 'high' | 'medium' | 'low'
+}
+
+export interface SavingsResponse {
+  summary: SavingsSummary
+  recommendations: OptimizationRecommendation[]
+  cacheStats: CacheStats
 }
