@@ -2,14 +2,19 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getMeServer } from '@/lib/auth'
 import { bkend } from '@/lib/bkend'
 import { testChannel } from '@/services/notification.service'
-import type { NotificationChannel, NotificationChannel as NC } from '@/types/notification'
+import type { NotificationChannel } from '@/types/notification'
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const authUser = await getMeServer()
+    await getMeServer()
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
     const { id } = await params
 
     const channels = await bkend.get<NotificationChannel[]>('/notification-channels', {
@@ -33,7 +38,10 @@ export async function POST(
 
     const result = await testChannel(channel, orgName)
     return NextResponse.json(result)
-  } catch {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Failed to test channel' },
+      { status: 500 },
+    )
   }
 }

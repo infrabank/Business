@@ -6,20 +6,35 @@ import { isFeatureAvailable } from '@/lib/plan-limits'
 import type { User } from '@/types'
 
 export async function GET(req: NextRequest) {
+  let authUser
   try {
-    const authUser = await getMeServer()
+    authUser = await getMeServer()
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
     const orgId = req.nextUrl.searchParams.get('orgId') || authUser.id
     const channels = await getChannels(orgId, '')
     const masked = channels.map((ch) => ({ ...ch, config: maskConfig(ch.type, ch.config) }))
     return NextResponse.json(masked)
-  } catch {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Failed to fetch channels' },
+      { status: 500 },
+    )
   }
 }
 
 export async function POST(req: NextRequest) {
+  let authUser
   try {
-    const authUser = await getMeServer()
+    authUser = await getMeServer()
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
     const body = await req.json()
     const { orgId, type, name, config, alertTypes, severityFilter } = body
 
@@ -43,7 +58,10 @@ export async function POST(req: NextRequest) {
 
     const channel = await createChannel(orgId, { type, name, config, alertTypes: alertTypes || [], severityFilter }, '')
     return NextResponse.json(channel, { status: 201 })
-  } catch {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Failed to create channel' },
+      { status: 500 },
+    )
   }
 }

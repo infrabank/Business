@@ -9,6 +9,11 @@ export async function PATCH(
 ) {
   try {
     await getMeServer()
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
     const { id } = await params
     const body = await req.json()
     const { name, enabled, config, alertTypes, severityFilter, channelType } = body
@@ -20,8 +25,11 @@ export async function PATCH(
       '',
     )
     return NextResponse.json(updated)
-  } catch {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Failed to update channel' },
+      { status: 500 },
+    )
   }
 }
 
@@ -31,10 +39,18 @@ export async function DELETE(
 ) {
   try {
     await getMeServer()
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
     const { id } = await params
     await deleteChannel(id, '')
     return NextResponse.json({ ok: true })
-  } catch {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Failed to delete channel' },
+      { status: 500 },
+    )
   }
 }

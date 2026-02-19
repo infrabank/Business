@@ -66,10 +66,12 @@ export function useSession() {
 
     // Auth state listener — subscribe once
     const supabase = getSupabaseBrowserClient()
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!session) {
         restorePromise = null // Allow re-restore after sign-out
         clearSession()
+      } else if (event === 'SIGNED_IN') {
+        restorePromise = null // Allow fresh restore on re-login
       }
     })
 

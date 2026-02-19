@@ -11,9 +11,17 @@ const VALID_TYPES: AnalyticsEventType[] = [
 const rateLimits = new Map<string, { count: number; resetAt: number }>()
 const RATE_LIMIT = 100
 const WINDOW_MS = 60_000
+let lastCleanup = Date.now()
 
 function checkRateLimit(userId: string): boolean {
   const now = Date.now()
+  // Periodically purge expired entries to prevent memory leak
+  if (now - lastCleanup > WINDOW_MS) {
+    for (const [key, val] of rateLimits) {
+      if (now > val.resetAt) rateLimits.delete(key)
+    }
+    lastCleanup = now
+  }
   const entry = rateLimits.get(userId)
   if (!entry || now > entry.resetAt) {
     rateLimits.set(userId, { count: 1, resetAt: now + WINDOW_MS })
