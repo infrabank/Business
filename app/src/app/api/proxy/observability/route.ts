@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getMeServer } from '@/lib/auth'
 import { bkend } from '@/lib/bkend'
+import { encrypt, decrypt } from '@/services/encryption.service'
 
 interface ObservabilityConfigRecord {
   id: string
@@ -50,12 +51,32 @@ export async function GET(req: NextRequest) {
     }
 
     const record = records[0]
+    // Decrypt keys for masking display
+    let maskedApiKey = ''
+    let maskedSecretKey = ''
+    try {
+      if (record.apiKey) {
+        const plain = decrypt(record.apiKey)
+        maskedApiKey = '••••' + plain.slice(-4)
+      }
+    } catch {
+      // Legacy unencrypted value — mask directly
+      maskedApiKey = record.apiKey ? '••••' + record.apiKey.slice(-4) : ''
+    }
+    try {
+      if (record.secretKey) {
+        const plain = decrypt(record.secretKey)
+        maskedSecretKey = '••••' + plain.slice(-4)
+      }
+    } catch {
+      maskedSecretKey = record.secretKey ? '••••' + record.secretKey.slice(-4) : ''
+    }
     return NextResponse.json({
       provider: record.provider,
       enabled: record.enabled,
       endpoint: record.endpoint,
-      apiKey: record.apiKey ? '••••' + record.apiKey.slice(-4) : '',
-      secretKey: record.secretKey ? '••••' + record.secretKey.slice(-4) : '',
+      apiKey: maskedApiKey,
+      secretKey: maskedSecretKey,
       events: record.events || [],
     })
   } catch {
@@ -65,12 +86,20 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    await getMeServer()
+    const authUser = await getMeServer()
     const body = await req.json()
     const { orgId, config } = body
 
     if (!orgId || !config) {
       return NextResponse.json({ error: 'orgId and config required' }, { status: 400 })
+    }
+
+    // Verify org membership
+    const members = await bkend.get<Array<{ id: string }>>('/members', {
+      params: { orgId, userId: authUser.id },
+    })
+    if (members.length === 0) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const now = new Date().toISOString()
@@ -91,10 +120,10 @@ export async function PUT(req: NextRequest) {
         updatedAt: now,
       }
       if (config.apiKey && !config.apiKey.startsWith('••••')) {
-        updates.apiKey = config.apiKey
+        updates.apiKey = encrypt(config.apiKey)
       }
       if (config.secretKey && !config.secretKey.startsWith('••••')) {
-        updates.secretKey = config.secretKey
+        updates.secretKey = encrypt(config.secretKey)
       }
       record = await bkend.patch<ObservabilityConfigRecord>(
         `/observability-configs/${existing[0].id}`,
@@ -107,20 +136,40 @@ export async function PUT(req: NextRequest) {
         provider: config.provider,
         enabled: config.enabled,
         endpoint: config.endpoint,
-        apiKey: config.apiKey || '',
-        secretKey: config.secretKey || '',
+        apiKey: config.apiKey ? encrypt(config.apiKey) : '',
+        secretKey: config.secretKey ? encrypt(config.secretKey) : '',
         events: config.events || [],
         createdAt: now,
         updatedAt: now,
       } as Record<string, unknown>)
     }
 
+    // Mask encrypted keys in response
+    let respApiKey = ''
+    let respSecretKey = ''
+    try {
+      if (record.apiKey) {
+        const plain = decrypt(record.apiKey)
+        respApiKey = '••••' + plain.slice(-4)
+      }
+    } catch {
+      respApiKey = record.apiKey ? '••••' + record.apiKey.slice(-4) : ''
+    }
+    try {
+      if (record.secretKey) {
+        const plain = decrypt(record.secretKey)
+        respSecretKey = '••••' + plain.slice(-4)
+      }
+    } catch {
+      respSecretKey = record.secretKey ? '••••' + record.secretKey.slice(-4) : ''
+    }
+
     return NextResponse.json({
       provider: record.provider,
       enabled: record.enabled,
       endpoint: record.endpoint,
-      apiKey: record.apiKey ? '••••' + record.apiKey.slice(-4) : '',
-      secretKey: record.secretKey ? '••••' + record.secretKey.slice(-4) : '',
+      apiKey: respApiKey,
+      secretKey: respSecretKey,
       events: record.events || [],
     })
   } catch (err) {
@@ -130,10 +179,18 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    await getMeServer()
+    const authUser = await getMeServer()
     const orgId = req.nextUrl.searchParams.get('orgId')
     if (!orgId) {
       return NextResponse.json({ error: 'orgId required' }, { status: 400 })
+    }
+
+    // Verify org membership
+    const members = await bkend.get<Array<{ id: string }>>('/members', {
+      params: { orgId, userId: authUser.id },
+    })
+    if (members.length === 0) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const existing = await bkend.get<ObservabilityConfigRecord[]>('/observability-configs', {

@@ -21,14 +21,7 @@ export interface PlaygroundExecuteResponse {
   provider: ProviderType
 }
 
-// === Estimate Request/Response ===
-
-export interface PlaygroundEstimateRequest {
-  provider: ProviderType
-  model: string
-  systemPrompt?: string
-  userPrompt: string
-}
+// === Estimate Response ===
 
 export interface PlaygroundEstimateResponse {
   estimatedInputTokens: number
@@ -57,16 +50,6 @@ export interface PlaygroundHistory {
   temperature: number
   maxTokens: number
   createdAt: string
-}
-
-// === Model Info ===
-
-export interface ModelInfo {
-  id: string
-  provider: ProviderType
-  label: string
-  inputPrice: number
-  outputPrice: number
 }
 
 // === Comparison Mode ===

@@ -150,16 +150,6 @@ export interface ProxyKeyDisplay {
   observabilitySettings: ObservabilitySettings | null
 }
 
-export interface ProxyLogQuery {
-  orgId: string
-  proxyKeyId?: string
-  providerType?: ProviderType
-  startDate?: string
-  endDate?: string
-  limit?: number
-  offset?: number
-}
-
 export interface SavingsSummary {
   totalSaved: number
   cacheHits: number

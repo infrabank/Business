@@ -19,9 +19,10 @@ export async function GET(
       return NextResponse.json({ error: '템플릿을 찾을 수 없습니다.' }, { status: 404 })
     }
 
-    // Verify access
-    const orgs = await bkend.get<Array<{ id: string }>>('/organizations', { params: { ownerId: me.id } })
-    if (template.userId !== me.id && !(template.orgId === orgs[0]?.id && template.visibility === 'shared')) {
+    // Verify access via members table (supports non-owner members)
+    const memberships = await bkend.get<Array<{ orgId: string }>>('/members', { params: { userId: me.id } })
+    const userOrgId = memberships[0]?.orgId
+    if (template.userId !== me.id && !(template.orgId === userOrgId && template.visibility === 'shared')) {
       return NextResponse.json({ error: '이 템플릿에 접근 권한이 없습니다.' }, { status: 403 })
     }
 

@@ -17,4 +17,5 @@ export interface BreakdownItem {
 }
 
 export type BreakdownType = 'model' | 'provider' | 'key'
-export type AnalyticsPeriod = '7d' | '30d' | '90d'
+// AnalyticsPeriod is defined in analytics.ts and re-exported from @/types
+export type { AnalyticsPeriod } from './analytics'
