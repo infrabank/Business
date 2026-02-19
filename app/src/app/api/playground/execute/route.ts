@@ -25,10 +25,13 @@ export async function POST(req: Request) {
       )
     }
 
-    // Get user plan
-    const users = await bkend.get<Array<{ plan?: string; orgId?: string }>>('/users', { params: { id: user.id } })
+    // Get user plan & org
+    const [users, orgs] = await Promise.all([
+      bkend.get<Array<{ plan?: string }>>('/users', { params: { id: user.id } }),
+      bkend.get<Array<{ id: string }>>('/organizations', { params: { ownerId: user.id } }),
+    ])
     const plan = (users[0]?.plan || 'free') as UserPlan
-    const orgId = users[0]?.orgId
+    const orgId = orgs[0]?.id
 
     if (!orgId) {
       return NextResponse.json({ error: '조직을 찾을 수 없습니다.' }, { status: 404 })

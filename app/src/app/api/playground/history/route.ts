@@ -16,8 +16,8 @@ export async function GET(req: Request) {
     const limit = Math.min(50, Number(searchParams.get('limit')) || 20)
     const offset = Number(searchParams.get('offset')) || 0
 
-    const users = await bkend.get<Array<{ orgId?: string }>>('/users', { params: { id: user.id } })
-    const orgId = users[0]?.orgId
+    const orgs = await bkend.get<Array<{ id: string }>>('/organizations', { params: { ownerId: user.id } })
+    const orgId = orgs[0]?.id
     if (!orgId) {
       return NextResponse.json({ data: [], total: 0 })
     }
