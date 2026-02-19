@@ -105,8 +105,7 @@ export function TeamPage() {
               onClick={async () => {
                 setBudgetSaving(true)
                 try {
-                  // Save team budget via settings API
-                  await fetch('/api/settings/preferences', {
+                  const res = await fetch('/api/team/budget', {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -114,6 +113,7 @@ export function TeamPage() {
                       teamBudgetDuration,
                     }),
                   })
+                  if (!res.ok) throw new Error('Failed')
                   setBudgetSaved(true)
                   setTimeout(() => setBudgetSaved(false), 2000)
                 } catch {
