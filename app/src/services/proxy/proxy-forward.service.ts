@@ -9,6 +9,8 @@ import { buildNormalizedCacheKey, findSemanticMatch, storeSemanticEntry } from '
 import { isRetryableError, getFallbackProviders, getEquivalentModel, transformRequestBody, getRetryDelay, sleep } from './fallback.service'
 import { runGuardrails, buildGuardrailBlockedResponse } from './guardrails.service'
 import type { GuardrailConfig } from './guardrails.service'
+import { sendObservabilityEvent, buildObservabilityPayload, generateTraceId } from './observability.service'
+import type { ObservabilityConfig, ObservabilityEvent } from './observability.service'
 import { computeCost } from '@/services/pricing.service'
 import type { ProviderType } from '@/types/provider'
 import type { ResolvedProxyKey } from '@/types/proxy'
@@ -83,6 +85,19 @@ export async function forwardRequest(params: {
     })
   }
 
+  // Observability setup
+  const traceId = generateTraceId()
+  const obsConfig: ObservabilityConfig | null = resolvedKey.observabilitySettings?.enabled
+    ? {
+        provider: resolvedKey.observabilitySettings.provider as ObservabilityConfig['provider'],
+        enabled: true,
+        endpoint: resolvedKey.observabilitySettings.endpoint,
+        apiKey: resolvedKey.observabilitySettings.apiKey,
+        secretKey: resolvedKey.observabilitySettings.secretKey,
+        events: resolvedKey.observabilitySettings.events as ObservabilityEvent[],
+      }
+    : null
+
   // Build target URL
   let targetUrl: URL
   if (providerType === 'google') {
@@ -126,19 +141,22 @@ export async function forwardRequest(params: {
   const isStream = finalBody ? config.isStreaming(finalBody, targetUrl) : false
 
   // Step 1.5: Guardrails check (before cache to catch blocked content)
-  if (finalBody) {
+  if (finalBody && resolvedKey.enableGuardrails) {
+    const gs = resolvedKey.guardrailSettings
     const guardrailConfig: GuardrailConfig = {
-      enablePiiMasking: resolvedKey.enableCache, // PII masking when cache is on (prevents PII in cache)
-      enableKeywordBlock: true, // Always check for prompt injection
+      enablePiiMasking: gs?.enablePiiMasking ?? true,
+      enableKeywordBlock: gs?.enableKeywordBlock ?? true,
+      blockedKeywords: gs?.blockedKeywords,
+      maxInputLength: gs?.maxInputLength ?? undefined,
     }
     const guardrailResult = await runGuardrails(finalBody, guardrailConfig)
     if (!guardrailResult.allowed) {
-      // Log the blocked request
+      const blockedModel = (finalBody.model as string) || 'unknown'
       logProxyRequest({
         orgId: resolvedKey.orgId,
         proxyKeyId: resolvedKey.id,
         providerType,
-        model: (finalBody.model as string) || 'unknown',
+        model: blockedModel,
         path,
         statusCode: 400,
         inputTokens: 0,
@@ -156,6 +174,16 @@ export async function forwardRequest(params: {
         fallbackProvider: null,
         fallbackModel: null,
       })
+      // Send observability event for guardrail block
+      if (obsConfig) {
+        sendObservabilityEvent(obsConfig, buildObservabilityPayload({
+          traceId, event: 'guardrail_blocked', orgId: resolvedKey.orgId,
+          proxyKeyId: resolvedKey.id, providerType, model: blockedModel, path,
+          statusCode: 400, inputTokens: 0, outputTokens: 0, cost: 0,
+          latencyMs: 0, isStreaming: false, cacheHit: false, savedAmount: 0,
+          errorMessage: guardrailResult.reason,
+        }))
+      }
       return buildGuardrailBlockedResponse(guardrailResult.reason || 'Request blocked by guardrails')
     }
     if (guardrailResult.modified && guardrailResult.maskedBody) {
@@ -218,6 +246,18 @@ export async function forwardRequest(params: {
       incrementBudgetSpend(resolvedKey.id, cachedEntry.cost).catch(() => {})
       if (resolvedKey.budgetAlertsEnabled && resolvedKey.budgetLimit) {
         checkBudgetAlerts(resolvedKey.id, resolvedKey.orgId, cachedEntry.cost, resolvedKey.budgetLimit, resolvedKey.budgetAlertThresholds).catch(() => {})
+      }
+
+      // Observability: cache hit event
+      if (obsConfig) {
+        sendObservabilityEvent(obsConfig, buildObservabilityPayload({
+          traceId, event: 'cache_hit', orgId: resolvedKey.orgId,
+          proxyKeyId: resolvedKey.id, providerType, model: currentModel, path,
+          statusCode: 200, inputTokens: cachedEntry.inputTokens, outputTokens: cachedEntry.outputTokens,
+          cost: cachedEntry.cost, latencyMs: 0, isStreaming: false, cacheHit: true,
+          cacheLevel, savedAmount: cachedEntry.cost,
+          originalModel: wasRouted ? originalModel : null,
+        }))
       }
 
       return new Response(cachedEntry.responseBody, {
@@ -317,6 +357,8 @@ export async function forwardRequest(params: {
       startTime,
       latencyMs,
       requestModel: fallbackUsed?.model || (finalBody?.model as string) || 'unknown',
+      traceId,
+      obsConfig,
       wasRouted: wasRouted || !!fallbackUsed,
       originalModel: fallbackUsed ? (finalBody?.model as string) || originalModel : originalModel,
       routingDecision: routingDecisionData,
@@ -408,6 +450,20 @@ export async function forwardRequest(params: {
     checkBudgetAlerts(resolvedKey.id, resolvedKey.orgId, cost, resolvedKey.budgetLimit, resolvedKey.budgetAlertThresholds).catch(() => {})
   }
 
+  // Observability: response or error event
+  if (obsConfig) {
+    const obsEvent: ObservabilityEvent = upstreamResponse.ok ? 'response' : 'error'
+    sendObservabilityEvent(obsConfig, buildObservabilityPayload({
+      traceId, event: obsEvent, orgId: resolvedKey.orgId,
+      proxyKeyId: resolvedKey.id, providerType, model, path,
+      statusCode: upstreamResponse.status, inputTokens: tokens.inputTokens,
+      outputTokens: tokens.outputTokens, cost, latencyMs: totalLatency,
+      isStreaming: false, cacheHit: false, savedAmount,
+      originalModel: wasRouted ? originalModel : null,
+      errorMessage: upstreamResponse.ok ? null : JSON.stringify(responseBody),
+    }))
+  }
+
   return new Response(JSON.stringify(responseBody), {
     status: upstreamResponse.status,
     headers: {
@@ -433,8 +489,10 @@ function handleStreamingResponse(params: {
   wasRouted: boolean
   originalModel: string | null
   routingDecision: { intent: string; confidence: number; reason: string; wasRouted: boolean } | null
+  traceId: string
+  obsConfig: ObservabilityConfig | null
 }): Response {
-  const { upstreamResponse, resolvedKey, providerType, path, startTime, requestModel, wasRouted, originalModel, routingDecision } = params
+  const { upstreamResponse, resolvedKey, providerType, path, startTime, requestModel, wasRouted, originalModel, routingDecision, traceId, obsConfig } = params
 
   const chunks: string[] = []
   const reader = upstreamResponse.body!.getReader()
@@ -509,6 +567,18 @@ function handleStreamingResponse(params: {
         incrementBudgetSpend(resolvedKey.id, cost).catch(() => {})
         if (resolvedKey.budgetAlertsEnabled && resolvedKey.budgetLimit) {
           checkBudgetAlerts(resolvedKey.id, resolvedKey.orgId, cost, resolvedKey.budgetLimit, resolvedKey.budgetAlertThresholds).catch(() => {})
+        }
+
+        // Observability: streaming response event
+        if (obsConfig) {
+          sendObservabilityEvent(obsConfig, buildObservabilityPayload({
+            traceId, event: 'response', orgId: resolvedKey.orgId,
+            proxyKeyId: resolvedKey.id, providerType, model, path,
+            statusCode: upstreamResponse.status, inputTokens: tokens.inputTokens,
+            outputTokens: tokens.outputTokens, cost, latencyMs: totalLatency,
+            isStreaming: true, cacheHit: false, savedAmount,
+            originalModel: wasRouted ? originalModel : null,
+          }))
         }
       } catch (err) {
         controller.error(err)
