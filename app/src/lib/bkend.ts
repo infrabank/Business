@@ -192,4 +192,11 @@ export const bkendService = {
 
   delete: <T>(path: string, options?: BkendRequestOptions) =>
     supabaseQuery<T>('DELETE', path, { ...options, service: true }),
+
+  rpc: async <T>(fnName: string, params: Record<string, unknown> = {}): Promise<T> => {
+    const client = await getClient(true)
+    const { data, error } = await client.rpc(fnName, params)
+    if (error) throw new Error(error.message)
+    return data as T
+  },
 }

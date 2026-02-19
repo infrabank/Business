@@ -1,12 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getMeServer } from '@/lib/auth'
 import { bkend, bkendService } from '@/lib/bkend'
-import type { ProxyLog } from '@/types/proxy'
 import type { TimeseriesPoint } from '@/types/proxy-analytics'
 
+interface TimeseriesRow {
+  date: string
+  total_cost: number
+  total_saved: number
+  request_count: number
+  cache_hits: number
+  model_routings: number
+}
+
+interface ProxyLogSlim {
+  createdAt: string
+  cost: number
+  savedAmount: number
+  cacheHit: boolean
+  originalModel: string | null
+}
+
 /**
- * GET /api/proxy/analytics/timeseries?orgId=xxx&period=30d&groupBy=day
+ * GET /api/proxy/analytics/timeseries?orgId=xxx&period=30d
  * Returns time-series cost/savings data aggregated by day.
+ * Uses DB-level aggregation via RPC with JS fallback.
  */
 export async function GET(req: NextRequest) {
   let authUser
@@ -40,30 +57,53 @@ export async function GET(req: NextRequest) {
   startDate.setDate(startDate.getDate() - days)
 
   try {
-    const logs = await bkendService.get<ProxyLog[]>('/proxy-logs', {
-      params: {
-        orgId,
-        createdAt_gte: startDate.toISOString(),
-        _sort: 'createdAt',
-        _limit: '10000',
-      },
-    })
-
-    // Aggregate by date
-    const map = new Map<string, TimeseriesPoint>()
-
-    for (const log of logs) {
-      const date = log.createdAt.slice(0, 10) // YYYY-MM-DD
-      let point = map.get(date)
-      if (!point) {
-        point = { date, totalCost: 0, totalSaved: 0, requestCount: 0, cacheHits: 0, modelRoutings: 0 }
-        map.set(date, point)
+    // Try DB-level aggregation via RPC (requires migration deployed)
+    let aggregated: Map<string, TimeseriesPoint> | null = null
+    try {
+      const rows = await bkendService.rpc<TimeseriesRow[]>('proxy_logs_timeseries', {
+        p_org_id: orgId,
+        p_start_date: startDate.toISOString(),
+      })
+      aggregated = new Map<string, TimeseriesPoint>()
+      for (const row of rows) {
+        aggregated.set(row.date, {
+          date: row.date,
+          totalCost: row.total_cost,
+          totalSaved: row.total_saved,
+          requestCount: Number(row.request_count),
+          cacheHits: Number(row.cache_hits),
+          modelRoutings: Number(row.model_routings),
+        })
       }
-      point.totalCost += Number(log.cost)
-      point.totalSaved += Number(log.savedAmount)
-      point.requestCount += 1
-      if (log.cacheHit) point.cacheHits += 1
-      if (log.originalModel) point.modelRoutings += 1
+    } catch {
+      // RPC not available — fall back to JS aggregation with slim SELECT
+    }
+
+    // Fallback: fetch only needed columns and aggregate in JS
+    if (!aggregated) {
+      const logs = await bkendService.get<ProxyLogSlim[]>('/proxy-logs', {
+        params: {
+          orgId,
+          createdAt_gte: startDate.toISOString(),
+          _sort: 'createdAt',
+          _limit: '10000',
+        },
+      })
+
+      aggregated = new Map<string, TimeseriesPoint>()
+      for (const log of logs) {
+        const date = log.createdAt.slice(0, 10)
+        let point = aggregated.get(date)
+        if (!point) {
+          point = { date, totalCost: 0, totalSaved: 0, requestCount: 0, cacheHits: 0, modelRoutings: 0 }
+          aggregated.set(date, point)
+        }
+        point.totalCost += Number(log.cost)
+        point.totalSaved += Number(log.savedAmount)
+        point.requestCount += 1
+        if (log.cacheHit) point.cacheHits += 1
+        if (log.originalModel) point.modelRoutings += 1
+      }
     }
 
     // Fill missing dates
@@ -72,7 +112,7 @@ export async function GET(req: NextRequest) {
     const today = new Date()
     while (cursor <= today) {
       const dateStr = cursor.toISOString().slice(0, 10)
-      const existing = map.get(dateStr)
+      const existing = aggregated.get(dateStr)
       result.push(existing ?? {
         date: dateStr,
         totalCost: 0,
