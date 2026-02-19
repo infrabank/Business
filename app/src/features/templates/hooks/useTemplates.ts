@@ -10,7 +10,7 @@ import type {
 } from '@/types/template'
 
 export function useTemplates() {
-  const { currentUser } = useAppStore()
+  const currentUser = useAppStore((s) => s.currentUser)
 
   // Data
   const [templates, setTemplates] = useState<PromptTemplate[]>([])

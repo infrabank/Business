@@ -31,6 +31,17 @@ const DEFAULT_TTL_SECONDS = 3600
 const memoryCache = new Map<string, CacheEntry>()
 const MAX_MEMORY_ENTRIES = 1000
 let memStats = { totalHits: 0, totalMisses: 0, totalSaved: 0 }
+let lastCacheSweep = Date.now()
+const CACHE_SWEEP_INTERVAL_MS = 5 * 60 * 1000 // 5 minutes
+
+function sweepExpiredEntries(): void {
+  const now = Date.now()
+  if (now - lastCacheSweep < CACHE_SWEEP_INTERVAL_MS) return
+  lastCacheSweep = now
+  for (const [key, entry] of memoryCache) {
+    if (entry.timestamp + entry.ttlSeconds * 1000 < now) memoryCache.delete(key)
+  }
+}
 
 /**
  * Build cache key from request params
@@ -153,6 +164,7 @@ export async function getCachedResponse(key: string): Promise<CacheEntry | null>
   }
 
   // In-memory fallback
+  sweepExpiredEntries()
   const entry = memoryCache.get(key)
   if (!entry) {
     memStats.totalMisses++

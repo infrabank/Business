@@ -38,10 +38,11 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ pat
     })
   }
 
-  const rateResult = await checkRateLimit(resolved.id, resolved.rateLimit)
+  const [rateResult, budgetResult] = await Promise.all([
+    checkRateLimit(resolved.id, resolved.rateLimit),
+    checkBudget(resolved.orgId, resolved.id, resolved.budgetLimit),
+  ])
   if (!rateResult.allowed) return buildRateLimitResponse(rateResult)
-
-  const budgetResult = await checkBudget(resolved.orgId, resolved.id, resolved.budgetLimit)
   if (!budgetResult.allowed) return buildBudgetExceededResponse(budgetResult)
 
   const { path: pathSegments } = await params

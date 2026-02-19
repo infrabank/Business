@@ -130,7 +130,7 @@ function maskPii(text: string): { masked: string; found: string[] } {
  */
 function maskBodyPii(body: Record<string, unknown>): { body: Record<string, unknown>; piiFound: string[] } {
   const allPiiFound: string[] = []
-  const cloned = JSON.parse(JSON.stringify(body)) as Record<string, unknown>
+  const cloned = structuredClone(body)
 
   // Mask messages
   if (Array.isArray(cloned.messages)) {

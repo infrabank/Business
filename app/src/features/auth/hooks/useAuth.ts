@@ -19,7 +19,9 @@ export function useAuth(): UseAuthResult {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-  const { setCurrentUser, setCurrentOrgId, clearSession } = useAppStore()
+  const setCurrentUser = useAppStore((s) => s.setCurrentUser)
+  const setCurrentOrgId = useAppStore((s) => s.setCurrentOrgId)
+  const clearSession = useAppStore((s) => s.clearSession)
 
   const initSession = useCallback(async () => {
     const user = await auth.getMe()

@@ -31,17 +31,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ pat
     return errorResponse('Invalid proxy key', 'authentication_error', 401)
   }
 
-  // Rate limit check
-  const rateResult = await checkRateLimit(resolved.id, resolved.rateLimit)
-  if (!rateResult.allowed) {
-    return buildRateLimitResponse(rateResult)
-  }
-
-  // Budget check
-  const budgetResult = await checkBudget(resolved.orgId, resolved.id, resolved.budgetLimit)
-  if (!budgetResult.allowed) {
-    return buildBudgetExceededResponse(budgetResult)
-  }
+  // Rate limit + budget check in parallel
+  const [rateResult, budgetResult] = await Promise.all([
+    checkRateLimit(resolved.id, resolved.rateLimit),
+    checkBudget(resolved.orgId, resolved.id, resolved.budgetLimit),
+  ])
+  if (!rateResult.allowed) return buildRateLimitResponse(rateResult)
+  if (!budgetResult.allowed) return buildBudgetExceededResponse(budgetResult)
 
   const { path: pathSegments } = await params
   const path = pathSegments.join('/')

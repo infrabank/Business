@@ -54,6 +54,7 @@ const eventQueue: Array<{ config: ObservabilityConfig; payload: ObservabilityPay
 let flushTimer: ReturnType<typeof setTimeout> | null = null
 const FLUSH_INTERVAL_MS = 5000
 const MAX_QUEUE_SIZE = 100
+const MAX_QUEUE_CAP = 500 // Hard cap to prevent unbounded growth
 
 /**
  * Generate a trace ID for request correlation
@@ -76,6 +77,11 @@ export function sendObservabilityEvent(
   // Filter by configured events
   if (config.events && config.events.length > 0 && !config.events.includes(payload.event)) {
     return
+  }
+
+  // Enforce hard cap to prevent unbounded memory growth
+  if (eventQueue.length >= MAX_QUEUE_CAP) {
+    return // Drop event — queue is at capacity
   }
 
   // Add to queue

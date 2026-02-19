@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import { useAppStore } from '@/lib/store'
 import { useProviders } from '@/features/providers/hooks/useProviders'
 import { createAdapter } from '@/services/providers'
@@ -16,9 +16,10 @@ import type {
 import type { PromptTemplate, VariableValues, CreateTemplateRequest } from '@/types/template'
 
 export function usePlayground() {
-  const { currentUser, currentOrgId } = useAppStore()
+  const currentUser = useAppStore((s) => s.currentUser)
+  const currentOrgId = useAppStore((s) => s.currentOrgId)
   const { providers } = useProviders(currentOrgId)
-  const activeProviders = providers.filter((p) => p.isActive)
+  const activeProviders = useMemo(() => providers.filter((p) => p.isActive), [providers])
 
   // Mode
   const [mode, setMode] = useState<PlaygroundMode>('single')

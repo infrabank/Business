@@ -9,7 +9,7 @@ import { Bell } from 'lucide-react'
 
 export function NotificationsTab() {
   const orgId = useAppStore((s) => s.currentOrgId)
-  const { currentUser } = useAppStore()
+  const currentUser = useAppStore((s) => s.currentUser)
   const { subscription } = useBilling()
   const plan = subscription?.plan || currentUser?.plan || 'free'
 

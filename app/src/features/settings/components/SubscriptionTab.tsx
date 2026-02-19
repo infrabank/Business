@@ -25,7 +25,7 @@ const STATUS_LABEL: Record<string, string> = {
 }
 
 export function SubscriptionTab() {
-  const { currentUser } = useAppStore()
+  const currentUser = useAppStore((s) => s.currentUser)
   const { subscription, invoices, commission, isLoading, openPortal } = useBilling()
 
   const plan = subscription?.plan || currentUser?.plan || 'free'

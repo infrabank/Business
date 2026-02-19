@@ -364,13 +364,9 @@ async function classifyIntentHybrid(body: Record<string, unknown>): Promise<Inte
     return keywordResult
   }
 
-  // Step 3: LLM classification for uncertain cases
-  const llmCategory = await classifyIntentByLLM(userText)
-  if (llmCategory) {
-    return mapCategoryToIntentResult(llmCategory)
-  }
-
-  // Fallback to keyword result
+  // Low confidence: use keyword result directly, fire LLM classification
+  // asynchronously for telemetry (avoid blocking the hot path)
+  classifyIntentByLLM(userText).catch(() => {})
   return keywordResult
 }
 

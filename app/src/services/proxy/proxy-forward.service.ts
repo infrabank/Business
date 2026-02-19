@@ -195,19 +195,22 @@ export async function forwardRequest(params: {
   if (resolvedKey.enableCache && !isStream && finalBody) {
     const currentModel = (finalBody.model as string) || 'unknown'
 
-    // Level 1: Exact match
+    // Level 1+2: Exact and normalized match in parallel
     const cacheKey = buildCacheKey(providerType, currentModel, finalBody)
-    let cachedEntry = await getCachedResponse(cacheKey)
-    let cacheLevel: 'exact' | 'normalized' | 'semantic' = 'exact'
+    const normalizedKey = buildNormalizedCacheKey(providerType, currentModel, finalBody)
+    const [exactEntry, normalizedEntry] = await Promise.all([
+      getCachedResponse(cacheKey),
+      getNormalizedCachedResponse(normalizedKey),
+    ])
 
-    // Level 2: Normalized match (catches formatting differences)
-    if (!cachedEntry) {
-      const normalizedKey = buildNormalizedCacheKey(providerType, currentModel, finalBody)
-      cachedEntry = await getNormalizedCachedResponse(normalizedKey)
-      if (cachedEntry) cacheLevel = 'normalized'
+    let cachedEntry = exactEntry
+    let cacheLevel: 'exact' | 'normalized' | 'semantic' = 'exact'
+    if (!cachedEntry && normalizedEntry) {
+      cachedEntry = normalizedEntry
+      cacheLevel = 'normalized'
     }
 
-    // Level 3: Semantic similarity match
+    // Level 3: Semantic similarity match (only on miss)
     let semanticSimilarity = 0
     if (!cachedEntry) {
       const semanticResult = await findSemanticMatch(providerType, currentModel, finalBody)
