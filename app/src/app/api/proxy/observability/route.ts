@@ -16,13 +16,31 @@ interface ObservabilityConfigRecord {
 }
 
 export async function GET(req: NextRequest) {
+  let authUser
   try {
-    await getMeServer()
-    const orgId = req.nextUrl.searchParams.get('orgId')
-    if (!orgId) {
-      return NextResponse.json({ error: 'orgId required' }, { status: 400 })
-    }
+    authUser = await getMeServer()
+  } catch {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
+  const orgId = req.nextUrl.searchParams.get('orgId')
+  if (!orgId) {
+    return NextResponse.json({ error: 'orgId required' }, { status: 400 })
+  }
+
+  // Verify user has access to this organization
+  try {
+    const members = await bkend.get<Array<{ id: string }>>('/members', {
+      params: { orgId, userId: authUser.id },
+    })
+    if (members.length === 0) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+  } catch {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
+  try {
     const records = await bkend.get<ObservabilityConfigRecord[]>('/observability-configs', {
       params: { orgId },
     })

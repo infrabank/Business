@@ -1,10 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getMeServer } from '@/lib/auth'
+import { bkend } from '@/lib/bkend'
 import { getSettings, updateSettings } from '@/services/anomaly.service'
 
-export async function GET(req: NextRequest) {
+async function verifyOrgAccess(userId: string, orgId: string): Promise<boolean> {
   try {
-    await getMeServer()
+    const members = await bkend.get<Array<{ id: string }>>('/members', {
+      params: { orgId, userId },
+    })
+    return members.length > 0
+  } catch {
+    return false
+  }
+}
+
+export async function GET(req: NextRequest) {
+  let authUser
+  try {
+    authUser = await getMeServer()
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -12,16 +25,28 @@ export async function GET(req: NextRequest) {
   const orgId = req.nextUrl.searchParams.get('orgId')
   if (!orgId) return NextResponse.json({ error: 'orgId required' }, { status: 400 })
 
+  if (!(await verifyOrgAccess(authUser.id, orgId))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
+
   const token = req.headers.get('authorization')?.replace('Bearer ', '') ?? ''
   const settings = await getSettings(orgId, token)
   return NextResponse.json(settings)
 }
 
 export async function PATCH(req: NextRequest) {
+  let authUser
   try {
-    await getMeServer()
+    authUser = await getMeServer()
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const orgId = req.nextUrl.searchParams.get('orgId')
+  if (!orgId) return NextResponse.json({ error: 'orgId required' }, { status: 400 })
+
+  if (!(await verifyOrgAccess(authUser.id, orgId))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
   const body = await req.json()
