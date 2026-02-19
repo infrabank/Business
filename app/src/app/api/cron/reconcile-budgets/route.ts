@@ -10,12 +10,13 @@ interface ProxyKey {
 }
 
 /**
- * GET /api/cron/reconcile-budgets?secret=CRON_SECRET
+ * GET /api/cron/reconcile-budgets
+ * Authorization: Bearer CRON_SECRET
  * Daily cron: recalculates Redis budget counters from proxy_logs for all active keys.
  */
 export async function GET(req: NextRequest) {
-  const secret = req.nextUrl.searchParams.get('secret')
-  if (secret !== process.env.CRON_SECRET) {
+  const authHeader = req.headers.get('authorization')
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

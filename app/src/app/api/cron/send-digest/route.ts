@@ -8,12 +8,13 @@ interface OrgRecord {
 }
 
 /**
- * GET /api/cron/send-digest?secret=CRON_SECRET
+ * GET /api/cron/send-digest
+ * Authorization: Bearer CRON_SECRET
  * Daily cron (0 0 * * *): sends digest emails for all organizations.
  */
 export async function GET(req: NextRequest) {
-  const secret = req.nextUrl.searchParams.get('secret')
-  if (secret !== process.env.CRON_SECRET) {
+  const authHeader = req.headers.get('authorization')
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 

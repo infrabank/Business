@@ -5,14 +5,13 @@ import { getReportSummary } from '@/services/report.service'
 import type { User, Organization } from '@/types'
 import type { NotificationChannel, EmailConfig } from '@/types/notification'
 
-const CRON_SECRET = process.env.CRON_SECRET || ''
 const RESEND_API_KEY = process.env.RESEND_API_KEY || ''
 const FROM_EMAIL = process.env.NOTIFICATION_FROM_EMAIL || 'LLM Cost Manager <noreply@llmcost.app>'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://llmcost.app'
 
 export async function GET(req: NextRequest) {
-  const secret = req.nextUrl.searchParams.get('secret')
-  if (!CRON_SECRET || secret !== CRON_SECRET) {
+  const authHeader = req.headers.get('authorization')
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
