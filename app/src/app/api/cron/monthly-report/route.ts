@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { bkend } from '@/lib/bkend'
+import { processBatch } from '@/lib/utils'
 import { getReportSummary } from '@/services/report.service'
 import type { User, Organization } from '@/types'
 import type { NotificationChannel, EmailConfig } from '@/types/notification'
@@ -23,10 +24,6 @@ export async function GET(req: NextRequest) {
     // Get all growth plan users
     const users = await bkend.get<User[]>('/users', { params: { plan: 'growth' } }).catch(() => [] as User[])
 
-    let sent = 0
-    let skipped = 0
-    let failed = 0
-
     // Previous month range
     const now = new Date()
     const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
@@ -35,13 +32,14 @@ export async function GET(req: NextRequest) {
     const to = `${prevMonth.getFullYear()}-${String(prevMonth.getMonth() + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`
     const monthLabel = `${prevMonth.getFullYear()}년 ${prevMonth.getMonth() + 1}월`
 
-    for (const user of users) {
-      try {
+    const settled = await processBatch(
+      users,
+      async (user): Promise<'sent' | 'skipped'> => {
         // Find user's org
         const orgs = await bkend.get<Organization[]>('/organizations', {
           params: { ownerId: user.id },
         })
-        if (orgs.length === 0) { skipped++; continue }
+        if (orgs.length === 0) return 'skipped'
         const org = orgs[0]
 
         // Find email notification channel
@@ -51,11 +49,10 @@ export async function GET(req: NextRequest) {
 
         const emailChannel = channels[0]
         const emailConfig = emailChannel?.config as EmailConfig | undefined
-        if (!emailChannel || !emailConfig?.recipients?.length) { skipped++; continue }
+        if (!emailChannel || !emailConfig?.recipients?.length) return 'skipped'
 
         // Generate summary
-        const token = ''
-        const summary = await getReportSummary(org.id, from, to, token)
+        const summary = await getReportSummary(org.id, from, to, '')
 
         // Build email HTML
         const html = buildMonthlyReportHtml(summary, org.name, monthLabel)
@@ -75,8 +72,19 @@ export async function GET(req: NextRequest) {
           }),
         })
 
-        if (res.ok) { sent++ } else { failed++ }
-      } catch {
+        if (!res.ok) throw new Error(`Resend API error: ${res.status}`)
+        return 'sent'
+      },
+      3, // Lower concurrency due to Resend API calls
+    )
+
+    let sent = 0
+    let skipped = 0
+    let failed = 0
+    for (const r of settled) {
+      if (r.status === 'fulfilled') {
+        if (r.value === 'sent') sent++; else skipped++
+      } else {
         failed++
       }
     }

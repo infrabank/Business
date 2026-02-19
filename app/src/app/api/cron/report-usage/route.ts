@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getStripe } from '@/lib/stripe'
 import { STRIPE_METER_EVENT_NAME } from '@/lib/constants'
 import { bkendService as bkend } from '@/lib/bkend'
+import { processBatch } from '@/lib/utils'
 
 interface GrowthUser {
   id: string
@@ -40,17 +41,15 @@ export async function GET(request: NextRequest) {
     const periodStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
     const periodEnd = new Date(now.getFullYear(), now.getMonth(), 0)
 
-    const results: { userId: string; savings: number; reported: boolean }[] = []
-
-    for (const user of growthUsers) {
-      try {
+    const settled = await processBatch(
+      growthUsers,
+      async (user) => {
         // Find user's org
         const orgs = await bkend.get<Organization[]>('/organizations', {
           params: { ownerId: user.id },
         })
         if (orgs.length === 0) {
-          results.push({ userId: user.id, savings: 0, reported: false })
-          continue
+          return { userId: user.id, savings: 0, reported: false }
         }
 
         // Sum savedAmount from proxy_logs for previous month
@@ -89,15 +88,15 @@ export async function GET(request: NextRequest) {
             reportedAt: new Date().toISOString(),
           })
 
-          results.push({ userId: user.id, savings: totalSavings, reported: true })
-        } else {
-          results.push({ userId: user.id, savings: 0, reported: false })
+          return { userId: user.id, savings: totalSavings, reported: true }
         }
-      } catch (err) {
-        console.error(`[report-usage] Error for user ${user.id}:`, err)
-        results.push({ userId: user.id, savings: 0, reported: false })
-      }
-    }
+        return { userId: user.id, savings: 0, reported: false }
+      },
+      3, // Lower concurrency due to Stripe API calls
+    )
+
+    const results = settled
+      .map((r) => r.status === 'fulfilled' ? r.value : { userId: '', savings: 0, reported: false })
 
     return NextResponse.json({
       success: true,

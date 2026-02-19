@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { bkendService } from '@/lib/bkend'
+import { processBatch } from '@/lib/utils'
 import { detectAnomalies } from '@/services/anomaly.service'
 
 interface OrgRecord {
@@ -18,16 +19,21 @@ export async function GET(req: NextRequest) {
 
   try {
     const orgs = await bkendService.get<OrgRecord[]>('/organizations')
+
+    const results = await processBatch(
+      orgs,
+      async (org) => {
+        const events = await detectAnomalies(org.id, '')
+        return events.length
+      },
+      5,
+    )
+
     let detected = 0
     let failed = 0
-
-    for (const org of orgs) {
-      try {
-        const events = await detectAnomalies(org.id, '')
-        detected += events.length
-      } catch {
-        failed++
-      }
+    for (const r of results) {
+      if (r.status === 'fulfilled') detected += r.value
+      else failed++
     }
 
     return NextResponse.json({ ok: true, detected, failed, orgs: orgs.length })

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { bkendService } from '@/lib/bkend'
+import { processBatch } from '@/lib/utils'
 import { reconcileBudgetCounter } from '@/services/proxy/budget-check.service'
 
 interface ProxyKey {
@@ -23,17 +24,14 @@ export async function GET(req: NextRequest) {
       params: { isActive: 'true' },
     })
 
-    let reconciled = 0
-    let failed = 0
+    const results = await processBatch(
+      keys,
+      (key) => reconcileBudgetCounter(key.id, key.orgId),
+      10,
+    )
 
-    for (const key of keys) {
-      try {
-        await reconcileBudgetCounter(key.id, key.orgId)
-        reconciled++
-      } catch {
-        failed++
-      }
-    }
+    const reconciled = results.filter((r) => r.status === 'fulfilled').length
+    const failed = results.filter((r) => r.status === 'rejected').length
 
     return NextResponse.json({
       ok: true,

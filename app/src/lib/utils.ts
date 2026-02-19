@@ -32,3 +32,21 @@ export function formatDate(dateStr: string): string {
     day: 'numeric',
   })
 }
+
+/**
+ * Process items in parallel batches with concurrency control.
+ * Returns settled results for each item (fulfilled or rejected).
+ */
+export async function processBatch<T, R>(
+  items: T[],
+  fn: (item: T) => Promise<R>,
+  concurrency = 5,
+): Promise<PromiseSettledResult<R>[]> {
+  const results: PromiseSettledResult<R>[] = []
+  for (let i = 0; i < items.length; i += concurrency) {
+    const chunk = items.slice(i, i + concurrency)
+    const settled = await Promise.allSettled(chunk.map(fn))
+    results.push(...settled)
+  }
+  return results
+}
