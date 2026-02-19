@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getMeServer } from '@/lib/auth'
+import { bkend } from '@/lib/bkend'
 import { syncProviderUsage } from '@/services/usage-sync.service'
 import { checkBudgetThresholds } from '@/services/budget.service'
 
 export async function POST(req: NextRequest) {
+  let authUser
   try {
-    await getMeServer()
+    authUser = await getMeServer()
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -16,6 +18,14 @@ export async function POST(req: NextRequest) {
 
     if (!orgId) {
       return NextResponse.json({ error: 'orgId is required' }, { status: 400 })
+    }
+
+    // Verify user has access to this organization
+    const members = await bkend.get<Array<{ id: string }>>('/members', {
+      params: { orgId, userId: authUser.id },
+    })
+    if (members.length === 0) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const syncResults = await syncProviderUsage({
