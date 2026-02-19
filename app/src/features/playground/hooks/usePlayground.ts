@@ -16,8 +16,8 @@ import type {
 import type { PromptTemplate, VariableValues, CreateTemplateRequest } from '@/types/template'
 
 export function usePlayground() {
-  const { currentUser } = useAppStore()
-  const { providers } = useProviders()
+  const { currentUser, currentOrgId } = useAppStore()
+  const { providers } = useProviders(currentOrgId)
   const activeProviders = providers.filter((p) => p.isActive)
 
   // Mode
