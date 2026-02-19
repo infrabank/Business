@@ -22,17 +22,18 @@ export async function GET(req: Request) {
       return NextResponse.json({ data: [], total: 0 })
     }
 
-    const history = await bkend.get<PlaygroundHistory[]>('/playground-history', {
-      params: { orgId, _sort: 'createdAt', _order: 'desc', _limit: String(limit), _offset: String(offset) },
-    })
-
-    const total = await bkend.get<PlaygroundHistory[]>('/playground-history', {
-      params: { orgId, _limit: '0' },
-    })
+    const [history, allRecords] = await Promise.all([
+      bkend.get<PlaygroundHistory[]>('/playground-history', {
+        params: { orgId, _sort: 'createdAt', _order: 'desc', _limit: String(limit), _offset: String(offset) },
+      }),
+      bkend.get<PlaygroundHistory[]>('/playground-history', {
+        params: { orgId },
+      }),
+    ])
 
     return NextResponse.json({
       data: history,
-      total: Array.isArray(total) ? total.length : 0,
+      total: allRecords.length,
     })
   } catch (err) {
     return NextResponse.json(

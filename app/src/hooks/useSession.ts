@@ -32,25 +32,18 @@ export function useSession() {
           const { data: { user }, error } = await supabase.auth.getUser()
           if (error || !user) return
 
-          let plan: string | undefined
-          try {
-            const userData = await bkend.get<{ plan?: string }[]>('/users', {
-              params: { id: user.id }
-            })
-            if (userData.length > 0) plan = userData[0].plan
-          } catch {
-            // ignore - will default to 'free'
-          }
+          const [userData, orgs] = await Promise.all([
+            bkend.get<{ plan?: string }[]>('/users', { params: { id: user.id } }).catch(() => [] as { plan?: string }[]),
+            bkend.get<Organization[]>('/organizations', { params: { ownerId: user.id } }),
+          ])
+
+          const plan = userData[0]?.plan
 
           setCurrentUser({
             id: user.id,
             email: user.email!,
             name: user.user_metadata?.name || user.email?.split('@')[0] || '',
             plan,
-          })
-
-          const orgs = await bkend.get<Organization[]>('/organizations', {
-            params: { ownerId: user.id }
           })
 
           if (orgs.length > 0) {

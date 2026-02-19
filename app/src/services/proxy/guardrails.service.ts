@@ -40,12 +40,12 @@ const PII_PATTERNS: Array<{ name: string; pattern: RegExp; replacement: string }
   },
   {
     name: 'ssn',
-    pattern: /\b\d{3}[-.\s]?\d{2}[-.\s]?\d{4}\b/g,
+    pattern: /\b\d{3}[-.\s]\d{2}[-.\s]\d{4}\b/g,
     replacement: '[SSN_REDACTED]',
   },
   {
     name: 'credit_card',
-    pattern: /\b(?:\d{4}[-.\s]?){3}\d{4}\b/g,
+    pattern: /\b\d{4}[-.\s]\d{4}[-.\s]\d{4}[-.\s]\d{4}\b/g,
     replacement: '[CC_REDACTED]',
   },
   {
