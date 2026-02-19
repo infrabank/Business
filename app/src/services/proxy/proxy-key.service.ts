@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'crypto'
 import { encrypt, decrypt } from '@/services/encryption.service'
 import { bkendService } from '@/lib/bkend'
+import { getRedis } from './redis'
 import type { ProxyKey, ResolvedProxyKey, ProxyKeyDisplay, ObservabilitySettings } from '@/types/proxy'
 import type { ProviderType } from '@/types/provider'
 
@@ -183,14 +184,17 @@ export async function resolveProxyKey(rawKey: string): Promise<ResolvedProxyKey 
 
 export async function incrementRequestCount(proxyKeyId: string): Promise<void> {
   try {
-    const keys = await bkendService.get<ProxyKey[]>('/proxy-keys', {
-      params: { id: proxyKeyId, _limit: '1' },
-    })
-    const currentCount = keys[0]?.requestCount ?? 0
-    await bkendService.patch<ProxyKey>(`/proxy-keys/${proxyKeyId}`, {
-      requestCount: currentCount + 1,
+    const r = getRedis()
+    if (r) {
+      // O(1) Redis INCR — no DB round-trip on the hot path
+      const redisKey = `lcm:reqcount:${proxyKeyId}`
+      await r.incr(redisKey)
+      await r.expire(redisKey, 86400) // 24h TTL, reconciled by cron
+    }
+    // Update lastUsedAt only (no read required)
+    bkendService.patch<ProxyKey>(`/proxy-keys/${proxyKeyId}`, {
       lastUsedAt: new Date().toISOString(),
-    })
+    }).catch(() => {})
   } catch {
     // Non-critical, don't block the request
   }

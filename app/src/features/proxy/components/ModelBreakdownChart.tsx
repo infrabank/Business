@@ -1,5 +1,6 @@
 'use client'
 
+import { useMemo } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { Card, CardHeader, CardContent } from '@/components/ui/Card'
 import type { BreakdownItem } from '@/types/proxy-analytics'
@@ -20,8 +21,8 @@ export function ModelBreakdownChart({ data, title = '모델별 비용 분석' }:
     )
   }
 
-  // Show top 10 only
-  const chartData = data.slice(0, 10)
+  // Show top 10 only — memoize to avoid re-slicing on every render
+  const chartData = useMemo(() => data.slice(0, 10), [data])
 
   return (
     <Card>

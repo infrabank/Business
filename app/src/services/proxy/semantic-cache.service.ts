@@ -218,11 +218,19 @@ export async function findSemanticMatch(
 
   if (entries.length === 0) return null
 
-  // Find best match
+  // Find best match with early termination
   let bestMatch: SemanticEntry | null = null
   let bestSimilarity = 0
+  const queryLen = queryTokens.length
 
   for (const entry of entries) {
+    // Token-length pre-filter: skip entries whose length is too different
+    // If ratio of shorter/longer < threshold, Jaccard can never reach threshold
+    const entryLen = entry.tokens.length
+    const shorter = Math.min(queryLen, entryLen)
+    const longer = Math.max(queryLen, entryLen)
+    if (longer > 0 && shorter / longer < threshold) continue
+
     const similarity = computeSimilarity(
       queryTokens,
       entry.tokens,
@@ -232,6 +240,8 @@ export async function findSemanticMatch(
     if (similarity > bestSimilarity) {
       bestSimilarity = similarity
       bestMatch = entry
+      // Early exit on perfect match
+      if (bestSimilarity >= 0.99) break
     }
   }
 

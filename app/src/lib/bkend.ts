@@ -33,6 +33,9 @@ function parsePath(path: string): { table: string; id?: string; subPath?: string
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function applyParams(query: any, params: Record<string, string>) {
   for (const [key, value] of Object.entries(params)) {
+    // Column selection: _select=col1,col2 → .select('col1,col2') instead of SELECT *
+    if (key === '_select') continue // handled in supabaseQuery before applyParams
+
     // Pagination / sorting (bkend-compat)
     if (key === '_limit') {
       query = query.limit(Number(value))
@@ -124,12 +127,13 @@ async function supabaseQuery<T>(
 
   switch (method) {
     case 'GET': {
+      const selectCols = params?._select || '*'
       if (id) {
-        const { data, error } = await client.from(table).select('*').eq('id', id).single()
+        const { data, error } = await client.from(table).select(selectCols).eq('id', id).single()
         if (error) throw new Error(error.message)
         return data as T
       }
-      let query = client.from(table).select('*')
+      let query = client.from(table).select(selectCols)
       if (params) query = applyParams(query, params)
       const { data, error } = await query
       if (error) throw new Error(error.message)

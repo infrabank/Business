@@ -497,6 +497,9 @@ function handleStreamingResponse(params: {
 }): Response {
   const { upstreamResponse, resolvedKey, providerType, path, startTime, requestModel, wasRouted, originalModel, routingDecision, traceId, obsConfig } = params
 
+  // Rolling buffer: only keep the last N chunks for token extraction
+  // (usage data is always in the last few SSE events)
+  const MAX_TAIL_CHUNKS = 20
   const chunks: string[] = []
   const reader = upstreamResponse.body!.getReader()
   const decoder = new TextDecoder()
@@ -511,9 +514,12 @@ function handleStreamingResponse(params: {
           // Pass through to client immediately
           controller.enqueue(value)
 
-          // Accumulate for token counting
+          // Keep only tail for token counting (usage is in last chunks)
           const text = decoder.decode(value, { stream: true })
           chunks.push(text)
+          if (chunks.length > MAX_TAIL_CHUNKS) {
+            chunks.shift()
+          }
         }
         controller.close()
 

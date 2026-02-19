@@ -1,6 +1,5 @@
 import { bkendService } from '@/lib/bkend'
 import { getRedis } from './redis'
-import type { ProxyLog } from '@/types/proxy'
 
 export type BudgetDuration = 'daily' | 'weekly' | 'monthly'
 
@@ -242,6 +241,7 @@ export async function incrementBudgetSpend(
 /**
  * Reconcile budget counter from proxy_logs.
  * Called by daily cron to keep Redis counter accurate.
+ * Uses aggregate endpoint to avoid fetching all rows.
  */
 export async function reconcileBudgetCounter(
   proxyKeyId: string,
@@ -250,7 +250,8 @@ export async function reconcileBudgetCounter(
   const now = new Date()
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
 
-  const logs = await bkendService.get<ProxyLog[]>('/proxy-logs', {
+  // Use aggregate endpoint — returns { totalCost } via SUM, no row transfer
+  const { totalCost } = await bkendService.get<{ totalCost: number }>('/proxy-logs/aggregate', {
     params: {
       proxyKeyId,
       orgId,
@@ -258,21 +259,19 @@ export async function reconcileBudgetCounter(
     },
   })
 
-  const totalSpend = logs.reduce((sum, log) => sum + Number(log.cost), 0)
-
   const r = getRedis()
   const key = budgetKey(proxyKeyId)
 
   if (r) {
     try {
-      await r.set(key, totalSpend, { ex: TTL_SECONDS })
+      await r.set(key, totalCost, { ex: TTL_SECONDS })
       return
     } catch {
       // Fall through to memory
     }
   }
 
-  memBudget.set(key, totalSpend)
+  memBudget.set(key, totalCost)
 }
 
 export function buildBudgetExceededResponse(result: BudgetCheckResult): Response {
