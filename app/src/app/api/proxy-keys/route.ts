@@ -1,11 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getMeServer } from '@/lib/auth'
+import { bkend } from '@/lib/bkend'
 import { createProxyKey, listProxyKeys } from '@/services/proxy/proxy-key.service'
+
+// Verify user has access to organization
+async function verifyOrgAccess(userId: string, orgId: string): Promise<boolean> {
+  try {
+    const members = await bkend.get<Array<{ id: string }>>('/members', {
+      params: { orgId, userId },
+    })
+    return members.length > 0
+  } catch {
+    return false
+  }
+}
 
 // GET /api/proxy-keys?orgId=xxx - list proxy keys for org
 export async function GET(req: NextRequest) {
+  let authUser
   try {
-    await getMeServer()
+    authUser = await getMeServer()
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -13,6 +27,10 @@ export async function GET(req: NextRequest) {
   const orgId = req.nextUrl.searchParams.get('orgId')
   if (!orgId) {
     return NextResponse.json({ error: 'orgId is required' }, { status: 400 })
+  }
+
+  if (!(await verifyOrgAccess(authUser.id, orgId))) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
   try {
@@ -28,8 +46,9 @@ export async function GET(req: NextRequest) {
 
 // POST /api/proxy-keys - create new proxy key
 export async function POST(req: NextRequest) {
+  let authUser
   try {
-    await getMeServer()
+    authUser = await getMeServer()
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -45,6 +64,10 @@ export async function POST(req: NextRequest) {
 
     if (!orgId || !name || !providerType || !apiKey) {
       return NextResponse.json({ error: 'orgId, name, providerType, and apiKey are required' }, { status: 400 })
+    }
+
+    if (!(await verifyOrgAccess(authUser.id, orgId))) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const result = await createProxyKey({

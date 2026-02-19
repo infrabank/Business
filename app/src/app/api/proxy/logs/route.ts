@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getMeServer } from '@/lib/auth'
-import { bkendService } from '@/lib/bkend'
+import { bkend, bkendService } from '@/lib/bkend'
 import type { ProxyLog } from '@/types'
 
 // GET /api/proxy/logs?orgId=xxx - list proxy logs with pagination
 export async function GET(req: NextRequest) {
+  let authUser
   try {
-    await getMeServer()
+    authUser = await getMeServer()
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -14,6 +15,18 @@ export async function GET(req: NextRequest) {
   const orgId = req.nextUrl.searchParams.get('orgId')
   if (!orgId) {
     return NextResponse.json({ error: 'orgId is required' }, { status: 400 })
+  }
+
+  // Verify user has access to this organization
+  try {
+    const members = await bkend.get<Array<{ id: string }>>('/members', {
+      params: { orgId, userId: authUser.id },
+    })
+    if (members.length === 0) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+  } catch {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
   try {

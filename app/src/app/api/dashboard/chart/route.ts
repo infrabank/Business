@@ -24,6 +24,14 @@ export async function GET(req: NextRequest) {
     } catch {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    // Verify user has access to this organization
+    const members = await bkend.get<Array<{ id: string }>>('/members', {
+      params: { orgId, userId: authUser.id },
+    })
+    if (members.length === 0) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
     const user = await bkend.get<User>(`/users/${authUser.id}`)
     const rawPlan = user.plan || 'free'
     // Map legacy plan values to new 2-tier model

@@ -7,8 +7,9 @@ import type { DashboardSummary } from '@/types/dashboard'
 const PROJECT_COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16']
 
 export async function GET(req: NextRequest) {
+  let authUser
   try {
-    await getMeServer()
+    authUser = await getMeServer()
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -16,6 +17,18 @@ export async function GET(req: NextRequest) {
   const orgId = req.nextUrl.searchParams.get('orgId')
   if (!orgId) {
     return NextResponse.json({ error: 'orgId is required' }, { status: 400 })
+  }
+
+  // Verify user has access to this organization
+  try {
+    const members = await bkend.get<Array<{ id: string }>>('/members', {
+      params: { orgId, userId: authUser.id },
+    })
+    if (members.length === 0) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+  } catch {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
   const providerTypesParam = req.nextUrl.searchParams.get('providerTypes')
@@ -113,7 +126,7 @@ export async function GET(req: NextRequest) {
     // Budget status
     const budgetStatus = budgets.map((b) => {
       const records = b.projectId
-        ? currentRecords.filter((r) => r.orgId === orgId)
+        ? currentRecords.filter((r) => r.projectId === b.projectId)
         : currentRecords
       const spent = records.reduce((sum, r) => sum + r.cost, 0)
       return {
