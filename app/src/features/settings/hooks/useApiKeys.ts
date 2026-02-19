@@ -1,7 +1,17 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { ApiKeySummary } from '@/services/settings.service'
+
+export interface ApiKeySummary {
+  providerId: string
+  providerType: string
+  providerName: string
+  keyId: string
+  label: string
+  keyPrefix: string
+  isActive: boolean
+  lastSyncAt?: string
+}
 
 export function useApiKeys(orgId?: string | null) {
   const [keys, setKeys] = useState<ApiKeySummary[]>([])
@@ -14,9 +24,11 @@ export function useApiKeys(orgId?: string | null) {
     }
     async function load() {
       try {
-        const { getApiKeySummary } = await import('@/services/settings.service')
-        const data = await getApiKeySummary(orgId!)
-        setKeys(data)
+        const res = await fetch(`/api/settings/api-keys?orgId=${orgId}`)
+        if (res.ok) {
+          const data = await res.json()
+          setKeys(data)
+        }
       } catch {
         // ignore
       } finally {
