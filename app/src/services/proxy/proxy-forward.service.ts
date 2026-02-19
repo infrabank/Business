@@ -620,14 +620,7 @@ function logProxyRequest(data: {
   fallbackProvider?: string | null
   fallbackModel?: string | null
 }): void {
-  // Separate originalCost to avoid insert failure if column doesn't exist yet
-  const { originalCost, ...coreData } = data
-  bkendService.post('/proxy-logs', coreData as unknown as Record<string, unknown>).catch(() => {
+  bkendService.post('/proxy-logs', data as unknown as Record<string, unknown>).catch(() => {
     // Logging failure should not impact the proxy response
   })
-  // Try to update originalCost separately (will silently fail if column doesn't exist)
-  if (originalCost > 0) {
-    // Attempt insert with originalCost via a second call if the column exists
-    // For now, originalCost is tracked in savedAmount (originalCost ≈ cost + savedAmount)
-  }
 }

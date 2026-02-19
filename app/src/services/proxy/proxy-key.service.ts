@@ -1,10 +1,31 @@
 import { createHash, randomBytes } from 'crypto'
 import { encrypt, decrypt } from '@/services/encryption.service'
 import { bkendService } from '@/lib/bkend'
-import type { ProxyKey, ResolvedProxyKey, ProxyKeyDisplay } from '@/types/proxy'
+import type { ProxyKey, ResolvedProxyKey, ProxyKeyDisplay, ObservabilitySettings } from '@/types/proxy'
 import type { ProviderType } from '@/types/provider'
 
 const PROXY_KEY_PREFIX = 'lmc_'
+
+function encryptObsSettings(settings: ObservabilitySettings | null | undefined): ObservabilitySettings | null {
+  if (!settings) return null
+  return {
+    ...settings,
+    apiKey: settings.apiKey ? encrypt(settings.apiKey) : settings.apiKey,
+    secretKey: settings.secretKey ? encrypt(settings.secretKey) : settings.secretKey,
+  }
+}
+
+function decryptObsSettings(settings: ObservabilitySettings | null | undefined): ObservabilitySettings | null {
+  if (!settings) return null
+  const result = { ...settings }
+  try {
+    if (result.apiKey) result.apiKey = decrypt(result.apiKey)
+  } catch { /* leave as-is if not encrypted */ }
+  try {
+    if (result.secretKey) result.secretKey = decrypt(result.secretKey)
+  } catch { /* leave as-is if not encrypted */ }
+  return result
+}
 
 function generateProxyKey(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -76,7 +97,7 @@ export async function createProxyKey(params: {
     enableFallback: params.enableFallback ?? false,
     enableGuardrails: params.enableGuardrails ?? false,
     guardrailSettings: params.guardrailSettings ?? null,
-    observabilitySettings: params.observabilitySettings ?? null,
+    observabilitySettings: encryptObsSettings(params.observabilitySettings as ObservabilitySettings | undefined) ?? null,
   })
 
   return {
@@ -153,7 +174,7 @@ export async function resolveProxyKey(rawKey: string): Promise<ResolvedProxyKey 
       enableFallback: record.enableFallback ?? false,
       enableGuardrails: record.enableGuardrails ?? false,
       guardrailSettings: record.guardrailSettings ?? null,
-      observabilitySettings: record.observabilitySettings ?? null,
+      observabilitySettings: decryptObsSettings(record.observabilitySettings) ?? null,
     }
   } catch {
     return null
@@ -162,8 +183,12 @@ export async function resolveProxyKey(rawKey: string): Promise<ResolvedProxyKey 
 
 export async function incrementRequestCount(proxyKeyId: string): Promise<void> {
   try {
-    // Use a direct update - increment count and set lastUsedAt
+    const keys = await bkendService.get<ProxyKey[]>('/proxy-keys', {
+      params: { id: proxyKeyId, _limit: '1' },
+    })
+    const currentCount = keys[0]?.requestCount ?? 0
     await bkendService.patch<ProxyKey>(`/proxy-keys/${proxyKeyId}`, {
+      requestCount: currentCount + 1,
       lastUsedAt: new Date().toISOString(),
     })
   } catch {

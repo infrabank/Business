@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getMeServer } from '@/lib/auth'
-import { bkendService } from '@/lib/bkend'
+import { bkend, bkendService } from '@/lib/bkend'
 
 /**
  * POST /api/proxy/logs/:id/feedback
@@ -10,8 +10,9 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  let authUser
   try {
-    await getMeServer()
+    authUser = await getMeServer()
   } catch {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -28,6 +29,20 @@ export async function POST(
   }
 
   try {
+    // Verify user owns the org that owns this log
+    const logs = await bkendService.get<Array<{ orgId: string }>>(`/proxy-logs`, {
+      params: { id, _limit: '1' },
+    })
+    if (logs.length === 0) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+    const members = await bkend.get<Array<{ id: string }>>('/members', {
+      params: { orgId: logs[0].orgId, userId: authUser.id },
+    })
+    if (members.length === 0) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+
     await bkendService.patch(`/proxy-logs/${id}`, { userFeedback: feedback })
     return NextResponse.json({ ok: true, id, feedback })
   } catch (err) {
