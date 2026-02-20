@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { bkend } from '@/lib/bkend'
 import { getMeServer } from '@/lib/auth'
 import { checkHistoryLimit } from '@/lib/plan-limits'
-import type { UsageRecord, User, UserPlan } from '@/types'
+import type { UsageRecord, User, UserPlan, ProxyLog } from '@/types'
 import type { ChartDataPoint } from '@/types/dashboard'
 
 export async function GET(req: NextRequest) {
@@ -43,16 +43,25 @@ export async function GET(req: NextRequest) {
     const from = new Date()
     from.setDate(from.getDate() - days)
 
-    const records = await bkend.get<UsageRecord[]>('/usage-records', {
-      params: { orgId, date_gte: from.toISOString().split('T')[0] },
-    })
+    const fromDate = from.toISOString().split('T')[0]
+    const [records, proxyLogs] = await Promise.all([
+      bkend.get<UsageRecord[]>('/usage-records', {
+        params: { orgId, date_gte: fromDate },
+      }),
+      bkend.get<ProxyLog[]>('/proxy-logs', {
+        params: { orgId, createdAt_gte: fromDate },
+      }).catch(() => [] as ProxyLog[]),
+    ])
 
     // Apply provider filter
     const filteredRecords = providerFilter
       ? records.filter((r) => providerFilter.includes(r.providerType))
       : records
+    const filteredProxyLogs = providerFilter
+      ? proxyLogs.filter((l) => providerFilter.includes(l.providerType))
+      : proxyLogs
 
-    // Aggregate by date
+    // Aggregate by date (merge usage records + proxy logs)
     const dateMap = new Map<string, { cost: number; tokens: number; requests: number }>()
     for (const r of filteredRecords) {
       const date = r.date.split('T')[0]
@@ -60,6 +69,14 @@ export async function GET(req: NextRequest) {
       entry.cost += r.cost
       entry.tokens += r.totalTokens
       entry.requests += r.requestCount
+      dateMap.set(date, entry)
+    }
+    for (const log of filteredProxyLogs) {
+      const date = log.createdAt.split('T')[0]
+      const entry = dateMap.get(date) || { cost: 0, tokens: 0, requests: 0 }
+      entry.cost += Number(log.cost)
+      entry.tokens += log.totalTokens
+      entry.requests += 1
       dateMap.set(date, entry)
     }
 
