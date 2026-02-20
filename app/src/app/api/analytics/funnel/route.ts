@@ -33,24 +33,13 @@ export async function GET(req: NextRequest) {
     const periodStart = new Date()
     periodStart.setDate(periodStart.getDate() - days)
 
-    // Get members for this org to find users who signed up in period
-    const members = await bkend.get<{ userId: string; createdAt: string }[]>('/members', {
-      params: { orgId },
-    })
-
     // Get users created in period
     const users = await bkend.get<UserRecord[]>('/users', {
       params: { orgId, createdAt_gte: periodStart.toISOString() },
     }).catch(() => [] as UserRecord[])
 
-    const signupUserIds = new Set(
-      users.length > 0
-        ? users.map((u) => u.id)
-        : members
-            .filter((m) => new Date(m.createdAt) >= periodStart)
-            .map((m) => m.userId),
-    )
-    const signupCount = signupUserIds.size || members.length
+    const signupUserIds = new Set(users.map((u) => u.id))
+    const signupCount = signupUserIds.size || 1
 
     // Get analytics events for funnel calculation
     const events = await bkend.get<AnalyticsEvent[]>('/analytics-events', {

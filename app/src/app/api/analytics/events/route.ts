@@ -74,10 +74,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Look up user's orgId
-    const userRecord = await bkend.get<{ orgId: string }[]>('/members', {
-      params: { userId: user.id, _limit: '1' },
+    const userOrgs = await bkend.get<{ id: string }[]>('/organizations', {
+      params: { ownerId: user.id, _limit: '1' },
     })
-    const orgId = userRecord[0]?.orgId
+    const orgId = userOrgs[0]?.id
     if (!orgId) {
       return NextResponse.json({ error: 'No organization found' }, { status: 400 })
     }

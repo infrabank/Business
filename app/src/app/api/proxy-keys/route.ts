@@ -6,10 +6,10 @@ import { createProxyKey, listProxyKeys } from '@/services/proxy/proxy-key.servic
 // Verify user has access to organization
 async function verifyOrgAccess(userId: string, orgId: string): Promise<boolean> {
   try {
-    const members = await bkend.get<Array<{ id: string }>>('/members', {
-      params: { orgId, userId },
+    const orgs = await bkend.get<Array<{ id: string }>>('/organizations', {
+      params: { ownerId: userId },
     })
-    return members.length > 0
+    return orgs.some((o) => o.id === orgId)
   } catch {
     return false
   }

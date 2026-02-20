@@ -11,9 +11,8 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 })
     }
 
-    // Find org via members table (supports non-owner members too)
-    const memberships = await bkend.get<Array<{ orgId: string }>>('/members', { params: { userId: me.id } })
-    const orgId = memberships[0]?.orgId
+    const orgs = await bkend.get<Array<{ id: string }>>('/organizations', { params: { ownerId: me.id } })
+    const orgId = orgs[0]?.id
     if (!orgId) {
       return NextResponse.json({ data: [], total: 0 })
     }
@@ -67,11 +66,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '인증이 필요합니다.' }, { status: 401 })
     }
 
-    const [usersForPlan, memberships] = await Promise.all([
+    const [usersForPlan, orgs] = await Promise.all([
       bkend.get<Array<{ plan?: string }>>('/users', { params: { id: me.id } }),
-      bkend.get<Array<{ orgId: string }>>('/members', { params: { userId: me.id } }),
+      bkend.get<Array<{ id: string }>>('/organizations', { params: { ownerId: me.id } }),
     ])
-    const orgId = memberships[0]?.orgId
+    const orgId = orgs[0]?.id
     if (!orgId) {
       return NextResponse.json({ error: '조직 정보를 찾을 수 없습니다.' }, { status: 400 })
     }

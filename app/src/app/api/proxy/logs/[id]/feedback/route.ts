@@ -36,10 +36,10 @@ export async function POST(
     if (logs.length === 0) {
       return NextResponse.json({ error: 'Not found' }, { status: 404 })
     }
-    const members = await bkend.get<Array<{ id: string }>>('/members', {
-      params: { orgId: logs[0].orgId, userId: authUser.id },
+    const orgs = await bkend.get<Array<{ id: string }>>('/organizations', {
+      params: { ownerId: authUser.id },
     })
-    if (members.length === 0) {
+    if (!orgs.some((o) => o.id === logs[0].orgId)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 

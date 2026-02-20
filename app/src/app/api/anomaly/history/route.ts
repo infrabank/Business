@@ -16,10 +16,10 @@ export async function GET(req: NextRequest) {
 
   // Verify user has access to this organization
   try {
-    const members = await bkend.get<Array<{ id: string }>>('/members', {
-      params: { orgId, userId: authUser.id },
+    const orgs = await bkend.get<Array<{ id: string }>>('/organizations', {
+      params: { ownerId: authUser.id },
     })
-    if (members.length === 0) {
+    if (!orgs.some((o) => o.id === orgId)) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
   } catch {

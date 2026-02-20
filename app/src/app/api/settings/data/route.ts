@@ -29,11 +29,8 @@ export async function DELETE(request: Request) {
       )
     }
 
-    // Verify the user owns this org (check members)
-    const members = await bkend.get<{ userId: string; role: string }[]>('/members', {
-      params: { orgId, userId: user.id },
-    })
-    if (members.length === 0 || members[0].role !== 'owner') {
+    // Verify the user owns this org
+    if (orgs[0].ownerId !== user.id) {
       return NextResponse.json({ error: '조직 소유자만 데이터를 초기화할 수 있습니다.' }, { status: 403 })
     }
 

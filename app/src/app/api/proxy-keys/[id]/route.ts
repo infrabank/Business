@@ -9,10 +9,10 @@ async function verifyKeyOwnership(userId: string, keyId: string): Promise<boolea
   try {
     const key = await bkend.get<ProxyKey>(`/proxy-keys/${keyId}`)
     if (!key?.orgId) return false
-    const members = await bkend.get<Array<{ id: string }>>('/members', {
-      params: { orgId: key.orgId, userId },
+    const orgs = await bkend.get<Array<{ id: string }>>('/organizations', {
+      params: { ownerId: userId },
     })
-    return members.length > 0
+    return orgs.some((o) => o.id === key.orgId)
   } catch {
     return false
   }
